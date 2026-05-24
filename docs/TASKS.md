@@ -1,0 +1,42 @@
+# Reusable Cycle Checklist
+
+Run this checklist on every implementation cycle.
+
+## Begin
+
+- [ ] Read `docs/PLAN.md`, recent `docs/JOURNAL.md` entries and relevant group notes.
+- [ ] Inspect `git status --short --branch` and do not overwrite unrelated work.
+- [ ] Pull or reconcile the private remote once it exists and authentication is valid.
+- [ ] Identify the bounded feature or validation objective for this cycle.
+
+## Implement
+
+- [ ] Keep periodic geometry encoded through fractional coordinates and edge shifts.
+- [ ] Update symmetry behavior when editing geometry or color semantics.
+- [ ] Add or update preset/group knowledge notes when a standard motif changes.
+- [ ] Keep exported state backward-compatible or record a schema migration.
+
+## Verify
+
+- [ ] Run `npm run typecheck`.
+- [ ] Run `npm run build`.
+- [ ] Exercise add vertex, connect periodic edge, color face, undo/redo, save/load and preview workflows in the browser when affected.
+- [ ] Confirm symmetry changes when an intentionally asymmetric face color is applied.
+
+## Close
+
+- [ ] Append concrete evidence and remaining risks to `docs/JOURNAL.md`.
+- [ ] Update `docs/PROJECT_MEMORY.md` only with reusable project lessons.
+- [ ] Review the diff and commit intended files.
+- [ ] Push to the private GitHub remote when configured and authenticated.
+
+## Cycle Record: 2026-05-24 Release 0.1
+
+- [x] Read project requirements and established the plan/journal/knowledge-base scaffold.
+- [x] Implemented periodic geometry, colored symmetry, persistence, history, preview and all 17 presets.
+- [x] Ran `npm run typecheck` and `npm run build`.
+- [x] Exercised editing, symmetry-breaking color, undo/redo, JSON round-trip, boundary-crossing edge and preview synchronization workflows.
+- [x] Verified all 17 preset classifications and mobile horizontal-overflow check.
+- [x] Updated the journal, design ledger, group notes and project memory.
+- [x] Reviewed the diff and created the initial local commit on `main`.
+- [ ] Push to a private GitHub remote; blocked until GitHub CLI authentication is repaired.
