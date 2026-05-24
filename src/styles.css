@@ -409,6 +409,17 @@ kbd {
   opacity: 1;
 }
 
+.vertex-grid-point {
+  fill: #b8aea0;
+  opacity: 0.8;
+  cursor: copy;
+}
+
+.vertex-grid-point:hover {
+  fill: var(--coral);
+  opacity: 1;
+}
+
 .motif-vertex {
   fill: #2d3839;
   stroke: var(--paper);

@@ -88,6 +88,29 @@
   Euler value zero.
 - Browser console and page-error checks reported no application errors during the reproduction.
 
+## 2026-05-24: Grid-Only Vertex Editing
+
+- Replaced unrestricted canvas clicking for vertex construction with visible permitted grid
+  points in Add / remove vertex mode.
+- Added a shared vertex-grid rule: generic, rectangular and square cells use sixteenths; the
+  hexagonal cell uses tenths so the existing generated mesh remains aligned to visible points.
+- Kept grid snapping in the mutation layer and enabled double-click vertex removal without
+  switching away from Add / remove vertex mode.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered QA through the local `agent-browser` fallback: the generic editor displayed 289
+  permitted grid points; a pointer event on the canvas outside a grid target left 288 displayed
+  periodic vertex copies unchanged.
+- Clicking an unoccupied grid point increased displayed periodic vertex copies from `288` to
+  `297`; double-clicking that new vertex while Add / remove vertex remained active restored
+  `288`.
+- Switching to a hexagonal working cell while keeping the vertex tool active displayed its
+  121-point tenth-step grid.
+- Browser page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

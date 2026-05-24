@@ -30,7 +30,7 @@ interface ToolPanelProps {
 
 const TOOLS: { id: EditorTool; name: string; shortcut: string }[] = [
   { id: "select", name: "Select / delete", shortcut: "V" },
-  { id: "vertex", name: "Add vertex", shortcut: "P" },
+  { id: "vertex", name: "Add / remove vertex", shortcut: "P" },
   { id: "edge", name: "Connect edge", shortcut: "E" },
   { id: "color", name: "Color face", shortcut: "C" },
 ];
@@ -98,8 +98,10 @@ export function ToolPanel({
           draw boundary-crossing geometry.
         </p>
         <p className="help-text">
-          In Color face mode, click a filled face to clear it. In Select / delete mode,
-          double-click an edge or vertex; the selected swatch colors the merged face.
+          In Add / remove vertex mode, place vertices on visible grid points and double-click an
+          existing vertex to remove it. In Color face mode, click a filled face to clear it.
+          Double-clicking an edge in Select / delete mode uses the selected swatch for the merged
+          face.
         </p>
       </section>
     </aside>

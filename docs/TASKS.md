@@ -56,3 +56,9 @@ Run this checklist on every implementation cycle.
 - [x] Implemented hole-aware face regions, rendering and symmetry sampling.
 - [x] Verified independent painting of the inner parallelogram and its enclosing ring.
 - [x] Ran `npm run typecheck`, `npm run build` and a full 17-preset classification regression sweep.
+
+## Cycle Record: 2026-05-24 Grid-Only Vertex Editing
+
+- [x] Replaced implicit free-canvas vertex placement with visible permitted grid points.
+- [x] Enabled double-click vertex removal directly in Add / remove vertex mode.
+- [x] Ran `npm run typecheck`, `npm run build` and browser interaction verification.

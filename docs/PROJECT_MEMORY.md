@@ -22,6 +22,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - A disconnected boundary contained inside another bounded cycle produces a face with a hole.
   Render it as an even-odd path, exclude holes during hit-testing, and select an interior point
   away from holes for symmetry matching because an enclosing polygon centroid can lie in the hole.
+- Vertex construction should expose its permitted lattice points directly in the canvas. Keep
+  insertion snapped through the mutation layer as well, so imported/programmatic actions cannot
+  bypass the same grid invariant.
 
 ## Validation Debt
 

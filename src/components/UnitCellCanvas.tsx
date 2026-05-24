@@ -8,6 +8,7 @@ import type {
 } from "../types";
 import { addPoint } from "../math/lattice";
 import { extractFaces, faceColor } from "../math/periodicGraph";
+import { vertexGridPoints } from "../math/vertexGrid";
 
 const WIDTH = 900;
 const HEIGHT = 690;
@@ -141,6 +142,10 @@ export function UnitCellCanvas({
   const svgRef = useRef<SVGSVGElement>(null);
   const faces = useMemo(() => extractFaces(document), [document]);
   const transform = useMemo(() => displayTransform(document), [document]);
+  const gridPoints = useMemo(
+    () => vertexGridPoints(document.lattice.type),
+    [document.lattice.type],
+  );
   const displayedTiles = tiles(preview ? 2 : 2);
   const edgeTiles = tiles(preview ? 2 : 1);
 
@@ -164,11 +169,6 @@ export function UnitCellCanvas({
       aria-label="Periodic unit-cell drawing canvas"
       onPointerMove={(event) => onCoordinate?.(eventPoint(event))}
       onPointerLeave={() => onCoordinate?.(null)}
-      onPointerDown={(event) => {
-        if (tool === "vertex") {
-          onAddVertex?.(eventPoint(event));
-        }
-      }}
     >
       <rect className="canvas-paper" width={WIDTH} height={HEIGHT} />
       {displayedTiles.map((tile) => {
@@ -264,6 +264,26 @@ export function UnitCellCanvas({
           }),
         )}
       </g>
+      {!preview && tool === "vertex" && (
+        <g className="canvas-vertex-grid" aria-label="Permitted vertex grid">
+          {gridPoints.map((point) => {
+            const positioned = toDisplay(point, transform);
+            return (
+              <circle
+                key={`grid-${point.u}-${point.v}`}
+                className="vertex-grid-point"
+                cx={positioned.x}
+                cy={positioned.y}
+                r={2.7}
+                onPointerDown={(event) => {
+                  event.stopPropagation();
+                  onAddVertex?.(point);
+                }}
+              />
+            );
+          })}
+        </g>
+      )}
       <g className="canvas-vertices">
         {edgeTiles.flatMap((tile) =>
           document.vertices.map((vertex) => {
@@ -286,7 +306,7 @@ export function UnitCellCanvas({
                   }
                 }}
                 onDoubleClick={(event) => {
-                  if (tool === "select") {
+                  if (tool === "select" || tool === "vertex") {
                     event.stopPropagation();
                     onDeleteVertex?.(vertex.id);
                   }

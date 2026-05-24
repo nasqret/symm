@@ -7,13 +7,14 @@ import type {
   TileOffset,
 } from "../types";
 import { buildBlankDocument } from "../data/wallpaperGroups";
-import { mod1, normalizePoint, pointsEqual } from "../math/lattice";
+import { pointsEqual } from "../math/lattice";
 import {
   canonicalEdgeKey,
   extractFaces,
   FACE_BACKGROUND_COLOR,
   findFaceAtPoint,
 } from "../math/periodicGraph";
+import { snapVertexToGrid } from "../math/vertexGrid";
 
 function stamped(document: CellDocument): CellDocument {
   return {
@@ -31,16 +32,12 @@ function nextId(prefix: string, ids: string[]): string {
   return `${prefix}_${index}`;
 }
 
-function snap(value: number): number {
-  return mod1(Math.round(value * 24) / 24);
-}
-
 export function changeLattice(_document: CellDocument, latticeType: LatticeType): CellDocument {
   return buildBlankDocument(latticeType);
 }
 
 export function addVertex(document: CellDocument, point: FractionalPoint): CellDocument {
-  const canonical = normalizePoint({ u: snap(point.u), v: snap(point.v) });
+  const canonical = snapVertexToGrid(point, document.lattice.type);
   if (document.vertices.some((vertex) => pointsEqual(vertex, canonical))) {
     return document;
   }
