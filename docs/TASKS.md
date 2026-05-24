@@ -48,3 +48,11 @@ Run this checklist on every implementation cycle.
 - [x] Preserved topology-aware face coloring and removed stale deleted-face color entries.
 - [x] Ran `npm run typecheck` and `npm run build`.
 - [x] Browser-verified clearing, edge deletion, vertex deletion, undo restoration and error-free rendering.
+
+## Cycle Record: 2026-05-24 Nested Face Independence
+
+- [x] Added local reproduction data directory to `.gitignore` and inspected the supplied JSON state.
+- [x] Reproduced the overlapping nested-face hit-target defect.
+- [x] Implemented hole-aware face regions, rendering and symmetry sampling.
+- [x] Verified independent painting of the inner parallelogram and its enclosing ring.
+- [x] Ran `npm run typecheck`, `npm run build` and a full 17-preset classification regression sweep.

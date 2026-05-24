@@ -19,6 +19,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Cache extracted faces once per symmetry computation: candidate-operation loops otherwise turn an interactive edit into repeated geometry reconstruction.
 - Topology deletion should paint only newly created face signatures located at the removed edge
   midpoint or vertex position, while dropping color records for faces that no longer exist.
+- A disconnected boundary contained inside another bounded cycle produces a face with a hole.
+  Render it as an even-odd path, exclude holes during hit-testing, and select an interior point
+  away from holes for symmetry matching because an enclosing polygon centroid can lie in the hole.
 
 ## Validation Debt
 

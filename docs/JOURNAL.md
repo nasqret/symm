@@ -66,6 +66,28 @@
 - Undo after vertex removal restored the original `p4m` `32/64/32` document; browser console and
   page-error checks reported no errors.
 
+## 2026-05-24: Nested Face Independence Fix
+
+- Inspected the local reproduction state in ignored `sources/problem_inside_color.json`; it
+  contains a 4-sided inner parallelogram surrounded by a 12-sided enclosing region.
+- Reproduced the defect: before the fix, a click at the inner parallelogram center hit the
+  enclosing 12-sided face because both cycles were rendered as overlapping solid polygons.
+- Extended extracted faces with hole boundaries and a hole-aware in-region sample point.
+- Switched face rendering to even-odd SVG paths, made point-based face lookup exclude holes, and
+  used the in-region sample for symmetry/color-orbit matching.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Supplied reproduction state: after the fix the enclosing region renders with two SVG subpaths
+  and center hit-testing resolves to the 4-sided inner face.
+- Independent painting path: the inner parallelogram retained coral `#d66853` while the enclosing
+  ring was separately painted yellow `#e0ab45`; the document stored 34 separate face colors.
+- Preset regression sweep: all 17 built-in motifs still computed as their selected group with
+  Euler value zero.
+- Browser console and page-error checks reported no application errors during the reproduction.
+
 ## Journal Protocol
 
 For each working cycle append:

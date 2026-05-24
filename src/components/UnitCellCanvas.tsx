@@ -90,6 +90,30 @@ function polygonPoints(
     .join(" ");
 }
 
+function polygonPath(
+  points: FractionalPoint[],
+  tile: TileOffset,
+  transform: ReturnType<typeof displayTransform>,
+): string {
+  return points
+    .map((point, index) => {
+      const positioned = toDisplay(addPoint(point, tile), transform);
+      return `${index === 0 ? "M" : "L"} ${positioned.x} ${positioned.y}`;
+    })
+    .join(" ")
+    .concat(" Z");
+}
+
+function facePath(
+  face: PeriodicFace,
+  tile: TileOffset,
+  transform: ReturnType<typeof displayTransform>,
+): string {
+  return [face.points, ...face.holes]
+    .map((points) => polygonPath(points, tile, transform))
+    .join(" ");
+}
+
 function tiles(range: number): TileOffset[] {
   const values: TileOffset[] = [];
   for (let u = -range; u <= range; u += 1) {
@@ -168,12 +192,13 @@ export function UnitCellCanvas({
           faces.map((face) => {
             const central = tile.u === 0 && tile.v === 0;
             return (
-              <polygon
+              <path
                 key={`face-${face.signature}-${tile.u}-${tile.v}`}
                 className={`periodic-face${central ? " periodic-face--active" : ""}${
                   tool === "color" ? " periodic-face--paintable" : ""
                 }`}
-                points={polygonPoints(face.points, tile, transform)}
+                d={facePath(face, tile, transform)}
+                fillRule="evenodd"
                 fill={faceColor(document, face.signature)}
                 onPointerDown={(event) => {
                   if (tool === "color") {

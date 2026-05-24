@@ -37,7 +37,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 
 - Fractional coordinates make translation periodicity explicit and keep saved motifs independent of display zoom.
 - An edge stores an integer shift to its endpoint, so geometry extending outside the selected cell is first-class data rather than clipped artwork.
-- Symmetry is computed from the decorated complex: an operation is accepted only when it maps vertices, edges and face colors correctly.
+- Symmetry is computed from the decorated complex: an operation is accepted only when it maps
+  vertices, edges and face colors correctly, including faces with nested holes.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

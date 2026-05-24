@@ -122,7 +122,7 @@ function validatesOperation(
     }
   }
   for (const face of faces) {
-    const target = findFaceAtPoint(faces, applyOperation(operation, face.centroid));
+    const target = findFaceAtPoint(faces, applyOperation(operation, face.samplePoint));
     if (!target || faceColor(document, target.signature) !== faceColor(document, face.signature)) {
       return false;
     }

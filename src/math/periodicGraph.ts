@@ -161,6 +161,60 @@ function traceCycles(document: CellDocument): LiftedVertex[][] {
   return cycles;
 }
 
+function translatedPoints(points: FractionalPoint[], tile: TileOffset): FractionalPoint[] {
+  return points.map((point) => addPoint(point, tile));
+}
+
+function pointInFaceRegion(face: PeriodicFace, point: FractionalPoint): boolean {
+  return (
+    pointInPolygon(point, face.points) &&
+    !face.holes.some((hole) => pointInPolygon(point, hole))
+  );
+}
+
+function samplePointForFace(face: PeriodicFace): FractionalPoint {
+  if (pointInFaceRegion(face, face.centroid)) {
+    return face.centroid;
+  }
+
+  for (let index = 0; index < face.points.length; index += 1) {
+    const next = face.points[(index + 1) % face.points.length];
+    const midpoint = {
+      u: (face.points[index].u + next.u) / 2,
+      v: (face.points[index].v + next.v) / 2,
+    };
+    for (const inset of [0.02, 0.05, 0.1, 0.2]) {
+      const candidate = {
+        u: midpoint.u + (face.centroid.u - midpoint.u) * inset,
+        v: midpoint.v + (face.centroid.v - midpoint.v) * inset,
+      };
+      if (pointInFaceRegion(face, candidate)) {
+        return candidate;
+      }
+    }
+  }
+
+  const us = face.points.map((point) => point.u);
+  const vs = face.points.map((point) => point.v);
+  const minimumU = Math.min(...us);
+  const maximumU = Math.max(...us);
+  const minimumV = Math.min(...vs);
+  const maximumV = Math.max(...vs);
+  for (let row = 1; row < 20; row += 1) {
+    for (let column = 1; column < 20; column += 1) {
+      const candidate = {
+        u: minimumU + ((maximumU - minimumU) * column) / 20,
+        v: minimumV + ((maximumV - minimumV) * row) / 20,
+      };
+      if (pointInFaceRegion(face, candidate)) {
+        return candidate;
+      }
+    }
+  }
+
+  return face.centroid;
+}
+
 export function extractFaces(document: CellDocument): PeriodicFace[] {
   const candidates = traceCycles(document)
     .filter((cycle) => cycle.length >= 3)
@@ -169,7 +223,9 @@ export function extractFaces(document: CellDocument): PeriodicFace[] {
       return {
         signature: translatedCycleSignature(cycle),
         points,
+        holes: [],
         centroid: polygonCentroid(points),
+        samplePoint: polygonCentroid(points),
         area: signedArea(points, document.lattice),
       };
     })
@@ -182,10 +238,49 @@ export function extractFaces(document: CellDocument): PeriodicFace[] {
         face.centroid.v < 1 - EPSILON,
     );
 
-  return [...new Map(candidates.map((face) => [face.signature, face])).values()].sort(
+  const faces = [...new Map(candidates.map((face) => [face.signature, face])).values()];
+  const holesByParent = new Map<string, FractionalPoint[][]>();
+
+  for (const inner of faces) {
+    let parent:
+      | {
+          face: PeriodicFace;
+          points: FractionalPoint[];
+        }
+      | undefined;
+    for (const outer of faces) {
+      if (outer.signature === inner.signature || outer.area <= inner.area + EPSILON) {
+        continue;
+      }
+      for (let u = -2; u <= 2; u += 1) {
+        for (let v = -2; v <= 2; v += 1) {
+          const tile = { u, v };
+          const shiftedCentroid = addPoint(inner.centroid, tile);
+          if (!pointInPolygon(shiftedCentroid, outer.points)) {
+            continue;
+          }
+          if (!parent || outer.area < parent.face.area) {
+            parent = { face: outer, points: translatedPoints(inner.points, tile) };
+          }
+        }
+      }
+    }
+    if (parent) {
+      const holes = holesByParent.get(parent.face.signature) ?? [];
+      holes.push(parent.points);
+      holesByParent.set(parent.face.signature, holes);
+    }
+  }
+
+  return faces
+    .map((face) => {
+      const withHoles = { ...face, holes: holesByParent.get(face.signature) ?? [] };
+      return { ...withHoles, samplePoint: samplePointForFace(withHoles) };
+    })
+    .sort(
     (left, right) =>
       left.centroid.v - right.centroid.v || left.centroid.u - right.centroid.u,
-  );
+    );
 }
 
 export function findFaceAtPoint(
@@ -195,11 +290,13 @@ export function findFaceAtPoint(
   for (const face of faces) {
     for (let u = -2; u <= 2; u += 1) {
       for (let v = -2; v <= 2; v += 1) {
-        const translated = face.points.map((vertex) => ({
-          u: vertex.u + u,
-          v: vertex.v + v,
-        }));
-        if (pointInPolygon(point, translated)) {
+        const tile = { u, v };
+        const translated = translatedPoints(face.points, tile);
+        const holes = face.holes.map((hole) => translatedPoints(hole, tile));
+        if (
+          pointInPolygon(point, translated) &&
+          !holes.some((hole) => pointInPolygon(point, hole))
+        ) {
           return face;
         }
       }

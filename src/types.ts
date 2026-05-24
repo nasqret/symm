@@ -56,7 +56,9 @@ export interface LiftedVertex {
 export interface PeriodicFace {
   signature: string;
   points: FractionalPoint[];
+  holes: FractionalPoint[][];
   centroid: FractionalPoint;
+  samplePoint: FractionalPoint;
   area: number;
 }
 

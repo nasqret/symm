@@ -357,7 +357,10 @@ export function buildPresetDocument(symbol: string): CellDocument {
     colorIndex += 1;
     assigned.set(face.signature, color);
     for (const symmetry of closure) {
-      const target = findFaceAtPoint(faces, normalizePoint(applyOperation(symmetry, face.centroid)));
+      const target = findFaceAtPoint(
+        faces,
+        normalizePoint(applyOperation(symmetry, face.samplePoint)),
+      );
       if (target) {
         assigned.set(target.signature, color);
       }
