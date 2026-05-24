@@ -6,7 +6,7 @@ Build an interactive browser application for designing colored periodic two-dime
 
 ## Release 0.1: Functional Editor Foundation
 
-Status: implemented and browser-verified locally on 2026-05-24; private remote sync pending GitHub re-authentication.
+Status: implemented, browser-verified, committed and synchronized to the private GitHub repository `nasqret/symm` on 2026-05-24.
 
 1. Establish a React/Vite/TypeScript app and durable project documentation.
 2. Represent a motif in fractional lattice coordinates with periodic edge shifts.
@@ -15,7 +15,7 @@ Status: implemented and browser-verified locally on 2026-05-24; private remote s
 5. Extract face cycles from the periodic graph and show the resulting CW-complex inventory.
 6. Test lattice-compatible symmetry operations against geometry and colors; display accepted generators and the classified plane group.
 7. Supply editable starting motives and notes for all 17 plane groups.
-8. Verify builds and core browser workflows, commit locally, and sync to a private GitHub repository once authentication is available. Local verification and the initial local commit are complete; remote synchronization remains blocked by the invalid current GitHub CLI token.
+8. Verify builds and core browser workflows, commit locally, and sync to a private GitHub repository. Completed on `main` with the private `origin` remote `nasqret/symm`.
 
 ## Release 0.2: Mathematical Validation
 

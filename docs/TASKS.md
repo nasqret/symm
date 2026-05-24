@@ -39,4 +39,4 @@ Run this checklist on every implementation cycle.
 - [x] Verified all 17 preset classifications and mobile horizontal-overflow check.
 - [x] Updated the journal, design ledger, group notes and project memory.
 - [x] Reviewed the diff and created the initial local commit on `main`.
-- [ ] Push to a private GitHub remote; blocked until GitHub CLI authentication is repaired.
+- [x] Created and pushed the private GitHub repository `nasqret/symm`; `main` tracks `origin/main`.

@@ -34,7 +34,14 @@
 
 - Standard-setting generator certification against crystallographic reference data remains release 0.2 work.
 - User-drawn intersecting segments are detected through the Euler warning but are not automatically split at intersections.
-- The GitHub connector confirms account `nasqret` but exposes no existing `symm` or `unit-cell-designer` repository; local GitHub CLI authentication is currently invalid, so private repository creation/sync cannot proceed until re-authentication.
+- Private repository creation/synchronization was deferred at the end of the implementation pass while GitHub CLI authentication required renewal.
+
+## 2026-05-24: Private Repository Sync
+
+- Confirmed renewed GitHub CLI authentication for account `nasqret`.
+- Confirmed no existing target repository or configured local remote before publishing.
+- Created private repository `nasqret/symm`, configured SSH `origin`, and pushed `main`.
+- Verified through the GitHub connector that `nasqret/symm` is private and that the local branch tracks `origin/main`.
 
 ## Journal Protocol
 
