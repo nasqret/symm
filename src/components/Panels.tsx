@@ -7,7 +7,7 @@ import type {
   SymmetryResult,
 } from "../types";
 import { WALLPAPER_GROUPS } from "../data/wallpaperGroups";
-import { faceColor } from "../math/periodicGraph";
+import { faceColor, FACE_BACKGROUND_COLOR } from "../math/periodicGraph";
 
 export const EDITOR_PALETTE = [
   "#d66853",
@@ -29,7 +29,7 @@ interface ToolPanelProps {
 }
 
 const TOOLS: { id: EditorTool; name: string; shortcut: string }[] = [
-  { id: "select", name: "Select edge", shortcut: "V" },
+  { id: "select", name: "Select / delete", shortcut: "V" },
   { id: "vertex", name: "Add vertex", shortcut: "P" },
   { id: "edge", name: "Connect edge", shortcut: "E" },
   { id: "color", name: "Color face", shortcut: "C" },
@@ -86,7 +86,9 @@ export function ToolPanel({
               type="button"
               className={color === selectedColor ? "swatch is-selected" : "swatch"}
               style={{ backgroundColor: color }}
-              aria-label={`Select ${color}`}
+              aria-label={
+                color === FACE_BACKGROUND_COLOR ? "Select background color" : `Select ${color}`
+              }
               onClick={() => onColorChange(color)}
             />
           ))}
@@ -94,6 +96,10 @@ export function ToolPanel({
         <p className="help-text">
           Edges may terminate in a translated copy of a vertex. Use visible neighboring cells to
           draw boundary-crossing geometry.
+        </p>
+        <p className="help-text">
+          In Color face mode, click a filled face to clear it. In Select / delete mode,
+          double-click an edge or vertex; the selected swatch colors the merged face.
         </p>
       </section>
     </aside>

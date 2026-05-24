@@ -27,6 +27,8 @@ interface UnitCellCanvasProps {
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
   onSelectEdge?: (edgeId: string) => void;
+  onDeleteEdge?: (edgeId: string) => void;
+  onDeleteVertex?: (vertexId: string) => void;
   onCoordinate?: (point: FractionalPoint | null) => void;
 }
 
@@ -108,6 +110,8 @@ export function UnitCellCanvas({
   onVertexHit,
   onColorFace,
   onSelectEdge,
+  onDeleteEdge,
+  onDeleteVertex,
   onCoordinate,
 }: UnitCellCanvasProps) {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -224,6 +228,12 @@ export function UnitCellCanvas({
                     onSelectEdge?.(edge.id);
                   }
                 }}
+                onDoubleClick={(event) => {
+                  if (tool === "select") {
+                    event.stopPropagation();
+                    onDeleteEdge?.(edge.id);
+                  }
+                }}
               />
             );
           }),
@@ -248,6 +258,12 @@ export function UnitCellCanvas({
                   if (tool === "edge") {
                     event.stopPropagation();
                     onVertexHit?.({ vertexId: vertex.id, tile });
+                  }
+                }}
+                onDoubleClick={(event) => {
+                  if (tool === "select") {
+                    event.stopPropagation();
+                    onDeleteVertex?.(vertex.id);
                   }
                 }}
               />

@@ -1,9 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CellDocument, EditorTool, FractionalPoint, TileOffset } from "./types";
 import { buildPresetDocument } from "./data/wallpaperGroups";
-import { extractFaces } from "./math/periodicGraph";
+import { extractFaces, faceColor, FACE_BACKGROUND_COLOR } from "./math/periodicGraph";
 import { computeSymmetry } from "./math/symmetry";
-import { addEdge, addVertex, changeLattice, colorFace, deleteEdge } from "./state/mutations";
+import {
+  addEdge,
+  addVertex,
+  changeLattice,
+  clearFaceColor,
+  colorFace,
+  deleteEdge,
+  deleteVertex,
+} from "./state/mutations";
 import { useDocumentHistory } from "./state/useDocumentHistory";
 import { Inspector, ToolPanel, EDITOR_PALETTE } from "./components/Panels";
 import { PreviewWindow, STORAGE_KEY } from "./components/PreviewWindow";
@@ -78,8 +86,9 @@ function Editor() {
       if ((event.key === "Delete" || event.key === "Backspace") && selectedEdgeId) {
         const target = event.target as HTMLElement;
         if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-          commit(deleteEdge(document, selectedEdgeId));
+          commit(deleteEdge(document, selectedEdgeId, selectedColor));
           setSelectedEdgeId(null);
+          setNotice("Edge removed; selected color applied to the merged face");
         }
       }
       const shortcuts: Record<string, EditorTool> = {
@@ -94,7 +103,7 @@ function Editor() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [commit, document, redo, selectedEdgeId, undo]);
+  }, [commit, document, redo, selectedColor, selectedEdgeId, undo]);
 
   const saveDocument = () => {
     const contents = JSON.stringify(document, null, 2);
@@ -195,8 +204,9 @@ function Editor() {
                 type="button"
                 className="delete-action"
                 onClick={() => {
-                  commit(deleteEdge(document, selectedEdgeId));
+                  commit(deleteEdge(document, selectedEdgeId, selectedColor));
                   setSelectedEdgeId(null);
+                  setNotice("Edge removed; selected color applied to the merged face");
                 }}
               >
                 Delete selected edge
@@ -214,6 +224,17 @@ function Editor() {
               setNotice("Vertex added modulo the lattice");
             }}
             onSelectEdge={setSelectedEdgeId}
+            onDeleteEdge={(edgeId) => {
+              commit(deleteEdge(document, edgeId, selectedColor));
+              setSelectedEdgeId(null);
+              setNotice("Edge removed; selected color applied to the merged face");
+            }}
+            onDeleteVertex={(vertexId) => {
+              commit(deleteVertex(document, vertexId, selectedColor));
+              setSelectedEdgeId(null);
+              setEdgeStart(null);
+              setNotice("Vertex removed; selected color applied to the merged face");
+            }}
             onVertexHit={(hit) => {
               if (!edgeStart) {
                 setEdgeStart(hit);
@@ -225,8 +246,17 @@ function Editor() {
               setNotice("Periodic edge added");
             }}
             onColorFace={(face) => {
-              commit(colorFace(document, face, selectedColor));
-              setNotice("Face color updated; symmetry recomputed");
+              if (faceColor(document, face.signature) !== FACE_BACKGROUND_COLOR) {
+                commit(clearFaceColor(document, face));
+                setNotice("Face color cleared; symmetry recomputed");
+              } else {
+                commit(colorFace(document, face, selectedColor));
+                setNotice(
+                  selectedColor === FACE_BACKGROUND_COLOR
+                    ? "Face already has the background color"
+                    : "Face color updated; symmetry recomputed",
+                );
+              }
             }}
           />
           <footer className="workspace-status">

@@ -13,7 +13,8 @@ The editor supports:
 
 - oblique/generic, rectangular, square, and hexagonal translation lattices;
 - periodic vertices and edges, including edges whose endpoint is in a neighboring cell;
-- detected bounded face cycles, palette coloring, undo/redo, JSON export/import, and autosave;
+- detected bounded face cycles, palette coloring/clearing, merge-colored vertex and edge deletion,
+  undo/redo, JSON export/import, and autosave;
 - a separate repeated-tiling preview window;
 - a colored-symmetry report and editable starter motifs for the 17 plane groups.
 

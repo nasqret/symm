@@ -2,12 +2,18 @@ import type {
   CellDocument,
   FractionalPoint,
   LatticeType,
+  PeriodicEdge,
   PeriodicFace,
   TileOffset,
 } from "../types";
 import { buildBlankDocument } from "../data/wallpaperGroups";
 import { mod1, normalizePoint, pointsEqual } from "../math/lattice";
-import { canonicalEdgeKey } from "../math/periodicGraph";
+import {
+  canonicalEdgeKey,
+  extractFaces,
+  FACE_BACKGROUND_COLOR,
+  findFaceAtPoint,
+} from "../math/periodicGraph";
 
 function stamped(document: CellDocument): CellDocument {
   return {
@@ -85,11 +91,90 @@ export function addEdge(
   });
 }
 
-export function deleteEdge(document: CellDocument, edgeId: string): CellDocument {
+function colorNewFacesAtMarkers(
+  document: CellDocument,
+  changed: CellDocument,
+  markers: FractionalPoint[],
+  color: string,
+): CellDocument {
+  const previousSignatures = new Set(extractFaces(document).map((face) => face.signature));
+  const nextFaces = extractFaces(changed);
+  const validSignatures = new Set(nextFaces.map((face) => face.signature));
+  const newSignatures = new Set<string>();
+
+  for (const marker of markers) {
+    const face = findFaceAtPoint(nextFaces, marker);
+    if (face && !previousSignatures.has(face.signature)) {
+      newSignatures.add(face.signature);
+    }
+  }
+
   return stamped({
-    ...document,
-    edges: document.edges.filter((edge) => edge.id !== edgeId),
+    ...changed,
+    faceColors: [
+      ...document.faceColors.filter(
+        (entry) => validSignatures.has(entry.signature) && !newSignatures.has(entry.signature),
+      ),
+      ...(color === FACE_BACKGROUND_COLOR
+        ? []
+        : [...newSignatures].map((signature) => ({ signature, color }))),
+    ],
   });
+}
+
+function edgeMidpoint(document: CellDocument, edge: PeriodicEdge): FractionalPoint[] {
+  const from = document.vertices.find((vertex) => vertex.id === edge.from);
+  const to = document.vertices.find((vertex) => vertex.id === edge.to);
+  if (!from || !to) {
+    return [];
+  }
+  return [
+    {
+      u: (from.u + to.u + edge.shift.u) / 2,
+      v: (from.v + to.v + edge.shift.v) / 2,
+    },
+  ];
+}
+
+export function deleteEdge(
+  document: CellDocument,
+  edgeId: string,
+  mergedFaceColor: string,
+): CellDocument {
+  const edge = document.edges.find((entry) => entry.id === edgeId);
+  if (!edge) {
+    return document;
+  }
+  return colorNewFacesAtMarkers(
+    document,
+    {
+      ...document,
+      edges: document.edges.filter((entry) => entry.id !== edgeId),
+    },
+    edgeMidpoint(document, edge),
+    mergedFaceColor,
+  );
+}
+
+export function deleteVertex(
+  document: CellDocument,
+  vertexId: string,
+  mergedFaceColor: string,
+): CellDocument {
+  const vertex = document.vertices.find((entry) => entry.id === vertexId);
+  if (!vertex) {
+    return document;
+  }
+  return colorNewFacesAtMarkers(
+    document,
+    {
+      ...document,
+      vertices: document.vertices.filter((entry) => entry.id !== vertexId),
+      edges: document.edges.filter((edge) => edge.from !== vertexId && edge.to !== vertexId),
+    },
+    [vertex],
+    mergedFaceColor,
+  );
 }
 
 export function colorFace(
@@ -97,11 +182,25 @@ export function colorFace(
   face: PeriodicFace,
   color: string,
 ): CellDocument {
+  if (color === FACE_BACKGROUND_COLOR) {
+    return clearFaceColor(document, face);
+  }
   return stamped({
     ...document,
     faceColors: [
       ...document.faceColors.filter((entry) => entry.signature !== face.signature),
       { signature: face.signature, color },
     ],
+  });
+}
+
+export function clearFaceColor(document: CellDocument, face: PeriodicFace): CellDocument {
+  const faceColors = document.faceColors.filter((entry) => entry.signature !== face.signature);
+  if (faceColors.length === document.faceColors.length) {
+    return document;
+  }
+  return stamped({
+    ...document,
+    faceColors,
   });
 }

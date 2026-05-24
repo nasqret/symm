@@ -43,6 +43,29 @@
 - Created private repository `nasqret/symm`, configured SSH `origin`, and pushed `main`.
 - Verified through the GitHub connector that `nasqret/symm` is private and that the local branch tracks `origin/main`.
 
+## 2026-05-24: Face Clearing And Topology Deletion
+
+- Added click-to-clear behavior for an already filled region in Color face mode; a background
+  region can still be painted with the selected non-background swatch.
+- Added double-click vertex and edge removal in Select / delete mode.
+- On removal, any newly merged face is assigned the currently selected swatch; stale color records
+  for faces removed by the topology change are dropped.
+- Updated the tool guidance so the deletion mode and selected-swatch merge behavior are visible in
+  the editor.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered `p4m` face-clear path: clicking a coral face changed it to the paper background,
+  reduced stored colored faces from 32 to 31, and recomputed colored symmetry to `p1`.
+- Rendered edge-removal path with dark swatch selected: double-click changed the CW counts from
+  `32/64/32` to `32/63/31`, kept Euler value zero, and filled the merged face dark.
+- Rendered vertex-removal path with dark swatch selected: double-click changed the CW counts from
+  `32/64/32` to `31/60/29`, kept Euler value zero, and filled the merged face dark.
+- Undo after vertex removal restored the original `p4m` `32/64/32` document; browser console and
+  page-error checks reported no errors.
+
 ## Journal Protocol
 
 For each working cycle append:

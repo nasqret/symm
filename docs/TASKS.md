@@ -40,3 +40,11 @@ Run this checklist on every implementation cycle.
 - [x] Updated the journal, design ledger, group notes and project memory.
 - [x] Reviewed the diff and created the initial local commit on `main`.
 - [x] Created and pushed the private GitHub repository `nasqret/symm`; `main` tracks `origin/main`.
+
+## Cycle Record: 2026-05-24 Face Clearing And Topology Deletion
+
+- [x] Implemented painted-face clearing in Color face mode.
+- [x] Implemented selected-color edge and vertex removal in Select / delete mode.
+- [x] Preserved topology-aware face coloring and removed stale deleted-face color entries.
+- [x] Ran `npm run typecheck` and `npm run build`.
+- [x] Browser-verified clearing, edge deletion, vertex deletion, undo restoration and error-free rendering.

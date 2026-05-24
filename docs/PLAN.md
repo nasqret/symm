@@ -11,7 +11,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 1. Establish a React/Vite/TypeScript app and durable project documentation.
 2. Represent a motif in fractional lattice coordinates with periodic edge shifts.
 3. Render the central unit cell together with translated copies so edges and faces crossing the boundary are visible.
-4. Implement vertex insertion, periodic edge creation, face coloring, palette selection, history, JSON save/load, and autosave.
+4. Implement vertex insertion, periodic edge creation, face coloring and clearing, merge-colored
+   vertex/edge deletion, palette selection, history, JSON save/load, and autosave.
 5. Extract face cycles from the periodic graph and show the resulting CW-complex inventory.
 6. Test lattice-compatible symmetry operations against geometry and colors; display accepted generators and the classified plane group.
 7. Supply editable starting motives and notes for all 17 plane groups.
@@ -28,7 +29,7 @@ Status: implemented, browser-verified, committed and synchronized to the private
 ## Release 0.3: Design and Export
 
 1. Support free lattice-parameter editing and constraint-aware snapping.
-2. Add robust face editing, deletion, vertex dragging, edge splitting and color legend management.
+2. Add robust face editing, vertex dragging, edge splitting and color legend management.
 3. Export SVG/PNG tiles and a structured CW-complex/symmetry report.
 4. Package sharable examples and a teaching tour of all groups.
 

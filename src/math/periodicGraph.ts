@@ -20,6 +20,8 @@ interface LiftedGraph {
   adjacency: Map<string, Set<string>>;
 }
 
+export const FACE_BACKGROUND_COLOR = "#f5f1e8";
+
 function nodeKey(vertexId: string, tile: TileOffset): string {
   return `${vertexId}@${tile.u},${tile.v}`;
 }
@@ -208,7 +210,8 @@ export function findFaceAtPoint(
 
 export function faceColor(document: CellDocument, signature: string): string {
   return (
-    document.faceColors.find((entry) => entry.signature === signature)?.color ?? "#f5f1e8"
+    document.faceColors.find((entry) => entry.signature === signature)?.color ??
+    FACE_BACKGROUND_COLOR
   );
 }
 
