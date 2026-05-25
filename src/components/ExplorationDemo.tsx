@@ -426,7 +426,6 @@ export function ExplorationDemo() {
 
   const style = {
     "--branch-accent": family.accent,
-    "--branch-glow": family.glow,
   } as CSSProperties;
   const groupDescription = lookupGroup(selection.symbol)?.feature ?? "Translations only.";
   const activeNarrative =
@@ -517,7 +516,7 @@ export function ExplorationDemo() {
           walkIndex={walkIndex}
           onSelectSymbol={navigateTo}
         />
-        <div className="demo-viewport is-chromatic">
+        <div className="demo-viewport">
           {bridge && bridgeFrom && bridgeTo && bridgeTransforms ? (
             <>
               <div

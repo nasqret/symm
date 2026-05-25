@@ -27,9 +27,9 @@ The editor supports:
 - an animated subgroup-exploration presentation reconstructing the supplied 17-group hierarchy
   with standard labels (`p6mm`, `p4mm`, `p4gm`, etc.), a highlighted live node and a featured
   walk from `p6mm` through `p1` to `p4mm` and back through `p4gm`; within a lattice family its
-  minimal certified accent witnesses pulse only the changing tiles at accelerating frequency
-  until the new group settles, while cross-family ascents pass through a smoothly transformed,
-  edge-contracting `p1` lattice homotopy;
+  minimal nonblank accent witnesses appear on a quiet paper field and pulse only the changing
+  tiles at accelerating frequency until the new group settles, while cross-family ascents pass
+  through a smoothly transformed, edge-contracting `p1` lattice homotopy;
 - a colored-symmetry report with selectable visual generators: translation arrows, rotation
   arcs, mirror loci and glide axes;
 - Preserve symmetry editing enabled on entry, propagating color and topology edits through the

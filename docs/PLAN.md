@@ -49,8 +49,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 4. Package sharable examples and a teaching tour of all groups. Ambient preview and animated
    subgroup exploration implemented on 2026-05-25; the explorer now reconstructs the supplied
    17-node standard-label hierarchy, highlights the live group, and performs the featured
-   `p6mm -> p1 -> p4mm -> p4gm -> p1` exploration with fixed-lattice chromatic transitions
-   that flicker only minimal verified accent witnesses with accelerating frequency before
+   `p6mm -> p1 -> p4mm -> p4gm -> p1` exploration with restrained fixed-lattice color
+   transitions that flicker only minimal nonblank verified accent witnesses before
    settling, plus an affine SVG `p1` homotopy when changing lattice family.
 
 ## Architecture Decisions
@@ -69,9 +69,10 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Edge and vertex visibility is presentation state stored independently from motif JSON and
   shared by editor, preview/export and animated presentation windows; omitted SVG groups stay
   omitted when the preview is serialized or rasterized.
-- Explorer-only fields retain a common background and color the minimum complete witness orbits
-  needed for each selected stage while retaining one lattice family's vertices and edges; the
-  resulting colored symbol is checked before it is described in the presentation.
+- Explorer-only fields retain the editor's paper-colored background and color the minimum
+  nonempty complete witness orbits needed for each selected stage while retaining one lattice
+  family's vertices and edges; the resulting colored symbol is checked before it is described
+  in the presentation.
 - The subgroup display is a reconstruction of the supplied standard-symbol hierarchy for all
   17 wallpaper-group types. It is not the infinite subgroup poset: finite-index translation
   copies of a type are intentionally collapsed to one node.

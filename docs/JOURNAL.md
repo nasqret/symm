@@ -571,6 +571,30 @@
 - Rendered preset sampling remains pending because the browser validation interface was
   unavailable in this session.
 
+## 2026-05-25: Restrained Continuous Walk Presentation
+
+- Diagnosed the strange continuous-walk appearance as deliberate immersive styling: every
+  explorer face was painted over a nearly black field while the viewport added moving radial
+  overlays and a continuous hue-rotation filter.
+- Returned the explorer to the app's paper-and-mineral palette, removed the decorative
+  atmosphere and luminous graph effects, and retained only motion that explains a group
+  transition: changing-face threshold blinking and the `p1` lattice homotopy.
+- Made `p2`, `cmm`, `p4m` and `p6m` explorer stages nonblank minimal witnesses so the calmer
+  background does not leave maximal stages visually empty.
+
+### Validation Evidence
+
+- Full explorer-stage sweep: passed across all `23` supported family/group presentations;
+  every stage contains at least one non-paper accent region and classifies to its requested
+  wallpaper-group symbol.
+- Source inspection confirms that the demo no longer defines the dark field, neon accents,
+  chromatic viewport class, aura/ripple keyframes or spectrum-rotation filter.
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered walk verification remains pending because the Browser plugin's required execution
+  interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

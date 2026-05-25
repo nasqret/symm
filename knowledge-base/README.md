@@ -13,7 +13,8 @@ plane-group labels. It renders the selected hierarchy connections, not a separat
 finite-index translation sublattice. The featured walk travels from `p6mm` down to `p1`, rises
 through the square `p4mm` direction, and returns through `p4gm`. Color descent within a current
 lattice family keeps the generated mesh fixed; changing lattice family is shown only through the
-explicit `p1` homotopy.
+explicit `p1` homotopy. Its presentation uses nonblank minimal accent witnesses on the same
+paper-colored field as the editor, without decorative moving background effects.
 
 ## Notation
 

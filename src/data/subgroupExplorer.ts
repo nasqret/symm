@@ -8,7 +8,6 @@ export interface ExplorerFamily {
   id: LatticeType;
   title: string;
   accent: string;
-  glow: string;
 }
 
 export interface ExplorerGraphNode {
@@ -41,26 +40,22 @@ export const EXPLORER_FAMILIES: ExplorerFamily[] = [
   {
     id: "hexagonal",
     title: "Hexagonal lattice",
-    accent: "#ff4fa3",
-    glow: "rgba(255, 79, 163, 0.62)",
+    accent: "#d66853",
   },
   {
     id: "square",
     title: "Square lattice",
-    accent: "#00e6ff",
-    glow: "rgba(0, 230, 255, 0.62)",
+    accent: "#1f7185",
   },
   {
     id: "rectangular",
     title: "Rectangular lattice",
-    accent: "#ffb400",
-    glow: "rgba(255, 180, 0, 0.62)",
+    accent: "#c68e2d",
   },
   {
     id: "generic",
     title: "Generic lattice",
-    accent: "#9d80ff",
-    glow: "rgba(157, 128, 255, 0.62)",
+    accent: "#557d76",
   },
 ];
 
@@ -220,24 +215,25 @@ interface ExplorerDecorationSeed {
   color: string;
 }
 
-const ACCENT_COLOR = "#ff4fa3";
-const SECONDARY_ACCENT_COLOR = "#00d7d9";
-const FIELD_COLOR = "#112c3b";
+const ACCENT_COLOR = "#d66853";
+const SECONDARY_ACCENT_COLOR = "#1f7185";
+const FIELD_COLOR = "#fbf9f2";
 const HEXAGONAL_SEED = { u: 4 / 15, v: 1 / 15 };
 const SQUARE_SEED = { u: 1 / 4, v: 1 / 8 };
 
 // These sparse witnesses are verified by computeSymmetry below. A stage paints only
-// enough complete target-group orbits to prevent classification as a larger group.
+// enough nonempty complete target-group orbits to remain visible and prevent
+// classification as a larger group.
 const EXPLORER_DECORATIONS: Record<LatticeType, Record<string, ExplorerDecorationSeed[]>> = {
   generic: {
-    p2: [],
+    p2: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
     p1: [
       { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
       { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
     ],
   },
   rectangular: {
-    cmm: [],
+    cmm: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
     pmm: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
     pmg: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
     pgg: [
@@ -266,7 +262,7 @@ const EXPLORER_DECORATIONS: Record<LatticeType, Record<string, ExplorerDecoratio
     ],
   },
   square: {
-    p4m: [],
+    p4m: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
     p4g: [{ point: SQUARE_SEED, color: ACCENT_COLOR }],
     p4: [{ point: SQUARE_SEED, color: ACCENT_COLOR }],
     p2: [{ point: SQUARE_SEED, color: ACCENT_COLOR }],
@@ -276,7 +272,7 @@ const EXPLORER_DECORATIONS: Record<LatticeType, Record<string, ExplorerDecoratio
     ],
   },
   hexagonal: {
-    p6m: [],
+    p6m: [{ point: { u: 1 / 3, v: 1 / 3 }, color: ACCENT_COLOR }],
     p6: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
     p3m1: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
     p31m: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],

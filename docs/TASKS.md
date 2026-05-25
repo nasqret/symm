@@ -259,3 +259,17 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered preset sampling when the browser validation interface is available
   in the session.
+
+## Cycle Record: 2026-05-25 Restrained Continuous Walk
+
+- [x] Removed the explorer's dark field, neon branch palette, animated aura/ripple and
+  spectrum-shifting canvas treatment.
+- [x] Retained subgroup threshold blinking and the cross-lattice `p1` homotopy as the
+  informative transition mechanisms.
+- [x] Added nonblank minimal witness orbits for the explorer's formerly undecorated
+  `p2`, `cmm`, `p4m` and `p6m` stages.
+- [x] Ran all 23 supported explorer-stage classifications: every stage has a visible accent
+  witness and retains its requested wallpaper-group symbol.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered walk verification when the browser validation interface is available
+  in the session.
