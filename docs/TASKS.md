@@ -361,3 +361,16 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete interactive mobile collapse/pinch verification when the Browser interface is
   exposed in the session.
+
+## Cycle Record: 2026-05-26 Mobile Ambient Preview Repair
+
+- [x] Replaced the mobile ambient export toolbar with a compact current-group and exit capsule.
+- [x] Expanded the ambient tiling into a stable full-screen field while retaining mobile
+  pinch zoom and leaving ordinary preview controls outside ambient mode.
+- [x] Disabled mobile ambient drift so the pinch target no longer moves underneath touch input;
+  retained desktop ambient drift.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified server-rendered mobile normal-preview entry markup and source/CSS ambient-state
+  boundaries.
+- [ ] Complete interactive mobile ambient screenshot verification when the Browser interface is
+  exposed in the session.

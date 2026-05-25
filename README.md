@@ -32,7 +32,8 @@ The editor supports:
 - persistent display switches for hiding edges and vertices in the editor, preview, animated
   presentation and exported images, including a face-only output mode;
 - preview export as standalone SVG or PNG at low (`900 x 690`), medium (`1800 x 1380`) and
-  high (`3600 x 2760`) resolution, with an ambient display mode;
+  high (`3600 x 2760`) resolution, with an ambient display mode that uses a stable
+  full-screen tiling field and compact exit control on mobile;
 - an animated subgroup-exploration presentation reconstructing the supplied 17-group hierarchy
   with standard labels (`p6mm`, `p4mm`, `p4gm`, etc.), a highlighted live node and a featured
   walk from `p6mm` through `p1` to `p4mm` and back through `p4gm`; within a lattice family its

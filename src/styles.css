@@ -1271,6 +1271,10 @@ kbd {
   text-align: right;
 }
 
+.mobile-ambient-header {
+  display: none;
+}
+
 .preview-page.is-ambient {
   padding: 0;
   background: #14242b;
@@ -2519,6 +2523,89 @@ kbd {
 
   .preview-notice {
     text-align: left;
+  }
+
+  .preview-page.is-ambient.is-mobile-preview {
+    height: 100svh;
+    min-height: 100svh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .preview-page.is-ambient.is-mobile-preview .mobile-ambient-header {
+    position: absolute;
+    inset: max(12px, env(safe-area-inset-top)) 12px auto;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 8px 8px 13px;
+    border: 1px solid rgba(118, 194, 202, 0.34);
+    border-radius: 14px;
+    background: rgba(20, 36, 43, 0.74);
+    color: #eef2ec;
+    backdrop-filter: blur(15px);
+  }
+
+  .mobile-ambient-title {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .mobile-ambient-title span {
+    overflow: hidden;
+    color: #b7c6c5;
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-ambient-title strong {
+    flex: 0 0 auto;
+    color: #73c3ca;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .preview-page.is-ambient.is-mobile-preview .mobile-ambient-header button {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 0 13px;
+    border: 1px solid rgba(118, 194, 202, 0.42);
+    border-radius: 10px;
+    color: #e3e9e8;
+    font-size: 0.73rem;
+    font-weight: 550;
+    background: rgba(32, 52, 59, 0.86);
+    touch-action: manipulation;
+  }
+
+  .preview-page.is-ambient.is-mobile-preview .preview-canvas-frame {
+    position: relative;
+    flex: 1 1 auto;
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .preview-page.is-ambient.is-mobile-preview .preview-canvas-frame .unit-canvas--preview {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: max(100vw, calc(100svh * 900 / 690));
+    max-width: none;
+    height: max(100svh, calc(100vw * 690 / 900));
+    min-height: 100svh;
+    aspect-ratio: auto;
+    transform: translate(-50%, -50%);
+    animation: none;
+  }
+
+  .preview-page.is-ambient.is-mobile-preview .preview-notice {
+    display: none;
   }
 
   .demo-page:not(.is-ambient) {

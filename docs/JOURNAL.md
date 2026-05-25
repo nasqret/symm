@@ -745,6 +745,29 @@
 - Interactive collapse/pinch screenshots remain pending because the Browser plugin's required
   execution interface was not exposed in this session.
 
+## 2026-05-26: Mobile Ambient Preview Repair
+
+- Replaced the desktop-style faded ambient overlay on mobile with a compact persistent capsule
+  showing the current colored symmetry and a touch-sized `Exit ambient` action.
+- Made mobile ambient preview a true full-screen display: the repeated SVG field is centered
+  and cropped outside its frame to cover portrait or narrow landscape screens, rather than
+  leaving an aspect-ratio panel surrounded by unused space.
+- Disabled the drifting ambient transform on mobile so pinch zoom operates against a stable
+  tiling surface; desktop ambient drift remains unchanged.
+- Kept standard mobile preview controls available outside ambient mode so layers and export
+  choices are made before entering the uncluttered presentation state.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Server-rendered mobile preview check passed for the normal-state ambient entry action and
+  pinch-enabled canvas; source/CSS assertions passed for the mobile ambient capsule,
+  full-viewport field and disabled drift animation.
+- Interactive mobile ambient screenshots remain pending because the Browser plugin's required
+  execution interface was not exposed after the prescribed discovery sequence in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

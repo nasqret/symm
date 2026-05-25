@@ -107,6 +107,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   completion for the entire gesture. Zoom by narrowing the view box around the pinch anchor;
   render the normal view box whenever touch zoom is disabled, and keep export serialization
   full-frame.
+- Mobile ambient preview must not depend on hover-revealed desktop overlays or continuously
+  translate the pinch target. Use a compact always-reachable exit control and center an
+  oversized, stable SVG field so the phone viewport remains filled with the tiling.
 
 ## Validation Debt
 
