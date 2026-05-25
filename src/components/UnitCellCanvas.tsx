@@ -3,6 +3,7 @@ import type {
   CellDocument,
   EditorTool,
   FractionalPoint,
+  Lattice,
   PeriodicFace,
   SymmetryElement,
   TileOffset,
@@ -30,6 +31,8 @@ interface UnitCellCanvasProps {
   immersive?: boolean;
   showEdges?: boolean;
   showVertices?: boolean;
+  latticeOverride?: Lattice;
+  displayScaleOverride?: number;
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
@@ -39,17 +42,17 @@ interface UnitCellCanvasProps {
   onCoordinate?: (point: FractionalPoint | null) => void;
 }
 
-function displayTransform(document: CellDocument): {
+function displayTransform(lattice: Lattice, displayScaleOverride?: number): {
   origin: { x: number; y: number };
   a: { x: number; y: number };
   b: { x: number; y: number };
 } {
-  const scale = document.lattice.type === "rectangular" ? 192 : 205;
-  const radians = (document.lattice.angle * Math.PI) / 180;
-  const a = { x: scale * document.lattice.a, y: 0 };
+  const scale = displayScaleOverride ?? (lattice.type === "rectangular" ? 192 : 205);
+  const radians = (lattice.angle * Math.PI) / 180;
+  const a = { x: scale * lattice.a, y: 0 };
   const b = {
-    x: scale * document.lattice.b * Math.cos(radians),
-    y: scale * document.lattice.b * Math.sin(radians),
+    x: scale * lattice.b * Math.cos(radians),
+    y: scale * lattice.b * Math.sin(radians),
   };
   return {
     origin: {
@@ -141,6 +144,8 @@ export function UnitCellCanvas({
   immersive = false,
   showEdges = true,
   showVertices = true,
+  latticeOverride,
+  displayScaleOverride,
   onAddVertex,
   onVertexHit,
   onColorFace,
@@ -151,7 +156,11 @@ export function UnitCellCanvas({
 }: UnitCellCanvasProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const faces = useMemo(() => extractFaces(document), [document]);
-  const transform = useMemo(() => displayTransform(document), [document]);
+  const displayLattice = latticeOverride ?? document.lattice;
+  const transform = useMemo(
+    () => displayTransform(displayLattice, displayScaleOverride),
+    [displayLattice, displayScaleOverride],
+  );
   const gridPoints = useMemo(
     () => vertexGridPoints(document.lattice.type),
     [document.lattice.type],

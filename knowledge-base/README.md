@@ -7,6 +7,11 @@ each example paints the fewest face regions found to retain exactly its computed
 See [PRESET_VALIDATION.md](PRESET_VALIDATION.md) for the painted-region counts and regression
 record.
 
+The animated explorer uses these 17 entries as a type-level subgroup graph. It renders indexed
+possible subgroup relationships between the types, not a separate node for every finite-index
+translation sublattice. Color descent within a current lattice family keeps the generated mesh
+fixed; changing lattice family is shown only through the explicit `p1` homotopy.
+
 ## Notation
 
 The interface uses the familiar short wallpaper symbols (`pm`, `pmm`, `p4m`, `p6m`). Where International Tables notation expands the symmetry directions, the group file also gives that standard symbol (`p1m1`, `p2mm`, `p4mm`, `p6mm`).
@@ -46,5 +51,7 @@ When a motif is developed and intentionally saved:
 
 - IUCr educational material, *Plane groups* and International Tables plane-group notation: https://www.iucr.org/education/pamphlets/13/full-text
 - Bilbao Crystallographic Server, Plane groups: generators and general-position tools: https://www.cryst.ehu.es/cryst/get_plane_gen.html
+- Coxeter relation table reproduced under "Wallpaper subgroup relationships" in the list of
+  planar symmetry groups: https://en.wikipedia.org/wiki/List_of_planar_symmetry_groups
 
 These references establish nomenclature and standard-setting validation targets. The generated editable motifs in release 0.1 still require per-preset regression certification.

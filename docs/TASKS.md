@@ -103,3 +103,13 @@ Run this checklist on every implementation cycle.
   reduced-motion behavior.
 - [x] Verified all displayed graph nodes, playback and mode controls, desktop/mobile layout,
   reduced-motion rendering, `npm run typecheck` and `npm run build`.
+
+## Cycle Record: 2026-05-25 Complete Type Graph And Fixed-Lattice Descent
+
+- [x] Replaced guided branches with the 17-type indexed subgroup-relation graph.
+- [x] Preserved vertices, edges and lattice parameters during within-family color descent.
+- [x] Routed cross-family moves through `p1` with basis interpolation and contracting/expanding
+  motif edges.
+- [x] Clarified in the UI and documentation that finite-index translation copies are suppressed.
+- [x] Ran `npm run build` and rendered browser checks across hexagonal, square, rectangular and
+  generic states, including a `390 x 844` no-overflow check, without page errors.

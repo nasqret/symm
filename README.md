@@ -22,9 +22,10 @@ The editor supports:
   presentation and exported images, including a face-only output mode;
 - preview export as standalone SVG or PNG at low (`900 x 690`), medium (`1800 x 1380`) and
   high (`3600 x 2760`) resolution, with an ambient display mode;
-- an animated subgroup-exploration presentation with hexagonal, square and rectangular descent
-  branches, a navigable guided subgroup graph, chromatic group-invariant pattern fields, manual
-  stage selection and playback controls;
+- an animated subgroup-exploration presentation showing all 17 wallpaper-group types and their
+  indexed type-level subgroup relations; within a lattice family its chromatic transitions
+  change colors only, while cross-family ascents pass through an edge-contracting `p1`
+  lattice homotopy;
 - a colored-symmetry report with selectable visual generators: translation arrows, rotation
   arcs, mirror loci and glide axes;
 - an optional Preserve symmetry mode that propagates color and topology edits through the
@@ -41,4 +42,4 @@ The editor supports:
 
 ## Mathematical Scope
 
-This first release computes symmetries by testing lattice-compatible affine isometries against vertices, periodic edges, and face colors. The 17 presets are editable generating motifs and documentation anchors. The knowledge base records which parts are computationally checked and which require future crystallographic certification against standard settings.
+This first release computes symmetries by testing lattice-compatible affine isometries against vertices, periodic edges, and face colors. The 17 presets are editable generating motifs and documentation anchors. The subgroup explorer displays the finite quotient by wallpaper-group type; finite-index translation copies within a type are not expanded as separate nodes. The knowledge base records which parts are computationally checked and which require future crystallographic certification against standard settings.

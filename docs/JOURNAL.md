@@ -248,6 +248,34 @@
   aura and node-pulse animation names resolved to `none`. Browser page-error checks reported no
   application errors.
 
+## 2026-05-25: Complete Type Graph And Fixed-Lattice Descent
+
+- Replaced the three-route subgroup diagram with a 17-node wallpaper-group type graph whose
+  possible relation edges carry their subgroup indices. The interface explicitly states that
+  finite-index translation copies are suppressed rather than suggesting a finite full subgroup
+  poset.
+- Reworked explorer presentation states to bind a symmetry symbol to an active lattice family.
+  Within hexagonal, square, rectangular or generic families, selecting subgroups now regenerates
+  color orbits over one unchanged vertex/edge mesh instead of swapping preset geometry.
+- Added cross-family navigation through `p1`: selection first recolors downward on the existing
+  lattice, then interpolates the lattice basis while old motif edges contract and the target
+  motif edges expand, before the selected higher-symmetry colors appear.
+- Enlarged and compacted the graph layout so all 17 nodes and its legend remain visible in the
+  presentation viewport, while retaining edge/vertex visibility controls and ambient display.
+
+### Validation Evidence
+
+- `npm run build`: passed after the graph, renderer and presentation changes.
+- Rendered full-graph check through the local `agent-browser` fallback: the panel displayed all
+  17 named node controls and the compacted desktop layout showed `p1` without clipping.
+- Fixed-lattice classification checks: hexagonal `p3m1` and `p31m`, square `p4g`,
+  rectangular `pmg`, `pgg`, `cm`, `pg`, `pmm`, `pm`, and generic `p2` each reported the
+  selected detected symmetry while their family caption remained `fixed lattice`.
+- Cross-family browser check reached the explicit `p1` bridge state before arrival in the target
+  family and completed at rectangular `cmm` / square `p4m` with matching detected symmetry.
+- At `390 x 844`, the browser reported 17 rendered graph nodes with no horizontal overflow;
+  browser page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

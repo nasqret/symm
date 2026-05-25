@@ -38,8 +38,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
    export and low/medium/high PNG output implemented on 2026-05-25, together with persistent
    edge/vertex layer hiding for face-only editor and export views; structured report remains.
 4. Package sharable examples and a teaching tour of all groups. Ambient preview and animated
-   subgroup-exploration branches implemented on 2026-05-25; the explorer now also renders its
-   guided subgroup-route graph and symmetry-preserving chromatic presentation fields.
+   subgroup exploration implemented on 2026-05-25; the explorer now renders all 17 type nodes,
+   indexed possible subgroup relations, fixed-lattice chromatic transitions and a `p1`
+   homotopy for moves into another lattice family.
 
 ## Architecture Decisions
 
@@ -56,9 +57,15 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Edge and vertex visibility is presentation state stored independently from motif JSON and
   shared by editor, preview/export and animated presentation windows; omitted SVG groups stay
   omitted when the preview is serialized or rasterized.
-- Explorer-only chromatic fields color complete face orbits under a stage's required operations
-  and verify the resulting colored symbol before display. The displayed graph is explicitly a
-  set of guided inclusion routes, not a complete certified subgroup lattice for all 17 groups.
+- Explorer-only chromatic fields color complete face orbits under a selected stage's required
+  operations while retaining one lattice family's vertices and edges; the resulting colored
+  symbol is checked before it is described in the presentation.
+- The subgroup display is a graph of all 17 wallpaper-group types and the indexed type
+  relations recorded by the standard relation table. It is not the infinite subgroup poset:
+  finite-index translation copies of a type are intentionally collapsed to one node.
+- A cross-family selection first descends to `p1` through recoloring on the unchanged lattice,
+  then interpolates lattice parameters while contracting old motif edges and expanding the new
+  mesh before applying the target colors.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

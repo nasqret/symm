@@ -1041,7 +1041,7 @@ kbd {
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: auto auto minmax(190px, 1fr);
+  grid-template-columns: minmax(360px, auto) auto minmax(215px, 1fr);
   align-items: center;
   gap: 20px;
   padding: 13px 15px;
@@ -1118,22 +1118,12 @@ kbd {
   gap: 10px;
 }
 
-.demo-visual-mode button {
+.demo-visual-mode strong {
   flex: 0 0 auto;
-  min-height: 37px;
-  border: 1px solid #34515b;
-  border-radius: 6px;
-  padding: 0 12px;
-  color: #bdcbcb;
-  font-size: 0.73rem;
-}
-
-.demo-visual-mode button:hover,
-.demo-visual-mode button.is-selected {
-  border-color: var(--branch-accent);
-  color: white;
-  background: color-mix(in srgb, var(--branch-accent) 31%, #132b35);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--branch-accent) 36%, transparent);
+  color: var(--branch-accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .demo-visual-mode span {
@@ -1145,7 +1135,7 @@ kbd {
 .demo-experience {
   min-height: 0;
   display: grid;
-  grid-template-columns: 278px minmax(0, 1fr);
+  grid-template-columns: minmax(390px, 425px) minmax(0, 1fr);
   gap: 17px;
 }
 
@@ -1198,7 +1188,7 @@ kbd {
 
 .subgroup-map {
   flex: 1;
-  min-height: 310px;
+  min-height: 260px;
   position: relative;
   margin: 15px -2px 12px;
 }
@@ -1211,21 +1201,24 @@ kbd {
 }
 
 .subgroup-edge {
-  stroke: #263c48;
-  stroke-width: 1.3;
-  stroke-dasharray: 2.6 3.2;
+  stroke: #314552;
+  stroke-width: 0.65;
+  stroke-dasharray: 1.4 2.8;
+  opacity: 0.42;
   transition: stroke 240ms ease, stroke-width 240ms ease, opacity 240ms ease;
 }
 
-.subgroup-edge.is-route {
-  stroke: #4e6571;
-  stroke-width: 1.75;
+.subgroup-edge.is-fixed {
+  stroke: #748992;
+  stroke-width: 1.05;
   stroke-dasharray: none;
+  opacity: 0.66;
 }
 
-.subgroup-edge.is-traversed {
+.subgroup-edge.is-focus {
   stroke: var(--branch-accent);
-  stroke-width: 2.1;
+  stroke-width: 1.8;
+  opacity: 1;
   filter: drop-shadow(0 0 4px var(--branch-glow));
 }
 
@@ -1236,25 +1229,24 @@ kbd {
   left: var(--node-x);
   top: var(--node-y);
   transform: translate(-50%, -50%);
-  min-width: 53px;
-  height: 29px;
-  padding: 0 7px;
+  min-width: 43px;
+  height: 27px;
+  padding: 0 6px;
   border: 1px solid #304752;
   border-radius: 16px;
   background: #10232e;
   color: #768c91;
-  font: 560 0.7rem/1 "SFMono-Regular", monospace;
+  font: 560 0.64rem/1 "SFMono-Regular", monospace;
   transition: border-color 180ms ease, background 180ms ease, color 180ms ease,
     box-shadow 180ms ease, transform 180ms ease;
 }
 
-.subgroup-node:hover,
-.subgroup-node.is-route {
+.subgroup-node:hover {
   border-color: #536c77;
   color: #d2dfdf;
 }
 
-.subgroup-node.is-visited {
+.subgroup-node.is-related {
   border-color: var(--branch-accent);
   color: #ffffff;
   background: color-mix(in srgb, var(--branch-accent) 25%, #10232e);
@@ -1274,6 +1266,45 @@ kbd {
   color: #768d91;
   font-size: 0.65rem;
   line-height: 1.5;
+  margin-top: 9px;
+}
+
+.subgroup-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #91a6a8;
+  font-size: 0.61rem;
+  margin-bottom: 10px;
+}
+
+.subgroup-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subgroup-legend span::before {
+  content: "";
+  display: block;
+  width: 20px;
+  border-top: 1px dashed #627982;
+}
+
+.subgroup-legend .is-color::before {
+  border-top: 2px solid var(--branch-accent);
+}
+
+.subgroup-connections {
+  min-height: 36px;
+  color: #a9babb;
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+
+.subgroup-connections strong {
+  color: #d9e5e5;
+  font-weight: 560;
 }
 
 @keyframes subgroup-pulse {
@@ -1366,6 +1397,17 @@ kbd {
   fill: #ffffff;
   stroke: #080e18;
   opacity: 0.64;
+}
+
+.demo-layer--homotopy .motif-edge,
+.demo-layer--homotopy .motif-vertex {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(var(--edge-scale));
+}
+
+.demo-layer--homotopy .periodic-face--immersive {
+  stroke-width: calc(0.3px + var(--edge-scale) * 0.45px);
 }
 
 .demo-viewport.is-chromatic .unit-canvas--immersive {
@@ -1522,8 +1564,8 @@ kbd {
   top: auto;
   right: auto;
   bottom: 20px;
-  width: 278px;
-  height: min(54vh, 430px);
+  width: min(425px, calc(100vw - 38px));
+  height: min(68vh, 570px);
   background: rgba(8, 16, 26, 0.86);
 }
 
@@ -1625,11 +1667,11 @@ kbd {
   }
 
   .subgroup-graph {
-    min-height: 285px;
+    min-height: 400px;
   }
 
   .subgroup-map {
-    min-height: 190px;
+    min-height: 255px;
   }
 }
 
@@ -1702,12 +1744,12 @@ kbd {
   }
 
   .subgroup-graph {
-    min-height: 265px;
+    min-height: 390px;
     padding: 14px;
   }
 
   .subgroup-map {
-    min-height: 175px;
+    min-height: 245px;
     margin-top: 10px;
   }
 
