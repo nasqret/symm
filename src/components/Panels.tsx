@@ -110,7 +110,7 @@ export function ToolPanel({
           ))}
         </div>
       </FoldSection>
-      <FoldSection title="Face Color">
+      <FoldSection title="Face Color" defaultOpen>
         <div className="palette" aria-label="Color palette">
           {EDITOR_PALETTE.map((color, index) => (
             <button

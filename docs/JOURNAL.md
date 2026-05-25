@@ -620,6 +620,21 @@
 - Rendered editor/preview/export verification remains pending because the Browser plugin's
   required execution interface was not exposed in this session.
 
+## 2026-05-25: Expanded Face Color Panel By Default
+
+- Opened the Face Color foldout on initial editor render so the palette is immediately
+  available with the default Color face construction tool.
+
+### Validation Evidence
+
+- Server-rendered panel markup check: the Face Color section initializes as
+  `<details class="tool-fold" open="">`.
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Interactive screenshot verification remains pending because the Browser plugin's required
+  execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

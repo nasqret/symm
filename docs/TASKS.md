@@ -288,3 +288,13 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered editor/preview/export verification when the browser validation
   interface is available in the session.
+
+## Cycle Record: 2026-05-25 Expanded Face Color Panel
+
+- [x] Set the Face Color construction foldout to open by default alongside the initial
+  Color face tool.
+- [x] Verified server-rendered initial panel markup includes
+  `<details class="tool-fold" open="">` for Face Color.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete interactive screenshot verification when the browser validation interface is
+  available in the session.
