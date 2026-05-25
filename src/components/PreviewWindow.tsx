@@ -25,7 +25,7 @@ function readStoredDocument(): CellDocument {
   }
 }
 
-export function PreviewWindow() {
+export function PreviewWindow({ mobileMode = false }: { mobileMode?: boolean }) {
   const [document, setDocument] = useState(readStoredDocument);
   const [ambient, setAmbient] = useState(false);
   const [notice, setNotice] = useState("Ready to export");
@@ -82,12 +82,14 @@ export function PreviewWindow() {
           <button type="button" onClick={() => setAmbient((active) => !active)}>
             {ambient ? "Exit ambient" : "Ambient mode"}
           </button>
-          <button
-            type="button"
-            onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
-          >
-            Explore subgroups
-          </button>
+          {!mobileMode ? (
+            <button
+              type="button"
+              onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
+            >
+              Explore subgroups
+            </button>
+          ) : null}
           <div className="presentation-layers" role="group" aria-label="Visible tiling layers">
             <span>Layers</span>
             <button

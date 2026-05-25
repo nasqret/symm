@@ -423,6 +423,71 @@ code {
   font-size: 0.79rem;
 }
 
+.mobile-disabled-page {
+  min-height: 100vh;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+
+.mobile-disabled-card {
+  width: min(440px, 100%);
+  padding: 31px 25px 25px;
+  border: 1px solid rgba(185, 175, 160, 0.72);
+  border-radius: 18px;
+  background: rgba(251, 249, 242, 0.88);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.mobile-disabled-label {
+  margin-top: 22px;
+  color: var(--teal-dark);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.mobile-disabled-card h1 {
+  margin-top: 10px;
+  color: var(--ink);
+  font-size: 1.75rem;
+  font-weight: 590;
+  letter-spacing: -0.045em;
+  line-height: 1.13;
+}
+
+.mobile-disabled-card > p:last-of-type {
+  margin-top: 18px;
+  color: #566061;
+  font-size: 0.9rem;
+  line-height: 1.62;
+}
+
+.mobile-disabled-actions {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-disabled-actions button {
+  min-height: 48px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  padding: 0 17px;
+  font-size: 0.84rem;
+  font-weight: 570;
+}
+
+.mobile-disabled-actions .start-primary {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: white;
+}
+
 .panel {
   background: var(--surface);
   min-height: 0;
@@ -459,6 +524,7 @@ code {
   cursor: pointer;
   display: flex;
   align-items: center;
+  gap: 10px;
   justify-content: space-between;
   list-style: none;
 }
@@ -471,7 +537,8 @@ code {
   margin-bottom: 0;
 }
 
-.tool-fold summary span {
+.tool-fold summary .fold-chevron {
+  margin-left: auto;
   width: 8px;
   height: 8px;
   border-right: 1.5px solid #9baaad;
@@ -480,8 +547,12 @@ code {
   transition: transform 120ms ease;
 }
 
-.tool-fold[open] summary span {
+.tool-fold[open] summary .fold-chevron {
   transform: rotate(225deg);
+}
+
+.fold-icon {
+  display: none;
 }
 
 .tool-fold-content {
@@ -1977,8 +2048,66 @@ kbd {
 }
 
 @media (max-width: 680px) {
+  .is-mobile-editor {
+    min-height: 100svh;
+    background: linear-gradient(158deg, #edf0e9 0%, var(--bg) 38%, #ecf3f1 100%);
+  }
+
+  .is-mobile-editor .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    gap: 11px;
+    padding: 12px;
+    background: rgba(20, 36, 43, 0.94);
+    backdrop-filter: blur(15px);
+  }
+
+  .is-mobile-editor .brand p {
+    display: none;
+  }
+
+  .is-mobile-editor .brand-mark {
+    width: 27px;
+    height: 27px;
+  }
+
+  .is-mobile-editor .brand-mark::before {
+    height: 31px;
+    left: 12px;
+  }
+
+  .is-mobile-editor .brand-mark::after {
+    width: 31px;
+    top: 12px;
+  }
+
   .header-actions {
     flex-wrap: wrap;
+  }
+
+  .is-mobile-editor .header-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    gap: 6px;
+  }
+
+  .is-mobile-editor .header-actions .separator {
+    display: none;
+  }
+
+  .is-mobile-editor .header-actions button {
+    height: 44px;
+    min-width: 0;
+    padding: 0 5px;
+    border-color: rgba(86, 173, 186, 0.14);
+    font-size: 0.71rem;
+  }
+
+  .is-mobile-editor .header-actions .primary-action {
+    grid-column: span 2;
+    margin-left: 0;
   }
 
   .start-overlay {
@@ -2066,14 +2195,268 @@ kbd {
     display: block;
   }
 
+  .mobile-tools-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    color: #e5ebea;
+  }
+
+  .mobile-mode-label {
+    grid-column: 1 / -1;
+    margin: 2px 4px 4px;
+    color: #4b6769;
+    font-size: 0.69rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .mobile-tools-panel .tool-fold {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgba(54, 85, 91, 0.28);
+    border-radius: 14px;
+    background: rgba(25, 44, 52, 0.89);
+    box-shadow: 0 7px 18px rgba(23, 34, 36, 0.07);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-tools-panel .tool-fold + .tool-fold {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid rgba(54, 85, 91, 0.28);
+  }
+
+  .mobile-tools-panel .tool-fold[open] {
+    grid-column: 1 / -1;
+  }
+
+  .mobile-tools-panel .tool-fold summary {
+    min-height: 57px;
+    padding: 0 13px;
+    touch-action: manipulation;
+  }
+
+  .mobile-tools-panel .tool-fold-content {
+    margin-top: 0;
+    padding: 0 13px 15px;
+  }
+
+  .mobile-tools-panel h2 {
+    font-size: 0.65rem;
+    margin: 0;
+  }
+
+  .fold-icon {
+    position: relative;
+    display: block;
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+    color: #75c2ca;
+  }
+
+  .fold-icon--lattice {
+    border: 1.5px solid currentColor;
+    transform: skew(-12deg);
+  }
+
+  .fold-icon--lattice::before,
+  .fold-icon--lattice::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+    opacity: 0.75;
+  }
+
+  .fold-icon--lattice::before {
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  .fold-icon--lattice::after {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+  }
+
+  .fold-icon--palette {
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 34%, #e0ab45 0 17%, transparent 18%),
+      radial-gradient(circle at 68% 38%, #d66853 0 16%, transparent 17%),
+      radial-gradient(circle at 51% 69%, #75c2ca 0 16%, transparent 17%);
+    border: 1.5px solid currentColor;
+  }
+
+  .fold-icon--display {
+    height: 16px;
+    margin-top: 4px;
+    border: 1.5px solid currentColor;
+    border-radius: 18px / 12px;
+  }
+
+  .fold-icon--display::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .fold-icon--symmetry::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border: 1.5px dashed currentColor;
+    border-radius: 50%;
+  }
+
+  .fold-icon--symmetry::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 0;
+    height: 25px;
+    border-left: 1.5px solid currentColor;
+  }
+
+  .fold-icon--examples {
+    border: 1.5px solid currentColor;
+    border-radius: 5px;
+    box-shadow: inset 8px 0 0 rgba(31, 113, 133, 0.2), inset 0 8px 0 rgba(31, 113, 133, 0.12);
+  }
+
+  .mobile-tools-panel .select-button,
+  .mobile-tools-panel .visibility-button,
+  .mobile-tools-panel .symmetry-lock {
+    min-height: 48px;
+    height: auto;
+    touch-action: manipulation;
+  }
+
+  .mobile-tools-panel .palette {
+    gap: 15px;
+    padding: 7px 0 3px;
+  }
+
+  .mobile-tools-panel .swatch {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mobile-tools-panel .help-text {
+    margin-top: 14px;
+    font-size: 0.76rem;
+  }
+
   .workspace {
     min-height: 500px;
     padding: 14px;
   }
 
+  .is-mobile-editor .workspace {
+    min-height: min(66svh, 590px);
+    padding: 10px;
+    background: transparent;
+  }
+
+  .is-mobile-editor .workspace-heading {
+    margin-bottom: 8px;
+    padding: 12px 13px;
+    border: 1px solid rgba(218, 212, 200, 0.75);
+    border-radius: 13px;
+    background: rgba(251, 249, 242, 0.74);
+    backdrop-filter: blur(10px);
+  }
+
+  .is-mobile-editor .workspace-heading h2 {
+    font-size: 1.05rem;
+  }
+
+  .is-mobile-editor .workspace-heading p {
+    line-height: 1.45;
+  }
+
+  .is-mobile-editor .unit-canvas {
+    min-height: 54svh;
+    border-radius: 14px;
+  }
+
   .workspace-status {
     margin-right: -14px;
     margin-left: -14px;
+  }
+
+  .is-mobile-editor .workspace-status {
+    height: auto;
+    min-height: 47px;
+    margin: 8px 0 0;
+    padding: 9px 13px;
+    border-radius: 12px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mobile-inspector-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 0 10px 14px;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .mobile-inspector-panel .tool-fold {
+    overflow: hidden;
+    border: 1px solid rgba(218, 212, 200, 0.86);
+    border-radius: 14px;
+    background: rgba(251, 249, 242, 0.79);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-inspector-panel .tool-fold[open] {
+    grid-column: 1 / -1;
+  }
+
+  .mobile-inspector-panel .tool-fold summary {
+    min-height: 57px;
+    padding: 0 13px;
+    touch-action: manipulation;
+  }
+
+  .mobile-inspector-panel .tool-fold summary h2 {
+    margin: 0;
+  }
+
+  .mobile-inspector-panel .tool-fold summary .fold-chevron {
+    border-color: #718080;
+  }
+
+  .mobile-inspector-panel .fold-icon {
+    color: var(--teal);
+  }
+
+  .mobile-inspector-panel .tool-fold-content {
+    margin: 0;
+    padding: 0 13px 16px;
+  }
+
+  .mobile-inspector-panel .preset {
+    min-height: 44px;
   }
 
   .preview-page {

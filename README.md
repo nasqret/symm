@@ -2,6 +2,11 @@
 
 A browser editor for constructing periodic colored tilings and inspecting symmetry operations against the current coloring. CW-complex data remains part of the internal computation, but its diagnostic panel is currently hidden.
 
+## Published App
+
+The public GitHub Pages deployment is configured for `https://nasqret.github.io/symm/`.
+Pushes to `main` build and publish the Vite application through GitHub Actions.
+
 ## Run
 
 ```bash
@@ -13,6 +18,9 @@ The editor supports:
 
 - oblique/generic, rectangular, square, and hexagonal translation lattices;
 - foldable construction controls and lattice-specific enabled preset choices;
+- a mobile touch mode with translucent foldable icon controls, prepared-motif recoloring,
+  symmetry inspection and export; topology editing and subgroup exploration are disabled on
+  small screens;
 - grid-constrained periodic vertices and edges, including edges whose endpoint is in a
   neighboring cell;
 - detected bounded face cycles including nested interior regions, palette coloring/clearing,

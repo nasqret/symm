@@ -635,6 +635,30 @@
 - Interactive screenshot verification remains pending because the Browser plugin's required
   execution interface was not exposed in this session.
 
+## 2026-05-25: Public Pages And Mobile Recoloring Mode
+
+- Added a phone-width editor mode with translucent foldable icon tabs, touch-sized palette and
+  display controls, and compact foldouts for symmetry and built-in examples.
+- Enforced a recoloring-only mobile interaction boundary: the canvas is held in Color face
+  mode, construction controls and topology mutation handlers are unavailable, and direct
+  mobile entry to the subgroup explorer renders a disabled-feature explanation.
+- Removed the subgroup explorer action from mobile editor and preview navigation while
+  retaining desktop exploration.
+- Configured the Vite project base path and a GitHub Actions Pages workflow for publication
+  from `main` at the repository Pages path.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; the production HTML references its bundle and stylesheet under
+  `/symm/assets/` for the repository-scoped Pages URL.
+- Vite server-rendered responsive check: mobile editor renders recoloring controls without
+  topology or subgroup actions, direct mobile `#demo` renders its disabled state, mobile
+  preview hides the explorer action, and desktop construction controls remain available.
+- Interactive screenshot verification remains pending because the Browser plugin's required
+  execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

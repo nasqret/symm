@@ -298,3 +298,20 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete interactive screenshot verification when the browser validation interface is
   available in the session.
+
+## Cycle Record: 2026-05-25 Public Pages And Mobile Recoloring Mode
+
+- [x] Added a mobile-only recoloring workflow with no vertex or edge creation/removal controls
+  and guards preventing topology handlers from acting at phone widths.
+- [x] Replaced the phone layout with translucent foldable icon tabs and larger touch targets.
+- [x] Disabled subgroup exploration on mobile from editor navigation, preview navigation and
+  direct `#demo` entry.
+- [x] Added the Vite GitHub Pages base path and a Pages deployment workflow for pushes to
+  `main`.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`; verified production
+  asset references are emitted below `/symm/assets/`.
+- [x] Verified rendered responsive markup: mobile hides topology and explorer actions and
+  blocks the `#demo` route, while desktop retains construction and explorer controls.
+- [ ] Verify the responsive rendered surface interactively when the Browser interface is
+  exposed in the session.
+- [ ] Publish the repository and confirm the live Pages deployment.

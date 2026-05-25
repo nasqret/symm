@@ -30,12 +30,13 @@ import { useDocumentHistory } from "./state/useDocumentHistory";
 import { useDisplaySettings } from "./state/useDisplaySettings";
 import { Inspector, ToolPanel, EDITOR_PALETTE } from "./components/Panels";
 import { ExplorationDemo } from "./components/ExplorationDemo";
-import { AboutPage, StartOverlay } from "./components/InformationViews";
+import { AboutPage, MobileExplorerDisabled, StartOverlay } from "./components/InformationViews";
 import { PreviewWindow, STORAGE_KEY } from "./components/PreviewWindow";
 import { UnitCellCanvas } from "./components/UnitCellCanvas";
 import "./styles.css";
 
 const INTRO_DISMISSED_KEY = "unit-cell-designer.intro-dismissed.v1";
+const MOBILE_EDITOR_QUERY = "(max-width: 680px)";
 
 interface SymmetryLock {
   symbol: string;
@@ -77,8 +78,25 @@ function isCellDocument(value: unknown): value is CellDocument {
   );
 }
 
+function useMobileEditorMode(): boolean {
+  const [mobileMode, setMobileMode] = useState(() =>
+    window.matchMedia(MOBILE_EDITOR_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_EDITOR_QUERY);
+    const syncMode = () => setMobileMode(media.matches);
+    syncMode();
+    media.addEventListener("change", syncMode);
+    return () => media.removeEventListener("change", syncMode);
+  }, []);
+
+  return mobileMode;
+}
+
 export default function App() {
   const [route, setRoute] = useState(window.location.hash);
+  const mobileMode = useMobileEditorMode();
 
   useEffect(() => {
     const syncRoute = () => setRoute(window.location.hash);
@@ -87,18 +105,18 @@ export default function App() {
   }, []);
 
   if (route === "#preview") {
-    return <PreviewWindow />;
+    return <PreviewWindow mobileMode={mobileMode} />;
   }
   if (route === "#demo") {
-    return <ExplorationDemo />;
+    return mobileMode ? <MobileExplorerDisabled /> : <ExplorationDemo />;
   }
   if (route === "#about") {
     return <AboutPage />;
   }
-  return <Editor />;
+  return <Editor mobileMode={mobileMode} />;
 }
 
-function Editor() {
+function Editor({ mobileMode }: { mobileMode: boolean }) {
   const [initialDocument] = useState(loadInitialDocument);
   const { document, canUndo, canRedo, commit, replace, undo, redo } = useDocumentHistory(
     initialDocument,
@@ -173,6 +191,14 @@ function Editor() {
   }, [document]);
 
   useEffect(() => {
+    if (mobileMode) {
+      setTool("color");
+      setSelectedEdgeId(null);
+      setEdgeStart(null);
+    }
+  }, [mobileMode]);
+
+  useEffect(() => {
     if (
       selectedSymmetryElementId &&
       !symmetry.elements.some((element) => element.id === selectedSymmetryElementId)
@@ -213,7 +239,7 @@ function Editor() {
         );
         return;
       }
-      if ((event.key === "Delete" || event.key === "Backspace") && selectedEdgeId) {
+      if (!mobileMode && (event.key === "Delete" || event.key === "Backspace") && selectedEdgeId) {
         if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
           const accepted = commitEdit(
             symmetryLock
@@ -233,7 +259,7 @@ function Editor() {
         e: "edge",
         c: "color",
       };
-      if (!command && shortcuts[event.key.toLowerCase()]) {
+      if (!mobileMode && !command && shortcuts[event.key.toLowerCase()]) {
         setTool(shortcuts[event.key.toLowerCase()]);
       }
     };
@@ -248,6 +274,7 @@ function Editor() {
     selectedEdgeId,
     showStartOverlay,
     symmetryLock,
+    mobileMode,
     undo,
   ]);
 
@@ -277,7 +304,7 @@ function Editor() {
   };
 
   return (
-    <div className="app-shell">
+    <div className={mobileMode ? "app-shell is-mobile-editor" : "app-shell"}>
       <header className="app-header">
         <div className="brand">
           <span className="brand-mark" />
@@ -314,13 +341,15 @@ function Editor() {
           >
             Open Tiling Preview
           </button>
-          <button
-            className="primary-action demo-action"
-            type="button"
-            onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
-          >
-            Explore Subgroups
-          </button>
+          {!mobileMode && (
+            <button
+              className="primary-action demo-action"
+              type="button"
+              onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
+            >
+              Explore Subgroups
+            </button>
+          )}
         </nav>
         <input
           ref={fileInput}
@@ -340,6 +369,7 @@ function Editor() {
       </header>
       <div className="editor-grid">
         <ToolPanel
+          mobileMode={mobileMode}
           latticeType={document.lattice.type}
           tool={tool}
           selectedColor={selectedColor}
@@ -355,8 +385,10 @@ function Editor() {
             setNotice(`New ${lattice} lattice cell`);
           }}
           onToolChange={(nextTool) => {
-            setTool(nextTool);
-            setEdgeStart(null);
+            if (!mobileMode) {
+              setTool(nextTool);
+              setEdgeStart(null);
+            }
           }}
           onColorChange={(color) => selectPaletteColor(color)}
           onToggleSymmetryLock={() => {
@@ -375,9 +407,13 @@ function Editor() {
           <div className="workspace-heading">
             <div>
               <h2>Fundamental Cell</h2>
-              <p>Neighbors are live translations; connect across them to cross a boundary.</p>
+              <p>
+                {mobileMode
+                  ? "Tap regions to recolor. Swipe vertically to cycle the active swatch."
+                  : "Neighbors are live translations; connect across them to cross a boundary."}
+              </p>
             </div>
-            {selectedEdgeId && (
+            {!mobileMode && selectedEdgeId && (
               <button
                 type="button"
                 className="delete-action"
@@ -405,14 +441,17 @@ function Editor() {
           </div>
           <UnitCellCanvas
             document={document}
-            tool={tool}
-            edgeStart={edgeStart}
-            selectedEdgeId={selectedEdgeId}
+            tool={mobileMode ? "color" : tool}
+            edgeStart={mobileMode ? null : edgeStart}
+            selectedEdgeId={mobileMode ? null : selectedEdgeId}
             selectedSymmetryElement={selectedSymmetryElement}
             showEdges={display.showEdges}
             showVertices={display.showVertices}
             onCycleColor={cyclePaletteColor}
             onAddVertex={(point) => {
+              if (mobileMode) {
+                return;
+              }
               commitEdit(
                 symmetryLock
                   ? addVertexInOrbit(document, point, symmetryLock.operations)
@@ -421,8 +460,15 @@ function Editor() {
                 `Vertex orbit added; ${symmetryLock?.symbol} preservation active`,
               );
             }}
-            onSelectEdge={setSelectedEdgeId}
+            onSelectEdge={(edgeId) => {
+              if (!mobileMode) {
+                setSelectedEdgeId(edgeId);
+              }
+            }}
             onDeleteEdge={(edgeId) => {
+              if (mobileMode) {
+                return;
+              }
               const accepted = commitEdit(
                 symmetryLock
                   ? deleteEdgeInOrbit(document, edgeId, selectedColor, symmetryLock.operations)
@@ -435,6 +481,9 @@ function Editor() {
               }
             }}
             onDeleteVertex={(vertexId) => {
+              if (mobileMode) {
+                return;
+              }
               const accepted = commitEdit(
                 symmetryLock
                   ? deleteVertexInOrbit(document, vertexId, selectedColor, symmetryLock.operations)
@@ -448,6 +497,9 @@ function Editor() {
               }
             }}
             onVertexHit={(hit) => {
+              if (mobileMode) {
+                return;
+              }
               if (!edgeStart) {
                 setEdgeStart(hit);
                 setNotice("Select an endpoint in any translated cell");
@@ -488,12 +540,13 @@ function Editor() {
           />
           <footer className="workspace-status">
             <span>
-              active tool <strong>{tool}</strong>
+              active tool <strong>{mobileMode ? "color" : tool}</strong>
             </span>
             <span>{notice}</span>
           </footer>
         </main>
         <Inspector
+          mobileMode={mobileMode}
           document={document}
           symmetry={symmetry}
           selectedSymmetryElementId={selectedSymmetryElementId}
@@ -514,7 +567,13 @@ function Editor() {
           }}
         />
       </div>
-      {showStartOverlay && <StartOverlay onClose={dismissStartOverlay} onOpenAbout={openAbout} />}
+      {showStartOverlay && (
+        <StartOverlay
+          mobileMode={mobileMode}
+          onClose={dismissStartOverlay}
+          onOpenAbout={openAbout}
+        />
+      )}
     </div>
   );
 }

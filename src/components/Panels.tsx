@@ -24,6 +24,7 @@ interface ToolPanelProps {
   tool: EditorTool;
   selectedColor: string;
   symmetryLock: string | null;
+  mobileMode: boolean;
   showEdges: boolean;
   showVertices: boolean;
   onLatticeChange: (value: LatticeType) => void;
@@ -43,11 +44,12 @@ const TOOLS: { id: EditorTool; name: string; shortcut: string }[] = [
 
 interface FoldSectionProps {
   title: string;
+  icon?: "lattice" | "palette" | "display" | "symmetry" | "examples";
   defaultOpen?: boolean;
   children: ReactNode;
 }
 
-function FoldSection({ title, defaultOpen = false, children }: FoldSectionProps) {
+function FoldSection({ title, icon, defaultOpen = false, children }: FoldSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <details
@@ -56,8 +58,9 @@ function FoldSection({ title, defaultOpen = false, children }: FoldSectionProps)
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >
       <summary>
+        {icon ? <span className={`fold-icon fold-icon--${icon}`} aria-hidden="true" /> : null}
         <h2>{title}</h2>
-        <span aria-hidden="true" />
+        <span className="fold-chevron" aria-hidden="true" />
       </summary>
       <div className="tool-fold-content">{children}</div>
     </details>
@@ -69,6 +72,7 @@ export function ToolPanel({
   tool,
   selectedColor,
   symmetryLock,
+  mobileMode,
   showEdges,
   showVertices,
   onLatticeChange,
@@ -79,8 +83,12 @@ export function ToolPanel({
   onToggleVertices,
 }: ToolPanelProps) {
   return (
-    <aside className="panel tools-panel" aria-label="Editor tools">
-      <FoldSection title="Lattice" defaultOpen>
+    <aside
+      className={mobileMode ? "panel tools-panel mobile-tools-panel" : "panel tools-panel"}
+      aria-label="Editor tools"
+    >
+      {mobileMode ? <p className="mobile-mode-label">Touch color studio</p> : null}
+      <FoldSection title="Lattice" icon="lattice" defaultOpen={!mobileMode}>
         <div className="lattice-list">
           {(["generic", "square", "rectangular", "hexagonal"] as const).map((entry) => (
             <button
@@ -95,7 +103,7 @@ export function ToolPanel({
           ))}
         </div>
       </FoldSection>
-      <FoldSection title="Construct">
+      {!mobileMode ? <FoldSection title="Construct">
         <div className="tool-list">
           {TOOLS.map((entry) => (
             <button
@@ -109,8 +117,8 @@ export function ToolPanel({
             </button>
           ))}
         </div>
-      </FoldSection>
-      <FoldSection title="Face Color" defaultOpen>
+      </FoldSection> : null}
+      <FoldSection title="Face Color" icon="palette" defaultOpen>
         <div className="palette" aria-label="Color palette">
           {EDITOR_PALETTE.map((color, index) => (
             <button
@@ -130,11 +138,12 @@ export function ToolPanel({
           ))}
         </div>
         <p className="help-text">
-          Keys 1-7 select a swatch. In Color face mode, swipe up or down on the canvas to cycle
-          paint colors without changing a face.
+          {mobileMode
+            ? "Tap a swatch or swipe vertically on the tiling to change paint color."
+            : "Keys 1-7 select a swatch. In Color face mode, swipe up or down on the canvas to cycle paint colors without changing a face."}
         </p>
       </FoldSection>
-      <FoldSection title="Display">
+      <FoldSection title="Display" icon="display">
         <div className="visibility-list" role="group" aria-label="Visible motif layers">
           <button
             type="button"
@@ -160,7 +169,7 @@ export function ToolPanel({
           exports.
         </p>
       </FoldSection>
-      <FoldSection title="Symmetric Editing">
+      <FoldSection title="Symmetric Editing" icon="symmetry">
         <button
           type="button"
           className={symmetryLock ? "symmetry-lock is-selected" : "symmetry-lock"}
@@ -183,6 +192,7 @@ interface InspectorProps {
   document: CellDocument;
   symmetry: SymmetryResult;
   selectedSymmetryElementId: string | null;
+  mobileMode?: boolean;
   onSelectSymmetryElement: (elementId: string) => void;
   onLoadPreset: (symbol: string) => void;
 }
@@ -191,71 +201,95 @@ export function Inspector({
   document,
   symmetry,
   selectedSymmetryElementId,
+  mobileMode = false,
   onSelectSymmetryElement,
   onLoadPreset,
 }: InspectorProps) {
-  return (
-    <aside className="panel inspector-panel" aria-label="Mathematical inspector">
-      <section className="symmetry-block">
-        <h2>Current Symmetry</h2>
-        <div className="group-result">
-          <strong>{symmetry.symbol}</strong>
-          <span>{symmetry.standardSymbol}</span>
-        </div>
-        <div className="generator-list" aria-label="Visible symmetry elements">
-          {symmetry.elements.map((element) => (
+  const symmetryContents = (
+    <>
+      <h2>Current Symmetry</h2>
+      <div className="group-result">
+        <strong>{symmetry.symbol}</strong>
+        <span>{symmetry.standardSymbol}</span>
+      </div>
+      <div className="generator-list" aria-label="Visible symmetry elements">
+        {symmetry.elements.map((element) => (
+          <button
+            type="button"
+            key={element.id}
+            className={
+              element.id === selectedSymmetryElementId
+                ? "generator-button is-selected"
+                : "generator-button"
+            }
+            aria-pressed={element.id === selectedSymmetryElementId}
+            onClick={() => onSelectSymmetryElement(element.id)}
+          >
+            <span>{element.kind}</span>
+            <code>{element.label}</code>
+          </button>
+        ))}
+      </div>
+      <p className="minor">Select an element to display its geometric action in the tiling.</p>
+      <p className="minor">
+        {symmetry.accepted.length} accepted operations; {symmetry.rejectedCount} color/geometry
+        conflicts tested.
+      </p>
+    </>
+  );
+  const presetsContents = (
+    <>
+      <h2>17 Plane Groups</h2>
+      <p className="minor preset-context">
+        Canonical presets for the {document.lattice.type} lattice. Coloring can lower the
+        detected symmetry further.
+      </p>
+      <div className="preset-grid">
+        {WALLPAPER_GROUPS.map((group) => {
+          const compatible = group.latticeType === document.lattice.type;
+          return (
             <button
               type="button"
-              key={element.id}
+              key={group.symbol}
               className={
-                element.id === selectedSymmetryElementId
-                  ? "generator-button is-selected"
-                  : "generator-button"
+                document.presetGroup === group.symbol ? "preset is-selected" : "preset"
               }
-              aria-pressed={element.id === selectedSymmetryElementId}
-              onClick={() => onSelectSymmetryElement(element.id)}
+              disabled={!compatible}
+              onClick={() => onLoadPreset(group.symbol)}
+              title={
+                compatible
+                  ? group.feature
+                  : `Not a ${document.lattice.type} lattice preset.`
+              }
             >
-              <span>{element.kind}</span>
-              <code>{element.label}</code>
+              {group.symbol}
             </button>
-          ))}
-        </div>
-        <p className="minor">Select an element to display its geometric action in the tiling.</p>
-        <p className="minor">
-          {symmetry.accepted.length} accepted operations; {symmetry.rejectedCount} color/geometry
-          conflicts tested.
-        </p>
-      </section>
-      <section className="presets-block">
-        <h2>17 Plane Groups</h2>
-        <p className="minor preset-context">
-          Canonical presets for the {document.lattice.type} lattice. Coloring can lower the
-          detected symmetry further.
-        </p>
-        <div className="preset-grid">
-          {WALLPAPER_GROUPS.map((group) => {
-            const compatible = group.latticeType === document.lattice.type;
-            return (
-              <button
-                type="button"
-                key={group.symbol}
-                className={
-                  document.presetGroup === group.symbol ? "preset is-selected" : "preset"
-                }
-                disabled={!compatible}
-                onClick={() => onLoadPreset(group.symbol)}
-                title={
-                  compatible
-                    ? group.feature
-                    : `Not a ${document.lattice.type} lattice preset.`
-                }
-              >
-                {group.symbol}
-              </button>
-            );
-          })}
-        </div>
-      </section>
+          );
+        })}
+      </div>
+    </>
+  );
+
+  return (
+    <aside
+      className={mobileMode ? "panel inspector-panel mobile-inspector-panel" : "panel inspector-panel"}
+      aria-label="Mathematical inspector"
+    >
+      {mobileMode ? (
+        <>
+          <FoldSection title="Symmetry" icon="symmetry">
+            {symmetryContents}
+          </FoldSection>
+          <FoldSection title="Examples" icon="examples">
+            {presetsContents}
+          </FoldSection>
+        </>
+      ) : (
+        <>
+          <section className="symmetry-block">{symmetryContents}</section>
+          <section className="presets-block">{presetsContents}</section>
+        </>
+      )}
     </aside>
   );
 }

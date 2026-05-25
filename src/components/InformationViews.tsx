@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 
 interface StartOverlayProps {
+  mobileMode?: boolean;
   onClose: () => void;
   onOpenAbout: () => void;
 }
 
-export function StartOverlay({ onClose, onOpenAbout }: StartOverlayProps) {
+export function StartOverlay({ mobileMode = false, onClose, onOpenAbout }: StartOverlayProps) {
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -28,18 +29,26 @@ export function StartOverlay({ onClose, onOpenAbout }: StartOverlayProps) {
           <span className="brand-mark" aria-hidden="true" />
           <div>
             <h2 id="start-dialog-title">Unit Cell Designer</h2>
-            <p>Construct periodic patterns and read their surviving symmetry.</p>
+            <p>
+              {mobileMode
+                ? "Recolor periodic patterns and read their surviving symmetry."
+                : "Construct periodic patterns and read their surviving symmetry."}
+            </p>
           </div>
         </div>
         <p className="start-description">
-          Choose a lattice, add vertices and periodic edges, then color the resulting faces.
-          The canvas repeats the cell while the right panel identifies the wallpaper group
-          preserved by both geometry and color.
+          {mobileMode
+            ? "Choose an existing periodic motif and recolor its faces. The touch editor repeats the cell while reporting the wallpaper symmetry preserved by the coloring."
+            : "Choose a lattice, add vertices and periodic edges, then color the resulting faces. The canvas repeats the cell while the right panel identifies the wallpaper group preserved by both geometry and color."}
         </p>
         <div className="start-steps">
           <article>
-            <strong>Build</strong>
-            <span>Create a motif on a generic, rectangular, square or hexagonal lattice.</span>
+            <strong>{mobileMode ? "Choose" : "Build"}</strong>
+            <span>
+              {mobileMode
+                ? "Select a prepared motif on a generic, rectangular, square or hexagonal lattice."
+                : "Create a motif on a generic, rectangular, square or hexagonal lattice."}
+            </span>
           </article>
           <article>
             <strong>Color</strong>
@@ -47,24 +56,52 @@ export function StartOverlay({ onClose, onOpenAbout }: StartOverlayProps) {
           </article>
           <article>
             <strong>Present</strong>
-            <span>Preview, export or explore the subgroup walk as an animated tiling.</span>
+            <span>
+              {mobileMode
+                ? "Preview or export your colored tiling directly from the touch interface."
+                : "Preview, export or explore the subgroup walk as an animated tiling."}
+            </span>
           </article>
         </div>
         <p className="start-symmetry">
-          <strong>Symmetric editing begins on.</strong> Each edit is propagated while retaining
-          the current group exactly. Turn off <em>Preserve symmetry</em> to explore symmetry
-          breaking freely.
+          <strong>Symmetric editing begins on.</strong> Each color edit is propagated while
+          retaining the current group exactly. Turn off <em>Preserve symmetry</em> to explore
+          symmetry breaking freely.
         </p>
         <div className="start-actions">
           <button type="button" className="secondary-action" onClick={onOpenAbout}>
             About the app
           </button>
           <button type="button" className="start-primary" onClick={onClose}>
-            Start designing
+            {mobileMode ? "Start coloring" : "Start designing"}
           </button>
         </div>
       </section>
     </div>
+  );
+}
+
+export function MobileExplorerDisabled() {
+  return (
+    <main className="mobile-disabled-page">
+      <section className="mobile-disabled-card" aria-labelledby="mobile-disabled-title">
+        <span className="brand-mark" aria-hidden="true" />
+        <p className="mobile-disabled-label">Desktop feature</p>
+        <h1 id="mobile-disabled-title">Subgroup explorer is disabled on mobile</h1>
+        <p>
+          The touch editor is focused on recoloring prepared periodic motifs. Open the editor to
+          paint faces, inspect symmetry and export a tiling.
+        </p>
+        <div className="mobile-disabled-actions">
+          <button type="button" className="start-primary" onClick={() => (window.location.hash = "")}>
+            Open coloring editor
+          </button>
+          <button type="button" onClick={() => (window.location.hash = "#preview")}>
+            Open preview
+          </button>
+        </div>
+      </section>
+    </main>
   );
 }
 

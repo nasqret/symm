@@ -53,6 +53,16 @@ Status: implemented, browser-verified, committed and synchronized to the private
    transitions that flicker only minimal nonblank verified accent witnesses before
    settling, plus an affine SVG `p1` homotopy when changing lattice family.
 
+## Release 0.4: Public Touch Presentation
+
+1. Publish the Vite application through GitHub Pages from `main`, with the project-path build
+   base and an Actions deployment workflow. Implemented on 2026-05-25.
+2. Provide a phone-sized touch interface using translucent foldable icon tabs and enlarged
+   palette targets. Implemented on 2026-05-25.
+3. Restrict mobile interaction to selecting prepared motifs, recoloring faces, visibility,
+   symmetry inspection, state/preview and export operations; remove topology editing paths and
+   disable the subgroup explorer at phone widths. Implemented on 2026-05-25.
+
 ## Architecture Decisions
 
 - Fractional coordinates make translation periodicity explicit and keep saved motifs independent of display zoom.
@@ -80,6 +90,10 @@ Status: implemented, browser-verified, committed and synchronized to the private
   then applies an SVG affine basis homotopy while contracting the old edge layer and expanding
   the new one before applying the target colors.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
+- Mobile mode deliberately treats motifs as fixed geometry: it forces the color tool in the
+  canvas and removes topology/editing navigation rather than relying on hidden controls alone.
+- GitHub Pages publishes the repository application under `/symm/`, so the Vite production
+  base path is part of deployment correctness.
 
 ## Acceptance Checks For Every Cycle
 
