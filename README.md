@@ -20,8 +20,8 @@ The editor supports:
 - foldable construction controls and lattice-specific enabled preset choices;
 - a mobile touch mode with translucent foldable icon controls, prepared-motif recoloring,
   symmetry inspection and export; it begins in face-only display with edges and vertices
-  hidden, supports collapsible menu/panels and pinch zoom, and disables topology editing and
-  subgroup exploration on small screens;
+  hidden, supports collapsible menu/panels, pinch zoom and a press-and-hold tile color roller,
+  and disables topology editing and subgroup exploration on small screens;
 - grid-constrained periodic vertices and edges, including edges whose endpoint is in a
   neighboring cell;
 - detected bounded face cycles including nested interior regions, palette coloring/clearing,

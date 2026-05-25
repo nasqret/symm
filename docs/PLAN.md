@@ -62,6 +62,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 3. Restrict mobile interaction to selecting prepared motifs, recoloring faces, visibility,
    symmetry inspection, state/preview and export operations; remove topology editing paths and
    disable the subgroup explorer at phone widths. Implemented on 2026-05-25.
+4. Support direct touch recoloring on a selected tile with a press-and-hold color roller that
+   coexists with tap clearing, vertical palette swipe and pinch zoom. Implemented on 2026-05-26.
 
 ## Architecture Decisions
 
@@ -92,6 +94,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 - Mobile mode deliberately treats motifs as fixed geometry: it forces the color tool in the
   canvas and removes topology/editing navigation rather than relying on hidden controls alone.
+- Mobile face gestures are disambiguated before an edit commits: tap applies the existing
+  toggle behavior, vertical movement cycles the current swatch, a sustained single touch opens
+  the tile-local color roller, and a second touch transfers control to pinch zoom.
 - GitHub Pages publishes the repository application under `/symm/`, so the Vite production
   base path is part of deployment correctness.
 

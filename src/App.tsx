@@ -500,6 +500,8 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
             showEdges={display.showEdges}
             showVertices={display.showVertices}
             enablePinchZoom={mobileMode}
+            colorRollColors={mobileMode ? EDITOR_PALETTE : undefined}
+            selectedColor={selectedColor}
             onCycleColor={cyclePaletteColor}
             onAddVertex={(point) => {
               if (mobileMode) {
@@ -589,6 +591,30 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
                     : `Face orbit colored; ${symmetryLock?.symbol} preservation active`,
                 );
               }
+            }}
+            onRollColorFace={(face, color) => {
+              selectPaletteColor(color);
+              if (faceColor(document, face.signature) === color) {
+                setNotice("Color roller: face already uses this color");
+                return;
+              }
+              if (color === FACE_BACKGROUND_COLOR) {
+                commitEdit(
+                  symmetryLock
+                    ? clearFaceColorInOrbit(document, face, symmetryLock.operations)
+                    : clearFaceColor(document, face),
+                  "Color roller cleared the face",
+                  `Color roller cleared the face orbit; ${symmetryLock?.symbol} preservation active`,
+                );
+                return;
+              }
+              commitEdit(
+                symmetryLock
+                  ? colorFaceInOrbit(document, face, color, symmetryLock.operations)
+                  : colorFace(document, face, color),
+                "Color roller applied the selected face color",
+                `Color roller applied the face orbit; ${symmetryLock?.symbol} preservation active`,
+              );
             }}
           />
           {!mobileMode ? (

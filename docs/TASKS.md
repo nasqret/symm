@@ -396,3 +396,17 @@ Run this checklist on every implementation cycle.
 - [x] Verified server-rendered mobile/desktop control boundaries and collapsed-rail selectors.
 - [ ] Complete interactive mobile alignment verification when the Browser interface is exposed
   in the session.
+
+## Cycle Record: 2026-05-26 Mobile Tile Color Roller
+
+- [x] Added a mobile press-and-hold roller on paintable tiles with horizontal swatch selection.
+- [x] Routed roller release through existing face recoloring/clearing and exact symmetry-lock
+  enforcement.
+- [x] Preserved tap, vertical color swipe and pinch zoom by cancelling or transferring the
+  pending hold gesture at the correct pointer thresholds.
+- [x] Suppressed native callout behavior and rendered the tiny roller above canvas overlays at
+  stable visible size under zoom.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified mobile/desktop wiring boundaries and source gesture/styling assertions.
+- [ ] Complete interactive long-press slide verification when the Browser interface is exposed
+  in the session.

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type {
   CellDocument,
@@ -45,6 +45,22 @@ interface PinchStart {
   ratio: { x: number; y: number };
 }
 
+interface ColorRollCandidate {
+  face: PeriodicFace;
+  pointerId: number;
+  x: number;
+  y: number;
+}
+
+interface ColorRollState {
+  face: PeriodicFace;
+  pointerId: number;
+  anchor: { x: number; y: number };
+  index: number;
+  initialIndex: number;
+  startX: number;
+}
+
 const DEFAULT_VIEWPORT: CanvasViewport = {
   x: 0,
   y: 0,
@@ -60,6 +76,11 @@ function pointerDistance(points: { x: number; y: number }[]): number {
 function clampZoom(value: number): number {
   return Math.min(4, Math.max(1, value));
 }
+
+const COLOR_ROLL_HOLD_MS = 380;
+const COLOR_ROLL_CANCEL_DISTANCE = 12;
+const COLOR_ROLL_STEP_PX = 28;
+const COLOR_ROLL_SLOT_WIDTH = 30;
 
 interface UnitCellCanvasProps {
   document: CellDocument;
@@ -81,6 +102,9 @@ interface UnitCellCanvasProps {
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
+  colorRollColors?: readonly string[];
+  selectedColor?: string;
+  onRollColorFace?: (face: PeriodicFace, color: string) => void;
   onCycleColor?: (direction: ColorCycleDirection) => void;
   onSelectEdge?: (edgeId: string) => void;
   onDeleteEdge?: (edgeId: string) => void;
@@ -186,6 +210,9 @@ export function UnitCellCanvas({
   onAddVertex,
   onVertexHit,
   onColorFace,
+  colorRollColors = [],
+  selectedColor,
+  onRollColorFace,
   onCycleColor,
   onSelectEdge,
   onDeleteEdge,
@@ -196,7 +223,11 @@ export function UnitCellCanvas({
   const touchPointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<PinchStart | null>(null);
   const pinchActive = useRef(false);
+  const colorRollTimer = useRef<number | null>(null);
+  const colorRollCandidate = useRef<ColorRollCandidate | null>(null);
+  const colorRollActive = useRef<ColorRollState | null>(null);
   const [viewport, setViewport] = useState(DEFAULT_VIEWPORT);
+  const [colorRoll, setColorRoll] = useState<ColorRollState | null>(null);
   const faces = useMemo(() => extractFaces(document), [document]);
   const displayLattice = latticeOverride ?? document.lattice;
   const transform = useMemo(
@@ -211,6 +242,103 @@ export function UnitCellCanvas({
   const edgeTiles = tiles(preview ? (previewTileRange ?? 4) : 1);
   const activeViewport = enablePinchZoom ? viewport : DEFAULT_VIEWPORT;
   const paintSeamUnderlay = !showEdges;
+  const colorRollEnabled =
+    enablePinchZoom && tool === "color" && colorRollColors.length > 0 && Boolean(onRollColorFace);
+  const clearColorRollTimer = () => {
+    if (colorRollTimer.current !== null) {
+      window.clearTimeout(colorRollTimer.current);
+      colorRollTimer.current = null;
+    }
+  };
+  const closeColorRoll = () => {
+    clearColorRollTimer();
+    colorRollCandidate.current = null;
+    colorRollActive.current = null;
+    setColorRoll(null);
+  };
+  const toViewportPoint = (svg: SVGSVGElement, clientX: number, clientY: number) => {
+    const rect = svg.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return null;
+    }
+    return {
+      point: {
+        x: activeViewport.x + ((clientX - rect.left) / rect.width) * activeViewport.width,
+        y: activeViewport.y + ((clientY - rect.top) / rect.height) * activeViewport.height,
+      },
+      rect,
+    };
+  };
+  const beginColorRoll = (event: React.PointerEvent<SVGPathElement>, face: PeriodicFace) => {
+    if (!colorRollEnabled || event.pointerType !== "touch") {
+      return;
+    }
+    clearColorRollTimer();
+    colorRollCandidate.current = {
+      face,
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+    };
+    const svg = event.currentTarget.ownerSVGElement;
+    if (!svg) {
+      return;
+    }
+    const pointerId = event.pointerId;
+    colorRollTimer.current = window.setTimeout(() => {
+      const candidate = colorRollCandidate.current;
+      if (!candidate || candidate.pointerId !== pointerId || pinchActive.current) {
+        return;
+      }
+      const positioned = toViewportPoint(svg, candidate.x, candidate.y);
+      if (!positioned) {
+        return;
+      }
+      const faceFill = faceColor(document, face.signature);
+      const faceIndex = colorRollColors.indexOf(faceFill);
+      const selectedIndex = selectedColor ? colorRollColors.indexOf(selectedColor) : -1;
+      const initialIndex = faceIndex >= 0 ? faceIndex : Math.max(selectedIndex, 0);
+      const inverseScale = 1 / activeViewport.scale;
+      const rollerWidth = colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + 20;
+      const halfWidth = (rollerWidth / 2) * inverseScale;
+      const above = candidate.y - positioned.rect.top > 72;
+      const next: ColorRollState = {
+        face,
+        pointerId: candidate.pointerId,
+        anchor: {
+          x: Math.min(
+            activeViewport.x + activeViewport.width - halfWidth,
+            Math.max(activeViewport.x + halfWidth, positioned.point.x),
+          ),
+          y: positioned.point.y + (above ? -58 : 58) * inverseScale,
+        },
+        index: initialIndex,
+        initialIndex,
+        startX: candidate.x,
+      };
+      colorRollTimer.current = null;
+      colorRollActive.current = next;
+      setColorRoll(next);
+      suppressTouchClick.current = true;
+      swipeStart.current = null;
+    }, COLOR_ROLL_HOLD_MS);
+  };
+  useEffect(() => {
+    if (!colorRollEnabled) {
+      clearColorRollTimer();
+      colorRollCandidate.current = null;
+      colorRollActive.current = null;
+      setColorRoll(null);
+    }
+  }, [colorRollEnabled]);
+  useEffect(
+    () => () => {
+      if (colorRollTimer.current !== null) {
+        window.clearTimeout(colorRollTimer.current);
+      }
+    },
+    [],
+  );
   const beginColorSwipe = (event: React.PointerEvent<SVGSVGElement>) => {
     if (event.pointerType !== "touch" || tool !== "color" || !onCycleColor) {
       return;
@@ -246,6 +374,7 @@ export function UnitCellCanvas({
       event.currentTarget.setPointerCapture?.(event.pointerId);
       touchPointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
       if (touchPointers.current.size >= 2) {
+        closeColorRoll();
         const points = Array.from(touchPointers.current.values()).slice(0, 2);
         const rect = event.currentTarget.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
@@ -278,6 +407,33 @@ export function UnitCellCanvas({
     beginColorSwipe(event);
   };
   const movePointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
+    const activeRoll = colorRollActive.current;
+    if (activeRoll && activeRoll.pointerId === event.pointerId) {
+      const offset = Math.round((event.clientX - activeRoll.startX) / COLOR_ROLL_STEP_PX);
+      const index = Math.min(
+        colorRollColors.length - 1,
+        Math.max(0, activeRoll.initialIndex + offset),
+      );
+      if (index !== activeRoll.index) {
+        const next = { ...activeRoll, index };
+        colorRollActive.current = next;
+        setColorRoll(next);
+      }
+      suppressTouchClick.current = true;
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    const candidate = colorRollCandidate.current;
+    if (candidate && candidate.pointerId === event.pointerId) {
+      if (
+        Math.hypot(event.clientX - candidate.x, event.clientY - candidate.y) >
+        COLOR_ROLL_CANCEL_DISTANCE
+      ) {
+        clearColorRollTimer();
+        colorRollCandidate.current = null;
+      }
+    }
     if (
       !enablePinchZoom ||
       event.pointerType !== "touch" ||
@@ -306,6 +462,24 @@ export function UnitCellCanvas({
     event.stopPropagation();
   };
   const endPointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
+    const activeRoll = colorRollActive.current;
+    if (activeRoll && activeRoll.pointerId === event.pointerId) {
+      const color = colorRollColors[activeRoll.index];
+      closeColorRoll();
+      touchPointers.current.delete(event.pointerId);
+      suppressTouchClick.current = true;
+      swipeStart.current = null;
+      if (color) {
+        onRollColorFace?.(activeRoll.face, color);
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (colorRollCandidate.current?.pointerId === event.pointerId) {
+      clearColorRollTimer();
+      colorRollCandidate.current = null;
+    }
     if (enablePinchZoom && event.pointerType === "touch") {
       const tracked = touchPointers.current.has(event.pointerId);
       if (tracked) {
@@ -329,6 +503,12 @@ export function UnitCellCanvas({
   };
   const cancelPointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
     swipeStart.current = null;
+    if (
+      colorRollCandidate.current?.pointerId === event.pointerId ||
+      colorRollActive.current?.pointerId === event.pointerId
+    ) {
+      closeColorRoll();
+    }
     if (event.pointerType === "touch") {
       touchPointers.current.delete(event.pointerId);
       if (touchPointers.current.size < 2) {
@@ -352,6 +532,11 @@ export function UnitCellCanvas({
       onPointerMoveCapture={movePointerGesture}
       onPointerUpCapture={endPointerGesture}
       onPointerCancelCapture={cancelPointerGesture}
+      onContextMenu={(event) => {
+        if (colorRollEnabled) {
+          event.preventDefault();
+        }
+      }}
       onClickCapture={(event) => {
         if (suppressTouchClick.current) {
           suppressTouchClick.current = false;
@@ -448,6 +633,8 @@ export function UnitCellCanvas({
                   if (tool === "color" && event.pointerType !== "touch") {
                     event.stopPropagation();
                     onColorFace?.(face);
+                  } else if (tool === "color" && event.pointerType === "touch") {
+                    beginColorRoll(event, face);
                   }
                 }}
                 onPointerUp={(event) => {
@@ -595,6 +782,35 @@ export function UnitCellCanvas({
           >
             b
           </text>
+        </g>
+      )}
+      {colorRoll && (
+        <g
+          className="color-roller"
+          aria-hidden="true"
+          transform={`translate(${colorRoll.anchor.x} ${colorRoll.anchor.y}) scale(${
+            1 / activeViewport.scale
+          })`}
+        >
+          <rect
+            className="color-roller-track"
+            x={-(colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + 20) / 2}
+            y={-26}
+            width={colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + 20}
+            height={52}
+            rx={26}
+          />
+          {colorRollColors.map((color, index) => {
+            const x = (index - (colorRollColors.length - 1) / 2) * COLOR_ROLL_SLOT_WIDTH;
+            return (
+              <g key={`color-roll-${color}`} transform={`translate(${x} 0)`}>
+                {index === colorRoll.index ? (
+                  <circle className="color-roller-selection" r={15} />
+                ) : null}
+                <circle className="color-roller-swatch" r={10.5} fill={color} />
+              </g>
+            );
+          })}
         </g>
       )}
       </g>

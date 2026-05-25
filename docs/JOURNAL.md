@@ -809,6 +809,30 @@
 - Interactive mobile screenshot verification remains pending because the Browser plugin's
   required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Mobile Tile Color Roller
+
+- Implemented the requested force-touch-style action as a portable press-and-hold gesture on
+  mobile paintable tiles: after a short hold, a compact seven-color roller appears adjacent to
+  the finger and a horizontal drag moves its highlighted selection.
+- On release, the highlighted swatch becomes the active paint color and is applied to that
+  face through the existing exact symmetry-lock validation; choosing background clears it.
+- Disambiguated the gesture from existing interactions: movement before the hold cancels the
+  roller and preserves vertical swatch cycling, while a second pointer cancels the roller and
+  transfers control to pinch zoom.
+- Suppressed native long-press callouts on the canvas and keep the SVG roller at constant
+  screen scale under zoom, above canvas annotation layers.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Server-rendered mobile/desktop boundary and source gesture assertions passed: only mobile
+  editor wiring exposes roller colors, with hold/cancel/release/pinch paths and roller styling
+  present.
+- Interactive long-press and slide screenshot verification remains pending because the Browser
+  plugin's required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

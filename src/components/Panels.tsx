@@ -139,7 +139,7 @@ export function ToolPanel({
         </div>
         <p className="help-text">
           {mobileMode
-            ? "Tap a swatch or swipe vertically on the tiling to change paint color."
+            ? "Tap a swatch, swipe vertically, or press and hold a tile for its color roller."
             : "Keys 1-7 select a swatch. In Color face mode, swipe up or down on the canvas to cycle paint colors without changing a face."}
         </p>
       </FoldSection>

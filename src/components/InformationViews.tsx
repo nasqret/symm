@@ -52,7 +52,11 @@ export function StartOverlay({ mobileMode = false, onClose, onOpenAbout }: Start
           </article>
           <article>
             <strong>Color</strong>
-            <span>Paint faces and watch which rotations, mirrors and glides remain valid.</span>
+            <span>
+              {mobileMode
+                ? "Tap to paint or hold a face for its color roller, then watch which symmetries remain."
+                : "Paint faces and watch which rotations, mirrors and glides remain valid."}
+            </span>
           </article>
           <article>
             <strong>Present</strong>
