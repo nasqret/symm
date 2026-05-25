@@ -308,6 +308,8 @@ Run this checklist on every implementation cycle.
   direct `#demo` entry.
 - [x] Added the Vite GitHub Pages base path and a Pages deployment workflow for pushes to
   `main`.
+- [x] Repaired initial Pages provisioning by setting `configure-pages` enablement after the
+  first public-repository run reported that no Pages site was configured.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`; verified production
   asset references are emitted below `/symm/assets/`.
 - [x] Verified rendered responsive markup: mobile hides topology and explorer actions and

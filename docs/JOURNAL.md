@@ -656,6 +656,9 @@
 - Vite server-rendered responsive check: mobile editor renders recoloring controls without
   topology or subgroup actions, direct mobile `#demo` renders its disabled state, mobile
   preview hides the explorer action, and desktop construction controls remain available.
+- After the public repository transition, the first pushed Pages run failed during
+  `configure-pages` because no Pages site existed while `enablement` defaulted to `false`;
+  the workflow now requests Pages enablement before artifact upload/deployment.
 - Interactive screenshot verification remains pending because the Browser plugin's required
   execution interface was not exposed in this session.
 
