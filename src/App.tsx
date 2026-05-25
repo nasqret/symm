@@ -319,17 +319,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
 
   return (
     <div className={shellClassName}>
-      {mobileMode && !mobileMenuVisible ? (
-        <button
-          type="button"
-          className="mobile-menu-reveal"
-          aria-label="Show Unit Cell Designer menu"
-          onClick={() => setMobileMenuVisible(true)}
-        >
-          <span className="brand-mark" aria-hidden="true" />
-          <span>Menu</span>
-        </button>
-      ) : (
+      {!mobileMode || mobileMenuVisible ? (
         <header className="app-header">
           <div className="brand">
             <span className="brand-mark" />
@@ -402,18 +392,31 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
             }}
           />
         </header>
-      )}
+      ) : null}
       {mobileMode ? (
-        <div className="mobile-studio-bar">
-          <strong>Touch color studio</strong>
-          <button
-            type="button"
-            aria-expanded={mobilePanelsVisible}
-            aria-controls="mobile-color-panels mobile-analysis-panels"
-            onClick={() => setMobilePanelsVisible((visible) => !visible)}
-          >
-            {mobilePanelsVisible ? "Hide panels" : "Show panels"}
-          </button>
+        <div className="mobile-control-rail">
+          <div className="mobile-studio-bar">
+            <strong>Touch color studio</strong>
+            <button
+              type="button"
+              aria-expanded={mobilePanelsVisible}
+              aria-controls="mobile-color-panels mobile-analysis-panels"
+              onClick={() => setMobilePanelsVisible((visible) => !visible)}
+            >
+              {mobilePanelsVisible ? "Hide panels" : "Show panels"}
+            </button>
+          </div>
+          {!mobileMenuVisible ? (
+            <button
+              type="button"
+              className="mobile-menu-reveal"
+              aria-label="Show Unit Cell Designer menu"
+              onClick={() => setMobileMenuVisible(true)}
+            >
+              <span className="brand-mark" aria-hidden="true" />
+              <span>Menu</span>
+            </button>
+          ) : null}
         </div>
       ) : null}
       <div className="editor-grid">

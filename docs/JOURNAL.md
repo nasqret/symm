@@ -791,6 +791,24 @@
 - Interactive mobile screenshot verification remains pending because the Browser plugin's
   required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Aligned Collapsed Mobile Controls
+
+- Reorganized the collapsed mobile header controls into a single sticky rail: `Touch color
+  studio` occupies the available left space while the cross-mark `Menu` reveal action forms a
+  matched-height capsule on the right.
+- Kept the ordinary expanded header and studio arrangement unchanged.
+- Added narrow-width wrapping constraints for the studio title so the menu reveal action
+  remains reachable on small phones.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Server-rendered mobile/desktop structure and source/CSS collapsed-rail assertions passed.
+- Interactive mobile screenshot verification remains pending because the Browser plugin's
+  required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

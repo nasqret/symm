@@ -386,3 +386,13 @@ Run this checklist on every implementation cycle.
 - [x] Verified server-rendered SVG layer boundaries for edge-free and layered states.
 - [ ] Complete interactive mobile seam verification when the Browser interface is exposed in
   the session.
+
+## Cycle Record: 2026-05-26 Aligned Collapsed Mobile Controls
+
+- [x] Grouped the collapsed mobile Touch color studio and cross-mark menu reveal control into
+  one sticky, matched-height rail.
+- [x] Preserved the expanded mobile header layout and added narrow-width wrapping protection.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified server-rendered mobile/desktop control boundaries and collapsed-rail selectors.
+- [ ] Complete interactive mobile alignment verification when the Browser interface is exposed
+  in the session.

@@ -103,6 +103,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Keep mobile chrome collapsible independently: hiding document actions or color/analysis
   panels should leave a compact reveal control and maximize the tessellation surface without
   deleting desktop guidance/status UI.
+- When the mobile document header is collapsed, group the Touch color studio and cross-mark
+  menu reveal control in one sticky rail with equal-height capsules. Let the studio title wrap
+  at very narrow widths instead of displacing the reveal control.
 - Pinch zoom on a paintable SVG canvas must track two pointer IDs and suppress tap/swipe paint
   completion for the entire gesture. Zoom by narrowing the view box around the pinch anchor;
   render the normal view box whenever touch zoom is disabled, and keep export serialization
