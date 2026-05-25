@@ -940,6 +940,27 @@
 - Interactive compact-selector screenshots remain pending because the Browser plugin's
   required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Default Compact Mobile Entry
+
+- Changed phone-sized editor initialization so both the Unit Cell Designer menu and the
+  foldable color/analysis panels begin collapsed, immediately showing the compact canvas
+  controls and expanded drawing space.
+- Applied the same collapsed entry when an active desktop editor crosses into mobile width;
+  returning to desktop restores the ordinary expanded desktop controls.
+- Kept the cog-only clean drawing state separate and opt-in, so the compact entry still
+  exposes menu/panel restoration and editing actions.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Vite production assets generated successfully.
+- Source-state checks passed: mobile first render initializes `mobileMenuVisible` and
+  `mobilePanelsVisible` to false, desktop initializes them to true, and responsive entry into
+  mobile applies the same collapsed state without setting `mobileInterfaceHidden` true.
+- Interactive mobile entry screenshots remain pending because the Browser plugin's required
+  execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

@@ -73,6 +73,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    its pale restore affordance while retaining the prior fold state. Implemented on 2026-05-26.
 8. Collapse the hidden-mode lattice and group choices into one shallow two-selector capsule
    to reduce obstruction of the active tiling. Implemented on 2026-05-26.
+9. Start phone-sized editor sessions in the compact state with both menu layers collapsed,
+   immediately exposing the minimally obstructive drawing view. Implemented on 2026-05-26.
 
 ## Architecture Decisions
 
@@ -116,6 +118,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
   lone pale restore cog must remain reachable over the drawing surface.
 - Hidden-mode lattice and group selection use one horizontal capsule rather than stacked
   cards so essential setup remains available without occupying as much of the active field.
+- Mobile editor sessions initialize with the document menu and the panel layer collapsed;
+  compact reveal affordances remain present, while cog-only clean view still requires a tap.
 - GitHub Pages publishes the repository application under `/symm/`, so the Vite production
   base path is part of deployment correctness.
 

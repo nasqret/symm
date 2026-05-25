@@ -472,3 +472,14 @@ Run this checklist on every implementation cycle.
   and compatible-group action handlers.
 - [ ] Complete interactive compact-selector screenshot verification when the Browser
   interface is exposed in the session.
+
+## Cycle Record: 2026-05-26 Default Compact Mobile Entry
+
+- [x] Initialized phone-sized editor sessions with the top document menu and foldable panel
+  layer collapsed.
+- [x] Applied the same compact reset on desktop-to-mobile responsive transitions, while
+  preserving the separately selected cog-only clean-view mode as opt-in.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified mobile/desktop state initialization and responsive-entry wiring in source.
+- [ ] Complete interactive mobile entry-state screenshot verification when the Browser
+  interface is exposed in the session.

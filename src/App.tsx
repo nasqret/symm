@@ -147,8 +147,8 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   const [showStartOverlay, setShowStartOverlay] = useState(
     () => window.localStorage.getItem(INTRO_DISMISSED_KEY) !== "true",
   );
-  const [mobileMenuVisible, setMobileMenuVisible] = useState(true);
-  const [mobilePanelsVisible, setMobilePanelsVisible] = useState(true);
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(() => !mobileMode);
+  const [mobilePanelsVisible, setMobilePanelsVisible] = useState(() => !mobileMode);
   const [mobileInterfaceHidden, setMobileInterfaceHidden] = useState(false);
   const [showMobileSymmetryGenerators, setShowMobileSymmetryGenerators] = useState(false);
   const [display, toggleDisplay] = useDisplaySettings(mobileMode);
@@ -255,6 +255,9 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
       setTool("color");
       setSelectedEdgeId(null);
       setEdgeStart(null);
+      setMobileMenuVisible(false);
+      setMobilePanelsVisible(false);
+      setMobileInterfaceHidden(false);
     } else {
       setMobileMenuVisible(true);
       setMobilePanelsVisible(true);

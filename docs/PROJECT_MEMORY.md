@@ -134,6 +134,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - In the hidden mobile editing state, place lattice and compatible group selects in one
   horizontal translucent capsule rather than separate stacked cards; retain their accessible
   labels while minimizing tiling occlusion.
+- Initialize mobile editor entry and desktop-to-mobile transitions in the compact collapsed
+  menu/panel state. Do not initialize directly in the cog-only clean view, since users still
+  need visible restoration and setup affordances on arrival.
 
 ## Validation Debt
 

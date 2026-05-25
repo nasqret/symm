@@ -20,7 +20,8 @@ The editor supports:
 - foldable construction controls and lattice-specific enabled preset choices;
 - a mobile touch mode with translucent foldable icon controls, prepared-motif recoloring,
   symmetry inspection and export; it begins in face-only display with edges and vertices
-  hidden, supports collapsible menu/panels, pinch zoom and a press-and-hold tile color roller,
+  hidden and with its menus collapsed into the compact working view, supports reopening
+  panels, pinch zoom and a press-and-hold tile color roller,
   preserves the active unit-cell frame, and provides a combined lattice/group selector capsule
   with a tappable live-symmetry generator view when the panels are fully hidden; a bottom canvas dock keeps
   preview, undo and redo reachable, with a cog toggle for a clean drawing-only view that
