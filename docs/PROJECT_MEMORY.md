@@ -45,6 +45,11 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   windows through browser storage. When exports serialize the live preview SVG, conditionally
   omitting hidden edge/vertex groups yields the same face-only result in SVG and PNG without a
   separate export filter.
+- For high-intensity teaching animations, derive alternate colors from complete face orbits of
+  the target group and confirm the colored classification before rendering. This permits a vivid
+  presentation layer without replacing the deliberately minimal editable preset witnesses.
+- Label any incomplete subgroup visualization as guided routes unless every plane-group
+  inclusion and conventional-setting relationship has been certified.
 
 ## Validation Debt
 

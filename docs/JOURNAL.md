@@ -217,6 +217,37 @@
   groups. Editor, preview and demo showed no horizontal overflow at `390 x 844`; browser
   page-error checks reported no application errors.
 
+## 2026-05-25: Immersive Guided Subgroup Explorer
+
+- Added a navigable `Subgroup position` graph for the three guided descent routes already used
+  by the animation; the active node and traversed inclusions follow playback and manual node
+  selection.
+- Replaced sparse demo-only rendering with an optional, default-enabled `Chromatic field`.
+  Each stage colors complete face orbits under the required group operations and checks its
+  resulting colored classification before it is displayed; editable presets remain minimal.
+- Added luminous branch-specific styling, glow and slow spectrum/atmospheric motion to the
+  presentation canvas, while retaining a source-motif toggle and the existing layer controls.
+- Corrected reduced-motion handling so continuous ambient/chromatic effects and active-node
+  pulsing stop instead of being reduced to rapidly repeating animations.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered graph and pattern check: the hexagonal route displayed an active `p6` node,
+  highlighted its traversed edge and rendered nine luminous face orbits reporting colored
+  symmetry `p6`.
+- Graph sweep: each displayed node (`p6m`, `p6`, `p3`, `p4m`, `p4`, `p2`, `cmm`, `pmm`,
+  `pm`, `p1`) activated successfully and its chromatic field reported the same colored
+  symmetry symbol.
+- Interaction checks: selecting nodes switched route and graph position; `Chromatic field`
+  toggled back to source motif colors; fast playback advanced the active node; ambient mode
+  retained the subdued graph overlay and live stage caption.
+- Responsive/accessibility checks: the enhanced demo had no horizontal overflow at
+  `1536 x 1024` or `390 x 844`; with `prefers-reduced-motion: reduce`, continuous canvas,
+  aura and node-pulse animation names resolved to `none`. Browser page-error checks reported no
+  application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

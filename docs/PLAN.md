@@ -38,7 +38,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    export and low/medium/high PNG output implemented on 2026-05-25, together with persistent
    edge/vertex layer hiding for face-only editor and export views; structured report remains.
 4. Package sharable examples and a teaching tour of all groups. Ambient preview and animated
-   subgroup-exploration branches implemented on 2026-05-25.
+   subgroup-exploration branches implemented on 2026-05-25; the explorer now also renders its
+   guided subgroup-route graph and symmetry-preserving chromatic presentation fields.
 
 ## Architecture Decisions
 
@@ -55,6 +56,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Edge and vertex visibility is presentation state stored independently from motif JSON and
   shared by editor, preview/export and animated presentation windows; omitted SVG groups stay
   omitted when the preview is serialized or rasterized.
+- Explorer-only chromatic fields color complete face orbits under a stage's required operations
+  and verify the resulting colored symbol before display. The displayed graph is explicitly a
+  set of guided inclusion routes, not a complete certified subgroup lattice for all 17 groups.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

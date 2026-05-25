@@ -27,6 +27,7 @@ interface UnitCellCanvasProps {
   selectedEdgeId?: string | null;
   selectedSymmetryElement?: SymmetryElement | null;
   preview?: boolean;
+  immersive?: boolean;
   showEdges?: boolean;
   showVertices?: boolean;
   onAddVertex?: (point: FractionalPoint) => void;
@@ -137,6 +138,7 @@ export function UnitCellCanvas({
   selectedEdgeId,
   selectedSymmetryElement,
   preview = false,
+  immersive = false,
   showEdges = true,
   showVertices = true,
   onAddVertex,
@@ -172,7 +174,9 @@ export function UnitCellCanvas({
   return (
     <svg
       ref={svgRef}
-      className={`unit-canvas${preview ? " unit-canvas--preview" : ""}`}
+      className={`unit-canvas${preview ? " unit-canvas--preview" : ""}${
+        immersive ? " unit-canvas--immersive" : ""
+      }`}
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       aria-label="Periodic unit-cell drawing canvas"
       onPointerMove={(event) => onCoordinate?.(eventPoint(event))}
@@ -212,7 +216,7 @@ export function UnitCellCanvas({
                   preview ? " periodic-face--preview" : central ? " periodic-face--active" : ""
                 }${
                   tool === "color" ? " periodic-face--paintable" : ""
-                }`}
+                }${immersive ? " periodic-face--immersive" : ""}`}
                 d={facePath(face, tile, transform)}
                 fillRule="evenodd"
                 fill={faceColor(document, face.signature)}

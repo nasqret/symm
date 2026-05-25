@@ -94,3 +94,12 @@ Run this checklist on every implementation cycle.
 - [x] Verified live preview synchronization and downloaded face-only SVG/PNG output.
 - [x] Ran `npm run typecheck`, `npm run build`, rendered desktop checks and mobile no-overflow
   checks without browser page errors.
+
+## Cycle Record: 2026-05-25 Immersive Guided Subgroup Explorer
+
+- [x] Added a navigable guided-route graph with current-node and traversed-inclusion states.
+- [x] Added cached, group-invariant chromatic presentation fields with classification fallback.
+- [x] Added immersive styling, source/chromatic switching, ambient integration and corrected
+  reduced-motion behavior.
+- [x] Verified all displayed graph nodes, playback and mode controls, desktop/mobile layout,
+  reduced-motion rendering, `npm run typecheck` and `npm run build`.
