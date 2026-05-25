@@ -667,6 +667,25 @@
 - Interactive screenshot verification remains pending because the Browser plugin's required
   execution interface was not exposed in this session.
 
+## 2026-05-26: Stable Paint Hover Rendering
+
+- Diagnosed transient paint-hover seams as a separate SVG compositing problem: each hovered
+  face previously applied a brightness filter and an opacity change against adjacent faces.
+- Removed the per-face brightness filter and retained opacity emphasis only while motif edges
+  are visible; in edge-free rendering, hover keeps the exact settled face paint and uses the
+  crosshair cursor as its cue.
+- Kept the established stroke-free `shape-rendering="crispEdges"` presentation path intact for
+  hidden-edge editor, preview and exported views.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; the emitted stylesheet includes the edge-aware hover selector and
+  no paintable-face brightness filter, while Pages asset paths remain below `/symm/assets/`.
+- Interactive hover screenshot verification remains pending because the Browser plugin's
+  required execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

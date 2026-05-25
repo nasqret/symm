@@ -86,6 +86,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   are hidden, but a same-fill overlap stroke becomes a visible bezel between different colors.
   In edge-free rendering, apply serialized `shape-rendering="crispEdges"` on the face group
   and emit no face stroke; this is retained by SVG serialization and PNG rasterization.
+- Avoid SVG `filter` effects on paintable face hover states: compositing a hovered shape
+  independently can expose a transient anti-aliased edge. In edge-free mode, preserve the
+  face opacity on hover and rely on the paint cursor as the interaction cue.
 - Initialize Preserve symmetry from the detected group of the document loaded into a new
   editor session. Keep the control switchable because deliberate symmetry-breaking experiments
   still require a free-editing mode.

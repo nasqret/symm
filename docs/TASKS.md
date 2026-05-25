@@ -319,3 +319,13 @@ Run this checklist on every implementation cycle.
 - [x] Made `nasqret/symm` public, enabled workflow-backed GitHub Pages through administrator
   configuration after the Actions token could not provision it, reran the deployment
   successfully and confirmed that the published app responds with HTTP `200`.
+
+## Cycle Record: 2026-05-26 Stable Paint Hover Rendering
+
+- [x] Removed the SVG brightness filter from paintable-face hover rendering.
+- [x] Kept the hover opacity cue only where visible motif edges cover face boundaries; hidden
+  edge mode leaves face opacity stable while hovering.
+- [x] Preserved stroke-free crisp-edge rendering for face-only editor, preview and export use.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete interactive hover screenshot verification when the Browser interface is exposed
+  in the session.

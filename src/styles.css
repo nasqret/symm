@@ -793,7 +793,7 @@ kbd {
 .periodic-face {
   stroke: none;
   opacity: 0.38;
-  transition: opacity 120ms ease, filter 120ms ease;
+  transition: opacity 120ms ease;
 }
 
 .periodic-face--active {
@@ -804,10 +804,12 @@ kbd {
   opacity: 0.92;
 }
 
-.periodic-face--paintable:hover {
-  filter: brightness(0.91);
-  opacity: 1;
+.periodic-face--paintable {
   cursor: crosshair;
+}
+
+.canvas-faces:not(.canvas-faces--edge-free) .periodic-face--paintable:hover {
+  opacity: 1;
 }
 
 .motif-edge {
