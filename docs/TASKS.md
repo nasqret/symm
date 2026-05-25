@@ -238,3 +238,12 @@ Run this checklist on every implementation cycle.
   rendered by the Face Color foldout.
 - [ ] Complete rendered foldout-content verification when the browser validation interface is
   available in the session.
+
+## Cycle Record: 2026-05-25 Default Color Face Tool
+
+- [x] Set the initial Construct selection to Color face so new editor sessions start directly
+  in the recoloring workflow.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Confirmed by source inspection that the editor's initial `EditorTool` state is `color`.
+- [ ] Complete rendered initial-tool verification when the browser validation interface is
+  available in the session.

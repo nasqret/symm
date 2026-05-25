@@ -536,6 +536,20 @@
 - Rendered foldout-content verification remains pending because the browser validation
   interface was unavailable in this session.
 
+## 2026-05-25: Default Color Face Construction Tool
+
+- Changed the editor's initial Construct selection from Select / delete to Color face so the
+  default workflow begins by recoloring the tiling under the active symmetry lock.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Source inspection confirms that the editor's initial `EditorTool` state is now `color`.
+- Rendered initial-tool verification remains pending because the browser validation interface
+  was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

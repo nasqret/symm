@@ -17,8 +17,8 @@ The editor supports:
   neighboring cell;
 - detected bounded face cycles including nested interior regions, palette coloring/clearing,
   double-click vertex/edge deletion with merge coloring, undo/redo, JSON export/import, and
-  autosave; palette colors can be selected with keys `1`-`7` or cycled by swiping vertically
-  on the canvas in Color face mode;
+  autosave; the editor begins in Color face mode, and palette colors can be selected with keys
+  `1`-`7` or cycled by swiping vertically on the canvas in Color face mode;
 - a separate repeated-tiling preview window;
 - persistent display switches for hiding edges and vertices in the editor, preview, animated
   presentation and exported images, including a face-only output mode;

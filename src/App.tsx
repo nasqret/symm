@@ -103,7 +103,7 @@ function Editor() {
   const { document, canUndo, canRedo, commit, replace, undo, redo } = useDocumentHistory(
     initialDocument,
   );
-  const [tool, setTool] = useState<EditorTool>("select");
+  const [tool, setTool] = useState<EditorTool>("color");
   const [selectedColor, setSelectedColor] = useState(EDITOR_PALETTE[0]);
   const [edgeStart, setEdgeStart] = useState<{
     vertexId: string;

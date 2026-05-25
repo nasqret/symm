@@ -91,6 +91,8 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Introductory UI should not disrupt an active design session: persist dismissal of the
   first-open guide locally, provide a Guide reopen action, and open the About page separately
   from the editor's history-bearing window.
+- Start the editor in Color face mode because initial exploration is principally recoloring
+  under the active symmetry lock; topology tools remain immediately selectable when needed.
 
 ## Validation Debt
 
