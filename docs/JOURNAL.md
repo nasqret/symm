@@ -408,6 +408,26 @@
 - Rendered inspector verification remains pending because the browser validation interface was
   unavailable in this session.
 
+## 2026-05-25: Compact Editor Controls And Lattice-Specific Presets
+
+- Converted the five construction sections in the left tools panel to independently foldable
+  disclosure controls. The lattice selector starts visible while optional controls start
+  folded to preserve vertical working space.
+- Restricted enabled right-panel preset buttons to motifs with the selected canonical lattice
+  family; incompatible presets remain visible but disabled and visibly gray.
+- Removed the fractional-cursor footer and the pointer tracking callbacks that were used only
+  for that unexplained readout.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- Source scan confirmed that `coordinate-readout`, `onCoordinate` and editor pointer state no
+  longer appear; remaining fractional-point references implement motif geometry.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered folding and disabled-preset interaction checks remain pending because the browser
+  validation interface was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

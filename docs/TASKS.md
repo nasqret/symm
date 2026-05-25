@@ -163,3 +163,12 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered inspector verification when the browser validation interface is
   available in the session.
+
+## Cycle Record: 2026-05-25 Compact Editor Controls
+
+- [x] Made every left-panel construction section foldable with its state retained during edits.
+- [x] Grayed and disabled plane-group presets outside the selected canonical lattice family.
+- [x] Removed the unexplained fractional-cursor readout and its unused tracking path.
+- [x] Ran `git diff --check`, cursor-path source checks, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered folding/preset-button interaction verification when the browser
+  validation interface is available in the session.

@@ -3,7 +3,6 @@ import type {
   AffineOperation,
   CellDocument,
   EditorTool,
-  FractionalPoint,
   SymmetryResult,
   TileOffset,
 } from "./types";
@@ -104,7 +103,6 @@ function Editor() {
     tile: TileOffset;
   } | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-  const [pointer, setPointer] = useState<FractionalPoint | null>(null);
   const [notice, setNotice] = useState<string>("Autosaved locally");
   const [selectedSymmetryElementId, setSelectedSymmetryElementId] = useState<string | null>(null);
   const [symmetryLock, setSymmetryLock] = useState<SymmetryLock | null>(null);
@@ -341,7 +339,6 @@ function Editor() {
             selectedSymmetryElement={selectedSymmetryElement}
             showEdges={display.showEdges}
             showVertices={display.showVertices}
-            onCoordinate={setPointer}
             onAddVertex={(point) => {
               commitEdit(
                 symmetryLock
@@ -426,7 +423,6 @@ function Editor() {
         <Inspector
           document={document}
           symmetry={symmetry}
-          pointer={pointer}
           selectedSymmetryElementId={selectedSymmetryElementId}
           onSelectSymmetryElement={(elementId) =>
             setSelectedSymmetryElementId((current) =>

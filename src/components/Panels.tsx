@@ -1,7 +1,8 @@
+import { useState } from "react";
+import type { ReactNode } from "react";
 import type {
   CellDocument,
   EditorTool,
-  FractionalPoint,
   LatticeType,
   SymmetryResult,
 } from "../types";
@@ -40,6 +41,29 @@ const TOOLS: { id: EditorTool; name: string; shortcut: string }[] = [
   { id: "color", name: "Color face", shortcut: "C" },
 ];
 
+interface FoldSectionProps {
+  title: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}
+
+function FoldSection({ title, defaultOpen = false, children }: FoldSectionProps) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <details
+      className="tool-fold"
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary>
+        <h2>{title}</h2>
+        <span aria-hidden="true" />
+      </summary>
+      <div className="tool-fold-content">{children}</div>
+    </details>
+  );
+}
+
 export function ToolPanel({
   latticeType,
   tool,
@@ -56,8 +80,7 @@ export function ToolPanel({
 }: ToolPanelProps) {
   return (
     <aside className="panel tools-panel" aria-label="Editor tools">
-      <section>
-        <h2>Lattice</h2>
+      <FoldSection title="Lattice" defaultOpen>
         <div className="lattice-list">
           {(["generic", "square", "rectangular", "hexagonal"] as const).map((entry) => (
             <button
@@ -71,9 +94,8 @@ export function ToolPanel({
             </button>
           ))}
         </div>
-      </section>
-      <section>
-        <h2>Construct</h2>
+      </FoldSection>
+      <FoldSection title="Construct">
         <div className="tool-list">
           {TOOLS.map((entry) => (
             <button
@@ -87,9 +109,8 @@ export function ToolPanel({
             </button>
           ))}
         </div>
-      </section>
-      <section>
-        <h2>Face Color</h2>
+      </FoldSection>
+      <FoldSection title="Face Color">
         <div className="palette" aria-label="Color palette">
           {EDITOR_PALETTE.map((color) => (
             <button
@@ -114,9 +135,8 @@ export function ToolPanel({
           Double-clicking an edge in Select / delete mode uses the selected swatch for the merged
           face.
         </p>
-      </section>
-      <section>
-        <h2>Display</h2>
+      </FoldSection>
+      <FoldSection title="Display">
         <div className="visibility-list" role="group" aria-label="Visible motif layers">
           <button
             type="button"
@@ -141,9 +161,8 @@ export function ToolPanel({
           Hide both motif layers for a face-only pattern view. The same choices apply to preview
           exports.
         </p>
-      </section>
-      <section>
-        <h2>Symmetric Editing</h2>
+      </FoldSection>
+      <FoldSection title="Symmetric Editing">
         <button
           type="button"
           className={symmetryLock ? "symmetry-lock is-selected" : "symmetry-lock"}
@@ -157,7 +176,7 @@ export function ToolPanel({
           Motif and color edits propagate through the locked group operations; edits that would
           change the exact group are blocked.
         </p>
-      </section>
+      </FoldSection>
     </aside>
   );
 }
@@ -165,7 +184,6 @@ export function ToolPanel({
 interface InspectorProps {
   document: CellDocument;
   symmetry: SymmetryResult;
-  pointer: FractionalPoint | null;
   selectedSymmetryElementId: string | null;
   onSelectSymmetryElement: (elementId: string) => void;
   onLoadPreset: (symbol: string) => void;
@@ -174,7 +192,6 @@ interface InspectorProps {
 export function Inspector({
   document,
   symmetry,
-  pointer,
   selectedSymmetryElementId,
   onSelectSymmetryElement,
   onLoadPreset,
@@ -213,26 +230,34 @@ export function Inspector({
       </section>
       <section className="presets-block">
         <h2>17 Plane Groups</h2>
+        <p className="minor preset-context">
+          Canonical presets for the {document.lattice.type} lattice. Coloring can lower the
+          detected symmetry further.
+        </p>
         <div className="preset-grid">
-          {WALLPAPER_GROUPS.map((group) => (
-            <button
-              type="button"
-              key={group.symbol}
-              className={document.presetGroup === group.symbol ? "preset is-selected" : "preset"}
-              onClick={() => onLoadPreset(group.symbol)}
-              title={group.feature}
-            >
-              {group.symbol}
-            </button>
-          ))}
+          {WALLPAPER_GROUPS.map((group) => {
+            const compatible = group.latticeType === document.lattice.type;
+            return (
+              <button
+                type="button"
+                key={group.symbol}
+                className={
+                  document.presetGroup === group.symbol ? "preset is-selected" : "preset"
+                }
+                disabled={!compatible}
+                onClick={() => onLoadPreset(group.symbol)}
+                title={
+                  compatible
+                    ? group.feature
+                    : `Not a ${document.lattice.type} lattice preset.`
+                }
+              >
+                {group.symbol}
+              </button>
+            );
+          })}
         </div>
       </section>
-      <footer className="coordinate-readout">
-        fractional cursor{" "}
-        <code>
-          {pointer ? `${pointer.u.toFixed(3)}, ${pointer.v.toFixed(3)}` : "-, -"}
-        </code>
-      </footer>
     </aside>
   );
 }

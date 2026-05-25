@@ -205,7 +205,7 @@ code {
   color: #e5ebea;
 }
 
-.tools-panel section + section {
+.tool-fold + .tool-fold {
   border-top: 1px solid #31464d;
   margin-top: 25px;
   padding-top: 24px;
@@ -213,6 +213,39 @@ code {
 
 .tools-panel h2 {
   color: #9baaad;
+}
+
+.tool-fold summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+}
+
+.tool-fold summary::-webkit-details-marker {
+  display: none;
+}
+
+.tool-fold summary h2 {
+  margin-bottom: 0;
+}
+
+.tool-fold summary span {
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid #9baaad;
+  border-bottom: 1.5px solid #9baaad;
+  transform: rotate(45deg);
+  transition: transform 120ms ease;
+}
+
+.tool-fold[open] summary span {
+  transform: rotate(225deg);
+}
+
+.tool-fold-content {
+  margin-top: 14px;
 }
 
 .lattice-list,
@@ -763,12 +796,17 @@ kbd {
   background: var(--teal-soft);
 }
 
-.coordinate-readout {
-  padding: 15px 21px;
-  color: var(--muted);
-  font-size: 0.69rem;
-  display: flex;
-  justify-content: space-between;
+.preset-context {
+  margin: -5px 0 14px;
+}
+
+.preset:disabled,
+.preset:disabled:hover {
+  cursor: not-allowed;
+  opacity: 0.36;
+  background: #f2efe8;
+  border-color: var(--line);
+  color: #69706d;
 }
 
 .preview-page {
@@ -1738,7 +1776,7 @@ kbd {
     gap: 20px;
   }
 
-  .tools-panel section + section {
+  .tool-fold + .tool-fold {
     border-top: 0;
     margin-top: 0;
     padding-top: 0;
@@ -1753,10 +1791,6 @@ kbd {
     border-top: 1px solid var(--line);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-  }
-
-  .coordinate-readout {
-    grid-column: 1 / -1;
   }
 
   .preview-header {

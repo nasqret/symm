@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import type { CSSProperties } from "react";
 import type {
   CellDocument,
@@ -50,7 +50,6 @@ interface UnitCellCanvasProps {
   onSelectEdge?: (edgeId: string) => void;
   onDeleteEdge?: (edgeId: string) => void;
   onDeleteVertex?: (vertexId: string) => void;
-  onCoordinate?: (point: FractionalPoint | null) => void;
 }
 
 export function displayTransform(lattice: Lattice, displayScaleOverride?: number): {
@@ -82,19 +81,6 @@ function toDisplay(
   return {
     x: transform.origin.x + transform.a.x * point.u + transform.b.x * point.v,
     y: transform.origin.y + transform.a.y * point.u + transform.b.y * point.v,
-  };
-}
-
-function fromDisplay(
-  point: { x: number; y: number },
-  transform: ReturnType<typeof displayTransform>,
-): FractionalPoint {
-  const x = point.x - transform.origin.x;
-  const y = point.y - transform.origin.y;
-  const det = transform.a.x * transform.b.y - transform.a.y * transform.b.x;
-  return {
-    u: (x * transform.b.y - y * transform.b.x) / det,
-    v: (transform.a.x * y - transform.a.y * x) / det,
   };
 }
 
@@ -167,9 +153,7 @@ export function UnitCellCanvas({
   onSelectEdge,
   onDeleteEdge,
   onDeleteVertex,
-  onCoordinate,
 }: UnitCellCanvasProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
   const faces = useMemo(() => extractFaces(document), [document]);
   const displayLattice = latticeOverride ?? document.lattice;
   const transform = useMemo(
@@ -183,28 +167,13 @@ export function UnitCellCanvas({
   const displayedTiles = tiles(preview ? (previewTileRange ?? 4) : 2);
   const edgeTiles = tiles(preview ? (previewTileRange ?? 4) : 1);
 
-  const eventPoint = (event: React.PointerEvent<SVGSVGElement>): FractionalPoint => {
-    const bounds = svgRef.current?.getBoundingClientRect();
-    if (!bounds) {
-      return { u: 0, v: 0 };
-    }
-    const display = {
-      x: ((event.clientX - bounds.left) / bounds.width) * WIDTH,
-      y: ((event.clientY - bounds.top) / bounds.height) * HEIGHT,
-    };
-    return fromDisplay(display, transform);
-  };
-
   return (
     <svg
-      ref={svgRef}
       className={`unit-canvas${preview ? " unit-canvas--preview" : ""}${
         immersive ? " unit-canvas--immersive" : ""
       }`}
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       aria-label="Periodic unit-cell drawing canvas"
-      onPointerMove={(event) => onCoordinate?.(eventPoint(event))}
-      onPointerLeave={() => onCoordinate?.(null)}
     >
       <defs>
         <marker id="symmetry-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">

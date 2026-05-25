@@ -12,6 +12,7 @@ npm run dev
 The editor supports:
 
 - oblique/generic, rectangular, square, and hexagonal translation lattices;
+- foldable construction controls and lattice-specific enabled preset choices;
 - grid-constrained periodic vertices and edges, including edges whose endpoint is in a
   neighboring cell;
 - detected bounded face cycles including nested interior regions, palette coloring/clearing,
