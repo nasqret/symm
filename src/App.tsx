@@ -136,7 +136,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   const [showStartOverlay, setShowStartOverlay] = useState(
     () => window.localStorage.getItem(INTRO_DISMISSED_KEY) !== "true",
   );
-  const [display, toggleDisplay] = useDisplaySettings();
+  const [display, toggleDisplay] = useDisplaySettings(mobileMode);
   const fileInput = useRef<HTMLInputElement>(null);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
   const selectedSymmetryElement =

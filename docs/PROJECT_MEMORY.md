@@ -97,6 +97,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   from the editor's history-bearing window.
 - Start the editor in Color face mode because initial exploration is principally recoloring
   under the active symmetry lock; topology tools remain immediately selectable when needed.
+- Keep mobile display-layer preferences separate from desktop presentation preferences. The
+  touch recoloring surface should begin face-only with edges and vertices hidden, then preserve
+  any explicit mobile visibility toggles across editor and preview windows.
 
 ## Validation Debt
 

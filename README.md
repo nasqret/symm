@@ -19,8 +19,8 @@ The editor supports:
 - oblique/generic, rectangular, square, and hexagonal translation lattices;
 - foldable construction controls and lattice-specific enabled preset choices;
 - a mobile touch mode with translucent foldable icon controls, prepared-motif recoloring,
-  symmetry inspection and export; topology editing and subgroup exploration are disabled on
-  small screens;
+  symmetry inspection and export; it begins in face-only display with edges and vertices
+  hidden, and topology editing and subgroup exploration are disabled on small screens;
 - grid-constrained periodic vertices and edges, including edges whose endpoint is in a
   neighboring cell;
 - detected bounded face cycles including nested interior regions, palette coloring/clearing,

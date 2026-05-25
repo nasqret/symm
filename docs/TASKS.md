@@ -337,3 +337,13 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete interactive mobile About verification when the Browser interface is exposed in
   the session.
+
+## Cycle Record: 2026-05-26 Face-Only Mobile Default
+
+- [x] Added independent mobile layer preferences with edges and vertices hidden initially.
+- [x] Applied mobile preferences consistently in the editor and clean preview/export surface.
+- [x] Verified fresh mobile render omits edge and vertex groups, stored mobile toggles restore,
+  and fresh desktop rendering remains layered.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete interactive mobile display verification when the Browser interface is exposed
+  in the session.

@@ -701,6 +701,26 @@
 - Interactive mobile About screenshot verification remains pending because the Browser
   plugin's required execution interface was not exposed in this session.
 
+## 2026-05-26: Face-Only Mobile Default
+
+- Added a dedicated mobile display-preference scope so a phone session does not inherit the
+  desktop default layer visibility.
+- Set fresh mobile editor and preview sessions to hide edges and vertices, giving the
+  recoloring surface a clean face-only starting view.
+- Preserved explicit mobile layer toggles using the mobile preference key; desktop continues
+  to start with its original visible edge and vertex layers.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- Vite server-rendered display checks passed: fresh mobile editor and preview contain no edge
+  or vertex SVG groups, stored mobile layer choices are restored, and fresh desktop still
+  includes both groups.
+- `npm run build`: passed.
+- Interactive mobile screenshot verification remains pending because the Browser plugin's
+  required execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

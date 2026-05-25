@@ -29,7 +29,7 @@ export function PreviewWindow({ mobileMode = false }: { mobileMode?: boolean }) 
   const [document, setDocument] = useState(readStoredDocument);
   const [ambient, setAmbient] = useState(false);
   const [notice, setNotice] = useState("Ready to export");
-  const [display, toggleDisplay] = useDisplaySettings();
+  const [display, toggleDisplay] = useDisplaySettings(mobileMode);
   const drawing = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const sync = (event: StorageEvent) => {
