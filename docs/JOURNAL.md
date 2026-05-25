@@ -833,6 +833,32 @@
 - Interactive long-press and slide screenshot verification remains pending because the Browser
   plugin's required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Hidden-Mode Mobile Canvas Controls And Frame Repair
+
+- Traced the disappearing mobile unit-cell frame to face-only rendering: the seam-removal
+  change correctly omitted repeated cell boundaries but also hid the editor's single active
+  fundamental-cell outline after a lattice change.
+- Restored only the active editor outline while leaving repeated cell boundaries and motif
+  edges suppressed, preserving the edge-free tiling field without losing lattice orientation.
+- Added two compact drawing-window selectors when both mobile panel sets are hidden: lattice
+  choice and the compatible starting symmetry-group presets use the same document mutations
+  as the panel controls.
+- Added an upper-right live symmetry control in that hidden state; tapping the detected group
+  toggles simultaneous rendering of its reported generators, while preset/lattice changes
+  close the overlay state.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Vite production assets generated successfully.
+- Source checks passed: the active outline is no longer conditional on `showEdges`, repeated
+  construction boundaries remain conditional on `showEdges`, quick selectors are conditioned
+  on the fully hidden mobile state, and the generator toggle passes the detected element list
+  into the SVG canvas.
+- Interactive mobile screenshot verification remains pending because the Browser plugin's
+  required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

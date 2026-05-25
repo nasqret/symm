@@ -410,3 +410,17 @@ Run this checklist on every implementation cycle.
 - [x] Verified mobile/desktop wiring boundaries and source gesture/styling assertions.
 - [ ] Complete interactive long-press slide verification when the Browser interface is exposed
   in the session.
+
+## Cycle Record: 2026-05-26 Hidden-Mode Mobile Canvas Controls
+
+- [x] Restored the single active unit-cell frame in face-only editing without restoring
+  repeated construction-cell boundary lines.
+- [x] Added fully collapsed mobile in-canvas selectors for lattice type and compatible starter
+  group presets.
+- [x] Added a current-symmetry button in the canvas that toggles all detected generator
+  overlays and clears stale one-generator selections.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified source boundaries for frame rendering, collapsed-only controls and generator
+  overlay wiring.
+- [ ] Complete interactive mobile selection/tap screenshot verification when the Browser
+  interface is exposed in the session.

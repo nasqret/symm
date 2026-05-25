@@ -3,10 +3,15 @@ import type {
   AffineOperation,
   CellDocument,
   EditorTool,
+  LatticeType,
   SymmetryResult,
   TileOffset,
 } from "./types";
-import { buildPresetDocument, operationClosure } from "./data/wallpaperGroups";
+import {
+  buildPresetDocument,
+  operationClosure,
+  WALLPAPER_GROUPS,
+} from "./data/wallpaperGroups";
 import { faceColor, FACE_BACKGROUND_COLOR } from "./math/periodicGraph";
 import { computeSymmetry } from "./math/symmetry";
 import {
@@ -37,6 +42,12 @@ import "./styles.css";
 
 const INTRO_DISMISSED_KEY = "unit-cell-designer.intro-dismissed.v1";
 const MOBILE_EDITOR_QUERY = "(max-width: 680px)";
+const LATTICE_TYPES: readonly LatticeType[] = [
+  "generic",
+  "square",
+  "rectangular",
+  "hexagonal",
+];
 
 interface SymmetryLock {
   symbol: string;
@@ -138,11 +149,28 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   );
   const [mobileMenuVisible, setMobileMenuVisible] = useState(true);
   const [mobilePanelsVisible, setMobilePanelsVisible] = useState(true);
+  const [showMobileSymmetryGenerators, setShowMobileSymmetryGenerators] = useState(false);
   const [display, toggleDisplay] = useDisplaySettings(mobileMode);
   const fileInput = useRef<HTMLInputElement>(null);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
   const selectedSymmetryElement =
     symmetry.elements.find((element) => element.id === selectedSymmetryElementId) ?? null;
+  const mobileCanvasControlsVisible =
+    mobileMode && !mobilePanelsVisible && !mobileMenuVisible;
+  const compatiblePresetGroups = WALLPAPER_GROUPS.filter(
+    (group) => group.latticeType === document.lattice.type,
+  );
+  const selectedPresetGroup = compatiblePresetGroups.some(
+    (group) => group.symbol === document.presetGroup,
+  )
+    ? document.presetGroup
+    : "";
+  const visibleSymmetryElements =
+    mobileCanvasControlsVisible && showMobileSymmetryGenerators
+      ? symmetry.elements
+      : selectedSymmetryElement
+        ? [selectedSymmetryElement]
+        : [];
   const dismissStartOverlay = useCallback(() => {
     window.localStorage.setItem(INTRO_DISMISSED_KEY, "true");
     setShowStartOverlay(false);
@@ -188,6 +216,30 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
     [commit, symmetryLock],
   );
 
+  const changeEditorLattice = (lattice: LatticeType) => {
+    const changed = changeLattice(document, lattice);
+    commit(changed);
+    if (symmetryLock) {
+      setSymmetryLock(createSymmetryLock(computeSymmetry(changed)));
+    }
+    setSelectedSymmetryElementId(null);
+    setShowMobileSymmetryGenerators(false);
+    setNotice(`New ${lattice} lattice cell`);
+  };
+
+  const loadPreset = (symbol: string) => {
+    const preset = buildPresetDocument(symbol);
+    commit(preset);
+    if (symmetryLock) {
+      setSymmetryLock(createSymmetryLock(computeSymmetry(preset)));
+    }
+    setEdgeStart(null);
+    setSelectedEdgeId(null);
+    setSelectedSymmetryElementId(null);
+    setShowMobileSymmetryGenerators(false);
+    setNotice(`Loaded ${symbol} starting motif`);
+  };
+
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(document));
   }, [document]);
@@ -211,6 +263,14 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
       setSelectedSymmetryElementId(null);
     }
   }, [selectedSymmetryElementId, symmetry.elements]);
+
+  useEffect(() => {
+    if (mobileCanvasControlsVisible) {
+      setSelectedSymmetryElementId(null);
+    } else {
+      setShowMobileSymmetryGenerators(false);
+    }
+  }, [mobileCanvasControlsVisible]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -430,12 +490,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
             showEdges={display.showEdges}
             showVertices={display.showVertices}
             onLatticeChange={(lattice) => {
-              const changed = changeLattice(document, lattice);
-              commit(changed);
-              if (symmetryLock) {
-                setSymmetryLock(createSymmetryLock(computeSymmetry(changed)));
-              }
-              setNotice(`New ${lattice} lattice cell`);
+              changeEditorLattice(lattice);
             }}
             onToolChange={(nextTool) => {
               if (!mobileMode) {
@@ -491,132 +546,192 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
               )}
             </div>
           ) : null}
-          <UnitCellCanvas
-            document={document}
-            tool={mobileMode ? "color" : tool}
-            edgeStart={mobileMode ? null : edgeStart}
-            selectedEdgeId={mobileMode ? null : selectedEdgeId}
-            selectedSymmetryElement={selectedSymmetryElement}
-            showEdges={display.showEdges}
-            showVertices={display.showVertices}
-            enablePinchZoom={mobileMode}
-            colorRollColors={mobileMode ? EDITOR_PALETTE : undefined}
-            selectedColor={selectedColor}
-            onCycleColor={cyclePaletteColor}
-            onAddVertex={(point) => {
-              if (mobileMode) {
-                return;
-              }
-              commitEdit(
-                symmetryLock
-                  ? addVertexInOrbit(document, point, symmetryLock.operations)
-                  : addVertex(document, point),
-                "Vertex added modulo the lattice",
-                `Vertex orbit added; ${symmetryLock?.symbol} preservation active`,
-              );
-            }}
-            onSelectEdge={(edgeId) => {
-              if (!mobileMode) {
-                setSelectedEdgeId(edgeId);
-              }
-            }}
-            onDeleteEdge={(edgeId) => {
-              if (mobileMode) {
-                return;
-              }
-              const accepted = commitEdit(
-                symmetryLock
-                  ? deleteEdgeInOrbit(document, edgeId, selectedColor, symmetryLock.operations)
-                  : deleteEdge(document, edgeId, selectedColor),
-                "Edge removed; selected color applied to the merged face",
-                `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
-              );
-              if (accepted) {
-                setSelectedEdgeId(null);
-              }
-            }}
-            onDeleteVertex={(vertexId) => {
-              if (mobileMode) {
-                return;
-              }
-              const accepted = commitEdit(
-                symmetryLock
-                  ? deleteVertexInOrbit(document, vertexId, selectedColor, symmetryLock.operations)
-                  : deleteVertex(document, vertexId, selectedColor),
-                "Vertex removed; selected color applied to the merged face",
-                `Vertex orbit removed; ${symmetryLock?.symbol} preservation active`,
-              );
-              if (accepted) {
-                setSelectedEdgeId(null);
-                setEdgeStart(null);
-              }
-            }}
-            onVertexHit={(hit) => {
-              if (mobileMode) {
-                return;
-              }
-              if (!edgeStart) {
-                setEdgeStart(hit);
-                setNotice("Select an endpoint in any translated cell");
-                return;
-              }
-              const accepted = commitEdit(
-                symmetryLock
-                  ? addEdgeInOrbit(document, edgeStart, hit, symmetryLock.operations)
-                  : addEdge(document, edgeStart, hit),
-                "Periodic edge added",
-                `Edge orbit added; ${symmetryLock?.symbol} preservation active`,
-              );
-              if (accepted) {
-                setEdgeStart(null);
-              }
-            }}
-            onColorFace={(face) => {
-              if (faceColor(document, face.signature) !== FACE_BACKGROUND_COLOR) {
+          <div className="canvas-stage">
+            {mobileCanvasControlsVisible ? (
+              <div className="mobile-canvas-controls" aria-label="Quick tiling controls">
+                <div className="mobile-canvas-selectors">
+                  <label>
+                    <span>Lattice</span>
+                    <select
+                      aria-label="Lattice"
+                      value={document.lattice.type}
+                      onChange={(event) =>
+                        changeEditorLattice(event.target.value as LatticeType)
+                      }
+                    >
+                      {LATTICE_TYPES.map((lattice) => (
+                        <option key={lattice} value={lattice}>
+                          {lattice}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>Group symmetry</span>
+                    <select
+                      aria-label="Group symmetry"
+                      value={selectedPresetGroup}
+                      onChange={(event) => {
+                        if (event.target.value) {
+                          loadPreset(event.target.value);
+                        }
+                      }}
+                    >
+                      <option value="">Choose group</option>
+                      {compatiblePresetGroups.map((group) => (
+                        <option key={group.symbol} value={group.symbol}>
+                          {group.symbol}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <button
+                  type="button"
+                  className={`mobile-symmetry-toggle${
+                    showMobileSymmetryGenerators ? " is-active" : ""
+                  }`}
+                  aria-pressed={showMobileSymmetryGenerators}
+                  onClick={() => {
+                    setSelectedSymmetryElementId(null);
+                    setShowMobileSymmetryGenerators((visible) => !visible);
+                  }}
+                >
+                  <span>Current symmetry</span>
+                  <strong>{symmetry.symbol}</strong>
+                  <small>
+                    {showMobileSymmetryGenerators ? "hide generators" : "show generators"}
+                  </small>
+                </button>
+              </div>
+            ) : null}
+            <UnitCellCanvas
+              document={document}
+              tool={mobileMode ? "color" : tool}
+              edgeStart={mobileMode ? null : edgeStart}
+              selectedEdgeId={mobileMode ? null : selectedEdgeId}
+              selectedSymmetryElements={visibleSymmetryElements}
+              showEdges={display.showEdges}
+              showVertices={display.showVertices}
+              enablePinchZoom={mobileMode}
+              colorRollColors={mobileMode ? EDITOR_PALETTE : undefined}
+              selectedColor={selectedColor}
+              onCycleColor={cyclePaletteColor}
+              onAddVertex={(point) => {
+                if (mobileMode) {
+                  return;
+                }
                 commitEdit(
                   symmetryLock
-                    ? clearFaceColorInOrbit(document, face, symmetryLock.operations)
-                    : clearFaceColor(document, face),
-                  "Face color cleared; symmetry recomputed",
-                  `Face orbit cleared; ${symmetryLock?.symbol} preservation active`,
+                    ? addVertexInOrbit(document, point, symmetryLock.operations)
+                    : addVertex(document, point),
+                  "Vertex added modulo the lattice",
+                  `Vertex orbit added; ${symmetryLock?.symbol} preservation active`,
                 );
-              } else {
+              }}
+              onSelectEdge={(edgeId) => {
+                if (!mobileMode) {
+                  setSelectedEdgeId(edgeId);
+                }
+              }}
+              onDeleteEdge={(edgeId) => {
+                if (mobileMode) {
+                  return;
+                }
+                const accepted = commitEdit(
+                  symmetryLock
+                    ? deleteEdgeInOrbit(document, edgeId, selectedColor, symmetryLock.operations)
+                    : deleteEdge(document, edgeId, selectedColor),
+                  "Edge removed; selected color applied to the merged face",
+                  `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
+                );
+                if (accepted) {
+                  setSelectedEdgeId(null);
+                }
+              }}
+              onDeleteVertex={(vertexId) => {
+                if (mobileMode) {
+                  return;
+                }
+                const accepted = commitEdit(
+                  symmetryLock
+                    ? deleteVertexInOrbit(document, vertexId, selectedColor, symmetryLock.operations)
+                    : deleteVertex(document, vertexId, selectedColor),
+                  "Vertex removed; selected color applied to the merged face",
+                  `Vertex orbit removed; ${symmetryLock?.symbol} preservation active`,
+                );
+                if (accepted) {
+                  setSelectedEdgeId(null);
+                  setEdgeStart(null);
+                }
+              }}
+              onVertexHit={(hit) => {
+                if (mobileMode) {
+                  return;
+                }
+                if (!edgeStart) {
+                  setEdgeStart(hit);
+                  setNotice("Select an endpoint in any translated cell");
+                  return;
+                }
+                const accepted = commitEdit(
+                  symmetryLock
+                    ? addEdgeInOrbit(document, edgeStart, hit, symmetryLock.operations)
+                    : addEdge(document, edgeStart, hit),
+                  "Periodic edge added",
+                  `Edge orbit added; ${symmetryLock?.symbol} preservation active`,
+                );
+                if (accepted) {
+                  setEdgeStart(null);
+                }
+              }}
+              onColorFace={(face) => {
+                if (faceColor(document, face.signature) !== FACE_BACKGROUND_COLOR) {
+                  commitEdit(
+                    symmetryLock
+                      ? clearFaceColorInOrbit(document, face, symmetryLock.operations)
+                      : clearFaceColor(document, face),
+                    "Face color cleared; symmetry recomputed",
+                    `Face orbit cleared; ${symmetryLock?.symbol} preservation active`,
+                  );
+                } else {
+                  commitEdit(
+                    symmetryLock
+                      ? colorFaceInOrbit(document, face, selectedColor, symmetryLock.operations)
+                      : colorFace(document, face, selectedColor),
+                    "Face color updated; symmetry recomputed",
+                    selectedColor === FACE_BACKGROUND_COLOR
+                      ? "Face already has the background color"
+                      : `Face orbit colored; ${symmetryLock?.symbol} preservation active`,
+                  );
+                }
+              }}
+              onRollColorFace={(face, color) => {
+                selectPaletteColor(color);
+                if (faceColor(document, face.signature) === color) {
+                  setNotice("Color roller: face already uses this color");
+                  return;
+                }
+                if (color === FACE_BACKGROUND_COLOR) {
+                  commitEdit(
+                    symmetryLock
+                      ? clearFaceColorInOrbit(document, face, symmetryLock.operations)
+                      : clearFaceColor(document, face),
+                    "Color roller cleared the face",
+                    `Color roller cleared the face orbit; ${symmetryLock?.symbol} preservation active`,
+                  );
+                  return;
+                }
                 commitEdit(
                   symmetryLock
-                    ? colorFaceInOrbit(document, face, selectedColor, symmetryLock.operations)
-                    : colorFace(document, face, selectedColor),
-                  "Face color updated; symmetry recomputed",
-                  selectedColor === FACE_BACKGROUND_COLOR
-                    ? "Face already has the background color"
-                    : `Face orbit colored; ${symmetryLock?.symbol} preservation active`,
+                    ? colorFaceInOrbit(document, face, color, symmetryLock.operations)
+                    : colorFace(document, face, color),
+                  "Color roller applied the selected face color",
+                  `Color roller applied the face orbit; ${symmetryLock?.symbol} preservation active`,
                 );
-              }
-            }}
-            onRollColorFace={(face, color) => {
-              selectPaletteColor(color);
-              if (faceColor(document, face.signature) === color) {
-                setNotice("Color roller: face already uses this color");
-                return;
-              }
-              if (color === FACE_BACKGROUND_COLOR) {
-                commitEdit(
-                  symmetryLock
-                    ? clearFaceColorInOrbit(document, face, symmetryLock.operations)
-                    : clearFaceColor(document, face),
-                  "Color roller cleared the face",
-                  `Color roller cleared the face orbit; ${symmetryLock?.symbol} preservation active`,
-                );
-                return;
-              }
-              commitEdit(
-                symmetryLock
-                  ? colorFaceInOrbit(document, face, color, symmetryLock.operations)
-                  : colorFace(document, face, color),
-                "Color roller applied the selected face color",
-                `Color roller applied the face orbit; ${symmetryLock?.symbol} preservation active`,
-              );
-            }}
-          />
+              }}
+            />
+          </div>
           {!mobileMode ? (
             <footer className="workspace-status">
               <span>
@@ -637,16 +752,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
                 current === elementId ? null : elementId,
               )
             }
-            onLoadPreset={(symbol) => {
-              const preset = buildPresetDocument(symbol);
-              commit(preset);
-              if (symmetryLock) {
-                setSymmetryLock(createSymmetryLock(computeSymmetry(preset)));
-              }
-              setEdgeStart(null);
-              setSelectedEdgeId(null);
-              setNotice(`Loaded ${symbol} starting motif`);
-            }}
+            onLoadPreset={loadPreset}
           />
         ) : null}
       </div>

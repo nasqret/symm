@@ -771,6 +771,17 @@ kbd {
   overflow: hidden;
 }
 
+.canvas-stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.canvas-stage .unit-canvas {
+  flex: 1;
+}
+
 .canvas-paper {
   fill: var(--paper);
 }
@@ -2514,6 +2525,95 @@ kbd {
   .is-mobile-editor .unit-canvas {
     min-height: 54svh;
     border-radius: 14px;
+  }
+
+  .mobile-canvas-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    z-index: 4;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .mobile-canvas-selectors {
+    display: grid;
+    gap: 6px;
+    width: min(182px, calc(100% - 116px));
+    pointer-events: auto;
+  }
+
+  .mobile-canvas-selectors label {
+    display: grid;
+    gap: 3px;
+    padding: 5px 7px 7px;
+    border: 1px solid rgba(118, 194, 202, 0.3);
+    border-radius: 11px;
+    background: rgba(20, 36, 43, 0.78);
+    color: #e4eae8;
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-canvas-selectors span,
+  .mobile-symmetry-toggle span {
+    color: #afc3c2;
+    font-size: 0.57rem;
+    font-weight: 650;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .mobile-canvas-selectors select {
+    width: 100%;
+    min-height: 30px;
+    border: 0;
+    border-radius: 7px;
+    padding: 0 6px;
+    background: rgba(50, 70, 76, 0.74);
+    color: #f1f2ed;
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 550;
+    line-height: 1;
+    text-transform: capitalize;
+    touch-action: manipulation;
+  }
+
+  .mobile-symmetry-toggle {
+    display: grid;
+    justify-items: end;
+    gap: 3px;
+    min-width: 108px;
+    padding: 9px 9px 8px;
+    border: 1px solid rgba(118, 194, 202, 0.33);
+    border-radius: 12px;
+    background: rgba(20, 36, 43, 0.82);
+    color: #eef1eb;
+    backdrop-filter: blur(14px);
+    pointer-events: auto;
+    touch-action: manipulation;
+  }
+
+  .mobile-symmetry-toggle strong {
+    color: #77d9e2;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .mobile-symmetry-toggle small {
+    color: #c3d1cf;
+    font-size: 0.61rem;
+  }
+
+  .mobile-symmetry-toggle.is-active {
+    border-color: rgba(118, 194, 202, 0.74);
+    background: rgba(27, 56, 64, 0.92);
+    box-shadow: 0 0 0 1px rgba(118, 194, 202, 0.14);
   }
 
   .is-mobile-editor.mobile-panels-hidden.mobile-menu-hidden .workspace {

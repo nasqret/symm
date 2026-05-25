@@ -87,7 +87,7 @@ interface UnitCellCanvasProps {
   tool?: EditorTool;
   edgeStart?: VertexHit | null;
   selectedEdgeId?: string | null;
-  selectedSymmetryElement?: SymmetryElement | null;
+  selectedSymmetryElements?: readonly SymmetryElement[];
   preview?: boolean;
   immersive?: boolean;
   enablePinchZoom?: boolean;
@@ -195,7 +195,7 @@ export function UnitCellCanvas({
   tool = "select",
   edgeStart,
   selectedEdgeId,
-  selectedSymmetryElement,
+  selectedSymmetryElements = [],
   preview = false,
   immersive = false,
   enablePinchZoom = false,
@@ -648,7 +648,7 @@ export function UnitCellCanvas({
           }),
         )}
       </g>
-      {!preview && showEdges && (
+      {!preview && (
         <polygon
           className="cell-outline-overlay"
           points={polygonPoints(
@@ -762,12 +762,14 @@ export function UnitCellCanvas({
           )}
         </g>
       )}
-      {!preview && selectedSymmetryElement && (
-        <SymmetryOverlay
-          element={selectedSymmetryElement}
-          toDisplay={(point) => toDisplay(point, transform)}
-        />
-      )}
+      {!preview &&
+        selectedSymmetryElements.map((element) => (
+          <SymmetryOverlay
+            key={`symmetry-overlay-${element.id}`}
+            element={element}
+            toDisplay={(point) => toDisplay(point, transform)}
+          />
+        ))}
       {!preview && (
         <g className="axis-labels">
           <text

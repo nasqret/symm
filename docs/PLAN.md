@@ -64,6 +64,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
    disable the subgroup explorer at phone widths. Implemented on 2026-05-25.
 4. Support direct touch recoloring on a selected tile with a press-and-hold color roller that
    coexists with tap clearing, vertical palette swipe and pinch zoom. Implemented on 2026-05-26.
+5. Keep the active unit-cell frame visible in mobile face-only editing and expose in-canvas
+   lattice/group selectors plus tap-to-show current symmetry generators when all outer panels
+   are hidden. Implemented on 2026-05-26.
 
 ## Architecture Decisions
 
@@ -97,6 +100,10 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Mobile face gestures are disambiguated before an edit commits: tap applies the existing
   toggle behavior, vertical movement cycles the current swatch, a sustained single touch opens
   the tile-local color roller, and a second touch transfers control to pinch zoom.
+- Hiding motif edges removes repeated construction boundaries and face seams, but the editor
+  retains one active unit-cell outline so lattice changes remain legible in face-only mode.
+- Fully collapsed mobile editing keeps lattice and starter-group selection inside the canvas,
+  with the live detected group acting as a toggle for its visual generators.
 - GitHub Pages publishes the repository application under `/symm/`, so the Vite production
   base path is part of deployment correctness.
 
