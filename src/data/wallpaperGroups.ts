@@ -330,7 +330,7 @@ function buildMesh(latticeType: LatticeType): {
   return { vertices: [...vertices.values()], edges: [...edges.values()] };
 }
 
-function operationClosure(generators: AffineOperation[]): AffineOperation[] {
+export function operationClosure(generators: AffineOperation[]): AffineOperation[] {
   const identity: AffineOperation = { matrix: IDENTITY, shift: { u: 0, v: 0 } };
   const operations = new Map([[operationKey(identity), identity]]);
   let changed = true;

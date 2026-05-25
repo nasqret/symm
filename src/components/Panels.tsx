@@ -23,9 +23,11 @@ interface ToolPanelProps {
   latticeType: LatticeType;
   tool: EditorTool;
   selectedColor: string;
+  symmetryLock: string | null;
   onLatticeChange: (value: LatticeType) => void;
   onToolChange: (value: EditorTool) => void;
   onColorChange: (value: string) => void;
+  onToggleSymmetryLock: () => void;
 }
 
 const TOOLS: { id: EditorTool; name: string; shortcut: string }[] = [
@@ -39,9 +41,11 @@ export function ToolPanel({
   latticeType,
   tool,
   selectedColor,
+  symmetryLock,
   onLatticeChange,
   onToolChange,
   onColorChange,
+  onToggleSymmetryLock,
 }: ToolPanelProps) {
   return (
     <aside className="panel tools-panel" aria-label="Editor tools">
@@ -104,6 +108,21 @@ export function ToolPanel({
           face.
         </p>
       </section>
+      <section>
+        <h2>Symmetric Editing</h2>
+        <button
+          type="button"
+          className={symmetryLock ? "symmetry-lock is-selected" : "symmetry-lock"}
+          aria-pressed={Boolean(symmetryLock)}
+          onClick={onToggleSymmetryLock}
+        >
+          <span>Preserve symmetry</span>
+          <strong>{symmetryLock ?? "Off"}</strong>
+        </button>
+        <p className="help-text">
+          When enabled, motif and color edits propagate through the locked group operations.
+        </p>
+      </section>
     </aside>
   );
 }
@@ -113,6 +132,8 @@ interface InspectorProps {
   symmetry: SymmetryResult;
   faces: PeriodicFace[];
   pointer: FractionalPoint | null;
+  selectedSymmetryElementId: string | null;
+  onSelectSymmetryElement: (elementId: string) => void;
   onLoadPreset: (symbol: string) => void;
 }
 
@@ -121,6 +142,8 @@ export function Inspector({
   symmetry,
   faces,
   pointer,
+  selectedSymmetryElementId,
+  onSelectSymmetryElement,
   onLoadPreset,
 }: InspectorProps) {
   const euler = document.vertices.length - document.edges.length + faces.length;
@@ -132,14 +155,25 @@ export function Inspector({
           <strong>{symmetry.symbol}</strong>
           <span>{symmetry.standardSymbol}</span>
         </div>
-        <dl className="generator-list">
-          {symmetry.generators.map((generator, index) => (
-            <div key={`${index}-${generator}`}>
-              <dt>{index < 2 ? "translation" : "generator"}</dt>
-              <dd>{generator}</dd>
-            </div>
+        <div className="generator-list" aria-label="Visible symmetry elements">
+          {symmetry.elements.map((element) => (
+            <button
+              type="button"
+              key={element.id}
+              className={
+                element.id === selectedSymmetryElementId
+                  ? "generator-button is-selected"
+                  : "generator-button"
+              }
+              aria-pressed={element.id === selectedSymmetryElementId}
+              onClick={() => onSelectSymmetryElement(element.id)}
+            >
+              <span>{element.kind}</span>
+              <code>{element.label}</code>
+            </button>
           ))}
-        </dl>
+        </div>
+        <p className="minor">Select an element to display its geometric action in the tiling.</p>
         <p className="minor">
           {symmetry.accepted.length} accepted operations; {symmetry.rejectedCount} color/geometry
           conflicts tested.

@@ -68,3 +68,12 @@ Run this checklist on every implementation cycle.
 - [x] Replaced all-orbit coloring with minimal target-symmetry witness decorations.
 - [x] Recorded per-group painted-region counts and clarified the archived `p4m` JSON fixture.
 - [x] Ran `npm run typecheck`, `npm run build` and rendered full-preset regression checks.
+
+## Cycle Record: 2026-05-25 Symmetry Visualization And Preserving Edits
+
+- [x] Made reported symmetry generators selectable and rendered translation, rotation, mirror
+  and glide overlays in the working tiling.
+- [x] Added opt-in locked-group propagation for face, vertex and edge mutations.
+- [x] Kept persisted document state backward-compatible and recorded the generator-closure rule.
+- [x] Ran `npm run typecheck`, `npm run build` and rendered checks for translation, centering,
+  mirror, rotation, glide, coloring, vertex insertion/removal and edge removal paths.

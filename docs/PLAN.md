@@ -22,9 +22,13 @@ Status: implemented, browser-verified, committed and synchronized to the private
 
 1. Validate each preset against standard-setting generator data from the Bilbao Crystallographic Server / International Tables.
 2. Introduce conventional versus primitive unit-cell conversion, especially centered rectangular groups.
-3. Add explicit mirror, glide, rotation-center and fundamental-domain overlays.
-4. Add automated regression fixtures: each standard preset must classify as its target group before and after JSON round-trip.
-5. Record saved user motives in group-specific knowledge-base manifests.
+3. Add explicit mirror, glide, rotation-center and fundamental-domain overlays. Initial
+   selectable generator overlays implemented on 2026-05-25; conventional-setting validation
+   remains.
+4. Provide symmetry-preserving editing by applying motif and color edits over a locked
+   generator closure. Implemented on 2026-05-25.
+5. Add automated regression fixtures: each standard preset must classify as its target group before and after JSON round-trip.
+6. Record saved user motives in group-specific knowledge-base manifests.
 
 ## Release 0.3: Design and Export
 
@@ -39,6 +43,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - An edge stores an integer shift to its endpoint, so geometry extending outside the selected cell is first-class data rather than clipped artwork.
 - Symmetry is computed from the decorated complex: an operation is accepted only when it maps
   vertices, edges and face colors correctly, including faces with nested holes.
+- Symmetry-preserving editing closes only the displayed group generators when enabled; periodic
+  translations are already encoded by the motif, and incidental accepted subcell translations
+  must not over-propagate a user's edit.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

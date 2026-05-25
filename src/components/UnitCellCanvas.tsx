@@ -4,11 +4,13 @@ import type {
   EditorTool,
   FractionalPoint,
   PeriodicFace,
+  SymmetryElement,
   TileOffset,
 } from "../types";
 import { addPoint } from "../math/lattice";
 import { extractFaces, faceColor } from "../math/periodicGraph";
 import { vertexGridPoints } from "../math/vertexGrid";
+import { SymmetryOverlay } from "./SymmetryOverlay";
 
 const WIDTH = 900;
 const HEIGHT = 690;
@@ -23,6 +25,7 @@ interface UnitCellCanvasProps {
   tool?: EditorTool;
   edgeStart?: VertexHit | null;
   selectedEdgeId?: string | null;
+  selectedSymmetryElement?: SymmetryElement | null;
   preview?: boolean;
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
@@ -130,6 +133,7 @@ export function UnitCellCanvas({
   tool = "select",
   edgeStart,
   selectedEdgeId,
+  selectedSymmetryElement,
   preview = false,
   onAddVertex,
   onVertexHit,
@@ -170,6 +174,11 @@ export function UnitCellCanvas({
       onPointerMove={(event) => onCoordinate?.(eventPoint(event))}
       onPointerLeave={() => onCoordinate?.(null)}
     >
+      <defs>
+        <marker id="symmetry-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M 0 0 L 8 4 L 0 8 Z" />
+        </marker>
+      </defs>
       <rect className="canvas-paper" width={WIDTH} height={HEIGHT} />
       {displayedTiles.map((tile) => {
         const cell = [
@@ -316,6 +325,12 @@ export function UnitCellCanvas({
           }),
         )}
       </g>
+      {!preview && selectedSymmetryElement && (
+        <SymmetryOverlay
+          element={selectedSymmetryElement}
+          toDisplay={(point) => toDisplay(point, transform)}
+        />
+      )}
       {!preview && (
         <g className="axis-labels">
           <text

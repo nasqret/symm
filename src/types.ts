@@ -75,6 +75,21 @@ export interface AffineOperation {
   label?: string;
 }
 
+export type SymmetryElementKind =
+  | "translation"
+  | "centering"
+  | "rotation"
+  | "mirror"
+  | "glide";
+
+export interface SymmetryElement {
+  id: string;
+  label: string;
+  kind: SymmetryElementKind;
+  operation?: AffineOperation;
+  vector?: FractionalPoint;
+}
+
 export interface WallpaperGroup {
   number: number;
   symbol: string;
@@ -90,6 +105,7 @@ export interface SymmetryResult {
   symbol: string;
   standardSymbol: string;
   generators: string[];
+  elements: SymmetryElement[];
   accepted: AffineOperation[];
   rejectedCount: number;
   additionalTranslations: AffineOperation[];

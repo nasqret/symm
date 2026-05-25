@@ -269,6 +269,35 @@ code {
   padding-left: 13px;
 }
 
+.symmetry-lock {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #43575c;
+  border-radius: 6px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #d3dcda;
+  font-size: 0.78rem;
+}
+
+.symmetry-lock strong {
+  color: #a6b5b6;
+  font: 600 0.68rem/1 "SFMono-Regular", monospace;
+}
+
+.symmetry-lock:hover,
+.symmetry-lock.is-selected {
+  border-color: #73c3ca;
+  background: #126779;
+  color: #ffffff;
+}
+
+.symmetry-lock.is-selected strong {
+  color: #ffffff;
+}
+
 kbd {
   font: 600 0.65rem/1 "SFMono-Regular", monospace;
   border: 1px solid #43575c;
@@ -439,6 +468,57 @@ kbd {
   opacity: 1;
 }
 
+.symmetry-overlay {
+  pointer-events: none;
+}
+
+#symmetry-arrowhead path {
+  fill: context-stroke;
+}
+
+.symmetry-translation {
+  stroke: var(--coral);
+  stroke-width: 3;
+  stroke-dasharray: 8 5;
+  marker-end: url("#symmetry-arrowhead");
+}
+
+.symmetry-label {
+  fill: var(--coral);
+  font: 600 12px/1 "SFMono-Regular", monospace;
+}
+
+.symmetry-center {
+  fill: var(--coral);
+  stroke: var(--paper);
+  stroke-width: 2;
+}
+
+.symmetry-rotation {
+  fill: none;
+  stroke: var(--coral);
+  stroke-width: 3;
+  marker-end: url("#symmetry-arrowhead");
+}
+
+.symmetry-mirror {
+  stroke: var(--ochre);
+  stroke-width: 3.2;
+  stroke-dasharray: 10 6;
+}
+
+.symmetry-glide {
+  stroke: var(--teal);
+  stroke-width: 3;
+  stroke-dasharray: 10 7;
+}
+
+.symmetry-glide-arrow {
+  stroke: var(--teal);
+  stroke-width: 3;
+  marker-end: url("#symmetry-arrowhead");
+}
+
 .axis-labels {
   font: italic 20px/1 Georgia, serif;
   fill: var(--teal);
@@ -496,29 +576,42 @@ kbd {
   border: 1px solid var(--line);
   border-radius: 5px;
   background: #f8f6ef;
+  overflow: hidden;
 }
 
-.generator-list div {
+.generator-button {
+  width: 100%;
   display: grid;
   grid-template-columns: 74px 1fr;
   border-bottom: 1px solid var(--line);
   padding: 8px 10px;
+  color: var(--text);
+  text-align: left;
 }
 
-.generator-list div:last-child {
+.generator-button:last-child {
   border-bottom: 0;
 }
 
-.generator-list dt {
+.generator-button:hover,
+.generator-button.is-selected {
+  background: var(--teal-soft);
+}
+
+.generator-button span {
   color: var(--muted);
   font-size: 0.63rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
 }
 
-.generator-list dd {
-  margin: 0;
+.generator-button code {
   font: 500 0.72rem/1.35 "SFMono-Regular", monospace;
+}
+
+.generator-button.is-selected code {
+  color: var(--teal-dark);
+  font-weight: 600;
 }
 
 .minor {

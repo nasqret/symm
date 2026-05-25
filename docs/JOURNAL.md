@@ -131,6 +131,37 @@
   `p4m` showed zero filled faces and still reported `p4m`.
 - Browser page-error checks reported no application errors.
 
+## 2026-05-25: Symmetry Visualization And Preserving Edits
+
+- Replaced the passive generator report with selectable symmetry elements in the inspector.
+  Selecting a translation, rotation, mirror or glide renders its arrow, center arc, dashed
+  locus or dashed axis/arrow directly on the repeated-cell canvas.
+- Added `Preserve symmetry`, which locks the currently computed wallpaper-group generators and
+  propagates face painting/clearing, vertex insertion/removal and edge insertion/removal over
+  their operation closure.
+- Used generator closure rather than every accepted operation: cell translations are already
+  implicit in periodic motif storage, and incidental subcell translations in an undecorated
+  mesh would otherwise duplicate an edit more aggressively than the selected group requires.
+- Kept JSON state backward-compatible because the selected overlay and editing lock are
+  interface state, not exported motif data.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed, including TypeScript project compilation.
+- Rendered translation/centering overlay checks: selecting `T(a)` and the `cm` centering
+  generator each displayed a direction arrow in the canvas.
+- Rendered `p4m` overlay checks through the local `agent-browser` fallback: selecting `m`
+  displayed dashed mirror loci, and selecting `C4` displayed curved rotation arrows and marked
+  centers.
+- Rendered `pg` overlay check: selecting `g` displayed dashed glide axes with direction arrows.
+- With `Preserve symmetry` locked to `p4m`, painting one face colored a four-face orbit and the
+  computed group remained `p4m`.
+- With the same lock, adding one unoccupied grid vertex changed `32` to `36` vertices and
+  double-click removal returned it to `32`, retaining `p4m` after both actions.
+- Locked edge removal changed the `p4m` counts from `32/64/32` to `32/60/29` and retained
+  `p4m`; browser page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

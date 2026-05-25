@@ -27,6 +27,13 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Vertex construction should expose its permitted lattice points directly in the canvas. Keep
   insertion snapped through the mutation layer as well, so imported/programmatic actions cannot
   bypass the same grid invariant.
+- A symmetry-preserving editor mode should close the advertised group generators captured when
+  the mode is enabled, not all accepted detector operations. Translation is already periodic,
+  while accidental subcell translations in a sparse or undecorated motif would over-propagate
+  one user edit.
+- Symmetry overlays are best derived from the same affine operations used by the classifier, so
+  the visible axes, centers and arrows track the actual colored-complex result rather than a
+  preset label alone.
 
 ## Validation Debt
 

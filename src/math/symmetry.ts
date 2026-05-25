@@ -5,6 +5,7 @@ import type {
   Matrix2,
   MotifVertex,
   PeriodicFace,
+  SymmetryElement,
   SymmetryResult,
 } from "../types";
 import { WALLPAPER_GROUPS } from "../data/wallpaperGroups";
@@ -18,6 +19,7 @@ import {
   matrixPoint,
   mod1,
   normalizePoint,
+  operationKey,
   pointsEqual,
   splitPoint,
 } from "./lattice";
@@ -287,6 +289,45 @@ function describeOperation(operation: AffineOperation): string {
   return `${type} + (${operation.shift.u.toFixed(2)}, ${operation.shift.v.toFixed(2)})`;
 }
 
+function kindForOperation(operation: AffineOperation): SymmetryElement["kind"] {
+  if (matricesEqual(operation.matrix, IDENTITY)) {
+    return "centering";
+  }
+  if (determinant(operation.matrix) > 0) {
+    return "rotation";
+  }
+  return fixedLineExists(operation) ? "mirror" : "glide";
+}
+
+function generatorElements(
+  generators: string[],
+  operations: AffineOperation[],
+  accepted: AffineOperation[],
+): SymmetryElement[] {
+  return generators.map((label, index) => {
+    if (index < 2) {
+      return {
+        id: index === 0 ? "translation-a" : "translation-b",
+        label,
+        kind: "translation",
+        vector: index === 0 ? { u: 1, v: 0 } : { u: 0, v: 1 },
+      };
+    }
+    const template = operations[index - 2];
+    const operation = template
+      ? accepted.find((entry) => operationKey(entry) === operationKey(template)) ??
+        accepted.find((entry) => matricesEqual(entry.matrix, template.matrix)) ??
+        template
+      : undefined;
+    return {
+      id: `generator-${index - 2}`,
+      label,
+      kind: operation ? kindForOperation(operation) : "translation",
+      operation,
+    };
+  });
+}
+
 export function computeSymmetry(document: CellDocument): SymmetryResult {
   const accepted: AffineOperation[] = [];
   const faces = extractFaces(document);
@@ -316,10 +357,16 @@ export function computeSymmetry(document: CellDocument): SymmetryResult {
     ...additionalTranslations.slice(0, 1).map(describeOperation),
     ...nonIdentity.slice(0, 3).map(describeOperation),
   ];
+  const generators = group?.generators ?? derivedGenerators;
+  const operations = group?.operations ?? [
+    ...additionalTranslations.slice(0, 1),
+    ...nonIdentity.slice(0, 3),
+  ];
   return {
     symbol,
     standardSymbol: group?.standardSymbol ?? symbol,
-    generators: group?.generators ?? derivedGenerators,
+    generators,
+    elements: generatorElements(generators, operations, accepted),
     accepted,
     rejectedCount: Math.max(0, tested - accepted.length),
     additionalTranslations,
