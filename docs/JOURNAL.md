@@ -521,6 +521,21 @@
 - Rendered Guide and About interaction checks remain pending because the browser validation
   interface was unavailable in this session.
 
+## 2026-05-25: Compact Face Color Guidance
+
+- Removed the long boundary-crossing and topology-deletion instruction paragraphs from the
+  Face Color foldout, leaving its concise number-key and swipe palette hint in place.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Source inspection confirms that the removed boundary-crossing and topology-deletion strings
+  are absent from the Face Color render path while the key/swipe hint remains.
+- Rendered foldout-content verification remains pending because the browser validation
+  interface was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

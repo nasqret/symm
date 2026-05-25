@@ -133,16 +133,6 @@ export function ToolPanel({
           Keys 1-7 select a swatch. In Color face mode, swipe up or down on the canvas to cycle
           paint colors without changing a face.
         </p>
-        <p className="help-text">
-          Edges may terminate in a translated copy of a vertex. Use visible neighboring cells to
-          draw boundary-crossing geometry.
-        </p>
-        <p className="help-text">
-          In Add / remove vertex mode, place vertices on visible grid points and double-click an
-          existing vertex to remove it. In Color face mode, click a filled face to clear it.
-          Double-clicking an edge in Select / delete mode uses the selected swatch for the merged
-          face.
-        </p>
       </FoldSection>
       <FoldSection title="Display">
         <div className="visibility-list" role="group" aria-label="Visible motif layers">

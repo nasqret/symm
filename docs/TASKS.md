@@ -227,3 +227,14 @@ Run this checklist on every implementation cycle.
   that the About route contains the requested copyright notice.
 - [ ] Complete rendered checks for guide dismissal/reopening, About navigation and the
   initially active symmetry lock when the browser validation interface is available.
+
+## Cycle Record: 2026-05-25 Compact Face Color Guidance
+
+- [x] Removed the boundary-crossing edge and vertex/edge deletion instruction paragraphs from
+  the Face Color foldout.
+- [x] Retained the palette keyboard and swipe guidance in that section.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Confirmed by source inspection that the removed instructional strings are no longer
+  rendered by the Face Color foldout.
+- [ ] Complete rendered foldout-content verification when the browser validation interface is
+  available in the session.
