@@ -26,7 +26,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    selectable generator overlays implemented on 2026-05-25; conventional-setting validation
    remains.
 4. Provide symmetry-preserving editing by applying motif and color edits over a locked
-   generator closure. Implemented on 2026-05-25.
+   generator closure. Implemented on 2026-05-25; exact-group validation now blocks a propagated
+   edit that would accidentally enlarge or reduce the locked symmetry type.
 5. Add automated regression fixtures: each standard preset must classify as its target group before and after JSON round-trip.
 6. Record saved user motives in group-specific knowledge-base manifests.
 

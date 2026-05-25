@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   AffineOperation,
   CellDocument,
@@ -115,6 +115,24 @@ function Editor() {
   const selectedSymmetryElement =
     symmetry.elements.find((element) => element.id === selectedSymmetryElementId) ?? null;
 
+  const commitEdit = useCallback(
+    (changed: CellDocument, standardNotice: string, lockedNotice: string): boolean => {
+      if (symmetryLock) {
+        const result = computeSymmetry(changed).symbol;
+        if (result !== symmetryLock.symbol) {
+          setNotice(
+            `Edit blocked: Preserve symmetry is locked to ${symmetryLock.symbol}; this change would produce ${result}.`,
+          );
+          return false;
+        }
+      }
+      commit(changed);
+      setNotice(symmetryLock ? lockedNotice : standardNotice);
+      return true;
+    },
+    [commit, symmetryLock],
+  );
+
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(document));
   }, [document]);
@@ -142,17 +160,16 @@ function Editor() {
       if ((event.key === "Delete" || event.key === "Backspace") && selectedEdgeId) {
         const target = event.target as HTMLElement;
         if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-          commit(
+          const accepted = commitEdit(
             symmetryLock
               ? deleteEdgeInOrbit(document, selectedEdgeId, selectedColor, symmetryLock.operations)
               : deleteEdge(document, selectedEdgeId, selectedColor),
+            "Edge removed; selected color applied to the merged face",
+            `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
           );
-          setSelectedEdgeId(null);
-          setNotice(
-            symmetryLock
-              ? `Edge orbit removed; ${symmetryLock.symbol} preservation active`
-              : "Edge removed; selected color applied to the merged face",
-          );
+          if (accepted) {
+            setSelectedEdgeId(null);
+          }
         }
       }
       const shortcuts: Record<string, EditorTool> = {
@@ -167,7 +184,7 @@ function Editor() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [commit, document, redo, selectedColor, selectedEdgeId, symmetryLock, undo]);
+  }, [commitEdit, document, redo, selectedColor, selectedEdgeId, symmetryLock, undo]);
 
   const saveDocument = () => {
     const contents = JSON.stringify(document, null, 2);
@@ -296,7 +313,7 @@ function Editor() {
                 type="button"
                 className="delete-action"
                 onClick={() => {
-                  commit(
+                  const accepted = commitEdit(
                     symmetryLock
                       ? deleteEdgeInOrbit(
                           document,
@@ -305,13 +322,12 @@ function Editor() {
                           symmetryLock.operations,
                         )
                       : deleteEdge(document, selectedEdgeId, selectedColor),
+                    "Edge removed; selected color applied to the merged face",
+                    `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
                   );
-                  setSelectedEdgeId(null);
-                  setNotice(
-                    symmetryLock
-                      ? `Edge orbit removed; ${symmetryLock.symbol} preservation active`
-                      : "Edge removed; selected color applied to the merged face",
-                  );
+                  if (accepted) {
+                    setSelectedEdgeId(null);
+                  }
                 }}
               >
                 Delete selected edge
@@ -328,44 +344,39 @@ function Editor() {
             showVertices={display.showVertices}
             onCoordinate={setPointer}
             onAddVertex={(point) => {
-              commit(
+              commitEdit(
                 symmetryLock
                   ? addVertexInOrbit(document, point, symmetryLock.operations)
                   : addVertex(document, point),
-              );
-              setNotice(
-                symmetryLock
-                  ? `Vertex orbit added; ${symmetryLock.symbol} preservation active`
-                  : "Vertex added modulo the lattice",
+                "Vertex added modulo the lattice",
+                `Vertex orbit added; ${symmetryLock?.symbol} preservation active`,
               );
             }}
             onSelectEdge={setSelectedEdgeId}
             onDeleteEdge={(edgeId) => {
-              commit(
+              const accepted = commitEdit(
                 symmetryLock
                   ? deleteEdgeInOrbit(document, edgeId, selectedColor, symmetryLock.operations)
                   : deleteEdge(document, edgeId, selectedColor),
+                "Edge removed; selected color applied to the merged face",
+                `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
               );
-              setSelectedEdgeId(null);
-              setNotice(
-                symmetryLock
-                  ? `Edge orbit removed; ${symmetryLock.symbol} preservation active`
-                  : "Edge removed; selected color applied to the merged face",
-              );
+              if (accepted) {
+                setSelectedEdgeId(null);
+              }
             }}
             onDeleteVertex={(vertexId) => {
-              commit(
+              const accepted = commitEdit(
                 symmetryLock
                   ? deleteVertexInOrbit(document, vertexId, selectedColor, symmetryLock.operations)
                   : deleteVertex(document, vertexId, selectedColor),
+                "Vertex removed; selected color applied to the merged face",
+                `Vertex orbit removed; ${symmetryLock?.symbol} preservation active`,
               );
-              setSelectedEdgeId(null);
-              setEdgeStart(null);
-              setNotice(
-                symmetryLock
-                  ? `Vertex orbit removed; ${symmetryLock.symbol} preservation active`
-                  : "Vertex removed; selected color applied to the merged face",
-              );
+              if (accepted) {
+                setSelectedEdgeId(null);
+                setEdgeStart(null);
+              }
             }}
             onVertexHit={(hit) => {
               if (!edgeStart) {
@@ -373,42 +384,35 @@ function Editor() {
                 setNotice("Select an endpoint in any translated cell");
                 return;
               }
-              commit(
+              const accepted = commitEdit(
                 symmetryLock
                   ? addEdgeInOrbit(document, edgeStart, hit, symmetryLock.operations)
                   : addEdge(document, edgeStart, hit),
+                "Periodic edge added",
+                `Edge orbit added; ${symmetryLock?.symbol} preservation active`,
               );
-              setEdgeStart(null);
-              setNotice(
-                symmetryLock
-                  ? `Edge orbit added; ${symmetryLock.symbol} preservation active`
-                  : "Periodic edge added",
-              );
+              if (accepted) {
+                setEdgeStart(null);
+              }
             }}
             onColorFace={(face) => {
               if (faceColor(document, face.signature) !== FACE_BACKGROUND_COLOR) {
-                commit(
+                commitEdit(
                   symmetryLock
                     ? clearFaceColorInOrbit(document, face, symmetryLock.operations)
                     : clearFaceColor(document, face),
-                );
-                setNotice(
-                  symmetryLock
-                    ? `Face orbit cleared; ${symmetryLock.symbol} preservation active`
-                    : "Face color cleared; symmetry recomputed",
+                  "Face color cleared; symmetry recomputed",
+                  `Face orbit cleared; ${symmetryLock?.symbol} preservation active`,
                 );
               } else {
-                commit(
+                commitEdit(
                   symmetryLock
                     ? colorFaceInOrbit(document, face, selectedColor, symmetryLock.operations)
                     : colorFace(document, face, selectedColor),
-                );
-                setNotice(
+                  "Face color updated; symmetry recomputed",
                   selectedColor === FACE_BACKGROUND_COLOR
                     ? "Face already has the background color"
-                    : symmetryLock
-                      ? `Face orbit colored; ${symmetryLock.symbol} preservation active`
-                      : "Face color updated; symmetry recomputed",
+                    : `Face orbit colored; ${symmetryLock?.symbol} preservation active`,
                 );
               }
             }}

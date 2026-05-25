@@ -31,6 +31,10 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   the mode is enabled, not all accepted detector operations. Translation is already periodic,
   while accidental subcell translations in a sparse or undecorated motif would over-propagate
   one user edit.
+- Orbit propagation only guarantees that the locked group remains a subgroup of the result; a
+  recoloring can accidentally restore extra relations, for example leaving `pgg` for `pmm` or
+  `cmm`. If the UI promises to preserve the displayed group, recompute after every propagated
+  candidate and commit only when its exact classified symbol still equals the lock.
 - Symmetry overlays are best derived from the same affine operations used by the classifier, so
   the visible axes, centers and arrows track the actual colored-complex result rather than a
   preset label alone.

@@ -134,3 +134,12 @@ Run this checklist on every implementation cycle.
   flicker for reduced-motion users.
 - [x] Ran `npm run typecheck`, `npm run build`, normal-motion threshold sampling,
   reduced-motion settlement and `p1` lattice-homotopy browser checks without page errors.
+
+## Cycle Record: 2026-05-25 Exact Preserve-Symmetry Lock
+
+- [x] Identified that orbit propagation can accidentally restore extra symmetries and move a
+  locked state to a supergroup.
+- [x] Added a shared exact-symbol guard for locked face, vertex and edge edits.
+- [x] Display a blocked-edit reason naming both the locked type and the would-be detected type.
+- [x] Ran `npm run typecheck`, `npm run build` and rendered `pgg` locked-edit regression checks
+  for both blocked and accepted face-orbit recolorings without browser page errors.

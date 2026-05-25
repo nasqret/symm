@@ -31,7 +31,8 @@ The editor supports:
 - a colored-symmetry report with selectable visual generators: translation arrows, rotation
   arcs, mirror loci and glide axes;
 - an optional Preserve symmetry mode that propagates color and topology edits through the
-  currently locked generator closure; and
+  currently locked generator closure and blocks edits that would change the exact locked
+  wallpaper group; and
 - minimally decorated editable starter motifs for the 17 plane groups.
 
 ## Documentation

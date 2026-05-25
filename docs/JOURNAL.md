@@ -336,6 +336,33 @@
   `Lattice homotopy`, mounted two homotopy layers and mounted no threshold paths.
 - Browser page-error checks reported no application errors.
 
+## 2026-05-25: Exact Preserve-Symmetry Enforcement
+
+- Diagnosed the preserve-mode defect: applying a recolor over the locked generator orbit keeps
+  the locked operations valid but can restore extra operations, changing the classified group.
+  In the `pgg` preset, direct orbit checks found accepted-by-the-old-mode recolorings that
+  produce `pmm` or `pmg`; the reported `cmm` case has the same supergroup mechanism.
+- Added one commit boundary for locked editing. After a candidate face, vertex or edge orbit
+  mutation is generated, the current classifier must still return the exact locked symbol;
+  otherwise no history entry is made and the status bar reports the blocked target type.
+- Updated the Preserve symmetry help text to describe exact-group blocking rather than only
+  propagation through generator operations.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Direct `pgg` regression enumeration: the starting motif classified as `pgg` with `8` colored
+  faces; `16` single orbit recolor/clear candidates would have changed its group without the
+  new commit guard.
+- Rendered locked-edit regression: clearing a filled face with `Preserve symmetry pgg` enabled
+  was blocked with the visible reason `this change would produce pmm`, preserved `8` central
+  accent faces and retained the inspector result `p2gg`.
+- Rendered accepted-edit regression: coloring an allowed background face changed the central
+  accent count from `8` to `12`, showed `Face orbit colored; pgg preservation active`, and
+  retained the inspector result `p2gg`.
+- Browser page-error and console-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

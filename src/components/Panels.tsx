@@ -155,7 +155,8 @@ export function ToolPanel({
           <strong>{symmetryLock ?? "Off"}</strong>
         </button>
         <p className="help-text">
-          When enabled, motif and color edits propagate through the locked group operations.
+          Motif and color edits propagate through the locked group operations; edits that would
+          change the exact group are blocked.
         </p>
       </section>
     </aside>
