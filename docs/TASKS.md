@@ -460,3 +460,15 @@ Run this checklist on every implementation cycle.
   rendering, full-height canvas styling and nonmutating restoration behavior.
 - [ ] Complete interactive mobile cog-toggle screenshot verification when the Browser
   interface is exposed in the session.
+
+## Cycle Record: 2026-05-26 Combined Compact Selectors
+
+- [x] Merged the hidden-mode lattice and group selector cards into one shared translucent
+  capsule with two side-by-side fields.
+- [x] Kept both selector handlers and accessible field labels unchanged while shortening the
+  visible group caption.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified source/CSS boundaries for one two-column selector capsule and retained lattice
+  and compatible-group action handlers.
+- [ ] Complete interactive compact-selector screenshot verification when the Browser
+  interface is exposed in the session.

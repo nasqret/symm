@@ -71,6 +71,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    tiling preview, undo and redo. Implemented on 2026-05-26.
 7. Add a reversible mobile clean-view cog that suppresses every menu and dock action except
    its pale restore affordance while retaining the prior fold state. Implemented on 2026-05-26.
+8. Collapse the hidden-mode lattice and group choices into one shallow two-selector capsule
+   to reduce obstruction of the active tiling. Implemented on 2026-05-26.
 
 ## Architecture Decisions
 
@@ -112,6 +114,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
   not need to restore the document menu during direct recoloring.
 - The mobile cog clean view suppresses chrome without overwriting menu/panel fold state; its
   lone pale restore cog must remain reachable over the drawing surface.
+- Hidden-mode lattice and group selection use one horizontal capsule rather than stacked
+  cards so essential setup remains available without occupying as much of the active field.
 - GitHub Pages publishes the repository application under `/symm/`, so the Vite production
   base path is part of deployment correctness.
 

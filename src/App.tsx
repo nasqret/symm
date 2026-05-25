@@ -575,7 +575,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
                     </select>
                   </label>
                   <label>
-                    <span>Group symmetry</span>
+                    <span>Group</span>
                     <select
                       aria-label="Group symmetry"
                       value={selectedPresetGroup}

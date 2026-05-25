@@ -131,6 +131,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - For a drawing-only mobile toggle, suppress chrome with a separate view state rather than
   mutating the stored menu/panel fold state. Leave one low-contrast restore control visible
   so reopening restores the exact prior arrangement.
+- In the hidden mobile editing state, place lattice and compatible group selects in one
+  horizontal translucent capsule rather than separate stacked cards; retain their accessible
+  labels while minimizing tiling occlusion.
 
 ## Validation Debt
 

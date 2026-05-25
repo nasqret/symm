@@ -920,6 +920,26 @@
 - Interactive mobile cog-toggle screenshots remain pending because the Browser plugin's
   required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Combined Compact Selectors
+
+- Replaced the two vertically stacked hidden-mode `Lattice` and `Group symmetry` capsules
+  with one shallow translucent control containing two selectors in a single row.
+- Preserved the same lattice-reset and compatible-preset loading paths and retained the full
+  accessible name `Group symmetry`, while shortening the visible caption to `Group`.
+- Reduced the height occupied at the upper-left of the tiling so compact controls obscure less
+  of the active coloring field.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Vite production assets generated successfully.
+- Source/CSS checks passed: `mobile-canvas-selectors` is now one bordered two-column capsule,
+  and the controls continue to call `changeEditorLattice` and `loadPreset` with the
+  `Group symmetry` accessible label retained.
+- Interactive compact-selector screenshots remain pending because the Browser plugin's
+  required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:
