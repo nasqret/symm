@@ -347,3 +347,17 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete interactive mobile display verification when the Browser interface is exposed
   in the session.
+
+## Cycle Record: 2026-05-26 Collapsible Mobile Canvas And Pinch Zoom
+
+- [x] Added independent mobile hide/reveal controls for the document menu and Touch color
+  studio control/analysis panels.
+- [x] Removed the mobile canvas title/instruction and active-tool/notice status chrome while
+  preserving desktop guidance.
+- [x] Added anchored two-touch `1x`-`4x` canvas zoom with paint/swipe suppression through
+  pinch gestures and normal desktop view-box fallback.
+- [x] Verified server-rendered mobile/desktop chrome boundaries and pinch-enabled mobile
+  canvases.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete interactive mobile collapse/pinch verification when the Browser interface is
+  exposed in the session.

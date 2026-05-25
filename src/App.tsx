@@ -136,6 +136,8 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   const [showStartOverlay, setShowStartOverlay] = useState(
     () => window.localStorage.getItem(INTRO_DISMISSED_KEY) !== "true",
   );
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(true);
+  const [mobilePanelsVisible, setMobilePanelsVisible] = useState(true);
   const [display, toggleDisplay] = useDisplaySettings(mobileMode);
   const fileInput = useRef<HTMLInputElement>(null);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
@@ -195,6 +197,9 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
       setTool("color");
       setSelectedEdgeId(null);
       setEdgeStart(null);
+    } else {
+      setMobileMenuVisible(true);
+      setMobilePanelsVisible(true);
     }
   }, [mobileMode]);
 
@@ -303,142 +308,186 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
     setEdgeStart(null);
   };
 
+  const shellClassName = [
+    "app-shell",
+    mobileMode ? "is-mobile-editor" : "",
+    mobileMode && !mobilePanelsVisible ? "mobile-panels-hidden" : "",
+    mobileMode && !mobileMenuVisible ? "mobile-menu-hidden" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className={mobileMode ? "app-shell is-mobile-editor" : "app-shell"}>
-      <header className="app-header">
-        <div className="brand">
-          <span className="brand-mark" />
-          <div>
-            <h1>Unit Cell Designer</h1>
-            <p>{document.name}</p>
-          </div>
-        </div>
-        <nav className="header-actions" aria-label="Document actions">
-          <button type="button" onClick={saveDocument}>
-            Save JSON
-          </button>
-          <button type="button" onClick={() => fileInput.current?.click()}>
-            Load
-          </button>
-          <span className="separator" />
-          <button type="button" onClick={undo} disabled={!canUndo}>
-            Undo
-          </button>
-          <button type="button" onClick={redo} disabled={!canRedo}>
-            Redo
-          </button>
-          <span className="separator" />
-          <button type="button" onClick={() => setShowStartOverlay(true)}>
-            Guide
-          </button>
-          <button type="button" onClick={openAbout}>
-            About
-          </button>
-          <button
-            className="primary-action"
-            type="button"
-            onClick={() => window.open(`${window.location.pathname}#preview`, "tiling-preview")}
-          >
-            Open Tiling Preview
-          </button>
-          {!mobileMode && (
-            <button
-              className="primary-action demo-action"
-              type="button"
-              onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
-            >
-              Explore Subgroups
-            </button>
-          )}
-        </nav>
-        <input
-          ref={fileInput}
-          hidden
-          type="file"
-          accept="application/json,.json"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) {
-              loadFile(file).catch((error: unknown) => {
-                setNotice(error instanceof Error ? error.message : "Could not load document");
-              });
-            }
-            event.target.value = "";
-          }}
-        />
-      </header>
-      <div className="editor-grid">
-        <ToolPanel
-          mobileMode={mobileMode}
-          latticeType={document.lattice.type}
-          tool={tool}
-          selectedColor={selectedColor}
-          symmetryLock={symmetryLock?.symbol ?? null}
-          showEdges={display.showEdges}
-          showVertices={display.showVertices}
-          onLatticeChange={(lattice) => {
-            const changed = changeLattice(document, lattice);
-            commit(changed);
-            if (symmetryLock) {
-              setSymmetryLock(createSymmetryLock(computeSymmetry(changed)));
-            }
-            setNotice(`New ${lattice} lattice cell`);
-          }}
-          onToolChange={(nextTool) => {
-            if (!mobileMode) {
-              setTool(nextTool);
-              setEdgeStart(null);
-            }
-          }}
-          onColorChange={(color) => selectPaletteColor(color)}
-          onToggleSymmetryLock={() => {
-            if (symmetryLock) {
-              setSymmetryLock(null);
-              setNotice("Symmetry-preserving propagation disabled");
-            } else {
-              setSymmetryLock(createSymmetryLock(symmetry));
-              setNotice(`Edits will preserve ${symmetry.symbol} symmetry`);
-            }
-          }}
-          onToggleEdges={() => toggleDisplay("showEdges")}
-          onToggleVertices={() => toggleDisplay("showVertices")}
-        />
-        <main className="workspace">
-          <div className="workspace-heading">
+    <div className={shellClassName}>
+      {mobileMode && !mobileMenuVisible ? (
+        <button
+          type="button"
+          className="mobile-menu-reveal"
+          aria-label="Show Unit Cell Designer menu"
+          onClick={() => setMobileMenuVisible(true)}
+        >
+          <span className="brand-mark" aria-hidden="true" />
+          <span>Menu</span>
+        </button>
+      ) : (
+        <header className="app-header">
+          <div className="brand">
+            <span className="brand-mark" />
             <div>
-              <h2>Fundamental Cell</h2>
-              <p>
-                {mobileMode
-                  ? "Tap regions to recolor. Swipe vertically to cycle the active swatch."
-                  : "Neighbors are live translations; connect across them to cross a boundary."}
-              </p>
+              <h1>Unit Cell Designer</h1>
+              <p>{document.name}</p>
             </div>
-            {!mobileMode && selectedEdgeId && (
+          </div>
+          {mobileMode ? (
+            <button
+              className="mobile-menu-hide"
+              type="button"
+              aria-label="Hide Unit Cell Designer menu"
+              onClick={() => setMobileMenuVisible(false)}
+            >
+              Hide
+            </button>
+          ) : null}
+          <nav className="header-actions" aria-label="Document actions">
+            <button type="button" onClick={saveDocument}>
+              Save JSON
+            </button>
+            <button type="button" onClick={() => fileInput.current?.click()}>
+              Load
+            </button>
+            <span className="separator" />
+            <button type="button" onClick={undo} disabled={!canUndo}>
+              Undo
+            </button>
+            <button type="button" onClick={redo} disabled={!canRedo}>
+              Redo
+            </button>
+            <span className="separator" />
+            <button type="button" onClick={() => setShowStartOverlay(true)}>
+              Guide
+            </button>
+            <button type="button" onClick={openAbout}>
+              About
+            </button>
+            <button
+              className="primary-action"
+              type="button"
+              onClick={() => window.open(`${window.location.pathname}#preview`, "tiling-preview")}
+            >
+              Open Tiling Preview
+            </button>
+            {!mobileMode && (
               <button
+                className="primary-action demo-action"
                 type="button"
-                className="delete-action"
-                onClick={() => {
-                  const accepted = commitEdit(
-                    symmetryLock
-                      ? deleteEdgeInOrbit(
-                          document,
-                          selectedEdgeId,
-                          selectedColor,
-                          symmetryLock.operations,
-                        )
-                      : deleteEdge(document, selectedEdgeId, selectedColor),
-                    "Edge removed; selected color applied to the merged face",
-                    `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
-                  );
-                  if (accepted) {
-                    setSelectedEdgeId(null);
-                  }
-                }}
+                onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
               >
-                Delete selected edge
+                Explore Subgroups
               </button>
             )}
-          </div>
+          </nav>
+          <input
+            ref={fileInput}
+            hidden
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) {
+                loadFile(file).catch((error: unknown) => {
+                  setNotice(error instanceof Error ? error.message : "Could not load document");
+                });
+              }
+              event.target.value = "";
+            }}
+          />
+        </header>
+      )}
+      {mobileMode ? (
+        <div className="mobile-studio-bar">
+          <strong>Touch color studio</strong>
+          <button
+            type="button"
+            aria-expanded={mobilePanelsVisible}
+            aria-controls="mobile-color-panels mobile-analysis-panels"
+            onClick={() => setMobilePanelsVisible((visible) => !visible)}
+          >
+            {mobilePanelsVisible ? "Hide panels" : "Show panels"}
+          </button>
+        </div>
+      ) : null}
+      <div className="editor-grid">
+        {!mobileMode || mobilePanelsVisible ? (
+          <ToolPanel
+            mobileMode={mobileMode}
+            latticeType={document.lattice.type}
+            tool={tool}
+            selectedColor={selectedColor}
+            symmetryLock={symmetryLock?.symbol ?? null}
+            showEdges={display.showEdges}
+            showVertices={display.showVertices}
+            onLatticeChange={(lattice) => {
+              const changed = changeLattice(document, lattice);
+              commit(changed);
+              if (symmetryLock) {
+                setSymmetryLock(createSymmetryLock(computeSymmetry(changed)));
+              }
+              setNotice(`New ${lattice} lattice cell`);
+            }}
+            onToolChange={(nextTool) => {
+              if (!mobileMode) {
+                setTool(nextTool);
+                setEdgeStart(null);
+              }
+            }}
+            onColorChange={(color) => selectPaletteColor(color)}
+            onToggleSymmetryLock={() => {
+              if (symmetryLock) {
+                setSymmetryLock(null);
+                setNotice("Symmetry-preserving propagation disabled");
+              } else {
+                setSymmetryLock(createSymmetryLock(symmetry));
+                setNotice(`Edits will preserve ${symmetry.symbol} symmetry`);
+              }
+            }}
+            onToggleEdges={() => toggleDisplay("showEdges")}
+            onToggleVertices={() => toggleDisplay("showVertices")}
+          />
+        ) : null}
+        <main className="workspace">
+          {!mobileMode ? (
+            <div className="workspace-heading">
+              <div>
+                <h2>Fundamental Cell</h2>
+                <p>Neighbors are live translations; connect across them to cross a boundary.</p>
+              </div>
+              {selectedEdgeId && (
+                <button
+                  type="button"
+                  className="delete-action"
+                  onClick={() => {
+                    const accepted = commitEdit(
+                      symmetryLock
+                        ? deleteEdgeInOrbit(
+                            document,
+                            selectedEdgeId,
+                            selectedColor,
+                            symmetryLock.operations,
+                          )
+                        : deleteEdge(document, selectedEdgeId, selectedColor),
+                      "Edge removed; selected color applied to the merged face",
+                      `Edge orbit removed; ${symmetryLock?.symbol} preservation active`,
+                    );
+                    if (accepted) {
+                      setSelectedEdgeId(null);
+                    }
+                  }}
+                >
+                  Delete selected edge
+                </button>
+              )}
+            </div>
+          ) : null}
           <UnitCellCanvas
             document={document}
             tool={mobileMode ? "color" : tool}
@@ -447,6 +496,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
             selectedSymmetryElement={selectedSymmetryElement}
             showEdges={display.showEdges}
             showVertices={display.showVertices}
+            enablePinchZoom={mobileMode}
             onCycleColor={cyclePaletteColor}
             onAddVertex={(point) => {
               if (mobileMode) {
@@ -538,34 +588,38 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
               }
             }}
           />
-          <footer className="workspace-status">
-            <span>
-              active tool <strong>{mobileMode ? "color" : tool}</strong>
-            </span>
-            <span>{notice}</span>
-          </footer>
+          {!mobileMode ? (
+            <footer className="workspace-status">
+              <span>
+                active tool <strong>{tool}</strong>
+              </span>
+              <span>{notice}</span>
+            </footer>
+          ) : null}
         </main>
-        <Inspector
-          mobileMode={mobileMode}
-          document={document}
-          symmetry={symmetry}
-          selectedSymmetryElementId={selectedSymmetryElementId}
-          onSelectSymmetryElement={(elementId) =>
-            setSelectedSymmetryElementId((current) =>
-              current === elementId ? null : elementId,
-            )
-          }
-          onLoadPreset={(symbol) => {
-            const preset = buildPresetDocument(symbol);
-            commit(preset);
-            if (symmetryLock) {
-              setSymmetryLock(createSymmetryLock(computeSymmetry(preset)));
+        {!mobileMode || mobilePanelsVisible ? (
+          <Inspector
+            mobileMode={mobileMode}
+            document={document}
+            symmetry={symmetry}
+            selectedSymmetryElementId={selectedSymmetryElementId}
+            onSelectSymmetryElement={(elementId) =>
+              setSelectedSymmetryElementId((current) =>
+                current === elementId ? null : elementId,
+              )
             }
-            setEdgeStart(null);
-            setSelectedEdgeId(null);
-            setNotice(`Loaded ${symbol} starting motif`);
-          }}
-        />
+            onLoadPreset={(symbol) => {
+              const preset = buildPresetDocument(symbol);
+              commit(preset);
+              if (symmetryLock) {
+                setSymmetryLock(createSymmetryLock(computeSymmetry(preset)));
+              }
+              setEdgeStart(null);
+              setSelectedEdgeId(null);
+              setNotice(`Loaded ${symbol} starting motif`);
+            }}
+          />
+        ) : null}
       </div>
       {showStartOverlay && (
         <StartOverlay

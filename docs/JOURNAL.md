@@ -721,6 +721,30 @@
 - Interactive mobile screenshot verification remains pending because the Browser plugin's
   required execution interface was not exposed in this session.
 
+## 2026-05-26: Collapsible Mobile Canvas And Pinch Zoom
+
+- Added a hide/reveal control for the mobile Unit Cell Designer document menu and a separate
+  Touch color studio switch that collapses both control and analysis panels.
+- Removed the mobile canvas heading/instruction block and active-tool/notice status bar so a
+  folded mobile interface exposes the tessellation directly; desktop guidance and status remain.
+- Added anchored two-pointer zoom from `1x` to `4x` in the mobile editor and mobile preview.
+  Pinch gestures suppress tap painting and swipe-color completion, and leaving mobile mode
+  returns the editor rendering to its unzoomed view box.
+- Kept exported preview files full-frame because SVG export normalizes its serialized view box
+  independently of transient mobile zoom.
+
+### Validation Evidence
+
+- Server-rendered mobile check passed: it contains menu/panel hide controls and a
+  pinch-enabled canvas marker, and omits `Fundamental Cell`, its instruction and the status bar.
+- Server-rendered desktop check passed: construction heading/instructions and the status bar
+  remain, and pinch zoom is not enabled.
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Pages asset references remain below `/symm/assets/`.
+- Interactive collapse/pinch screenshots remain pending because the Browser plugin's required
+  execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

@@ -132,6 +132,7 @@ export function PreviewWindow({ mobileMode = false }: { mobileMode?: boolean }) 
         <UnitCellCanvas
           document={document}
           preview
+          enablePinchZoom={mobileMode}
           showEdges={display.showEdges}
           showVertices={display.showVertices}
         />

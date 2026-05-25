@@ -100,6 +100,13 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Keep mobile display-layer preferences separate from desktop presentation preferences. The
   touch recoloring surface should begin face-only with edges and vertices hidden, then preserve
   any explicit mobile visibility toggles across editor and preview windows.
+- Keep mobile chrome collapsible independently: hiding document actions or color/analysis
+  panels should leave a compact reveal control and maximize the tessellation surface without
+  deleting desktop guidance/status UI.
+- Pinch zoom on a paintable SVG canvas must track two pointer IDs and suppress tap/swipe paint
+  completion for the entire gesture. Zoom by narrowing the view box around the pinch anchor;
+  render the normal view box whenever touch zoom is disabled, and keep export serialization
+  full-frame.
 
 ## Validation Debt
 

@@ -84,10 +84,10 @@ export function ToolPanel({
 }: ToolPanelProps) {
   return (
     <aside
+      id={mobileMode ? "mobile-color-panels" : undefined}
       className={mobileMode ? "panel tools-panel mobile-tools-panel" : "panel tools-panel"}
       aria-label="Editor tools"
     >
-      {mobileMode ? <p className="mobile-mode-label">Touch color studio</p> : null}
       <FoldSection title="Lattice" icon="lattice" defaultOpen={!mobileMode}>
         <div className="lattice-list">
           {(["generic", "square", "rectangular", "hexagonal"] as const).map((entry) => (
@@ -272,6 +272,7 @@ export function Inspector({
 
   return (
     <aside
+      id={mobileMode ? "mobile-analysis-panels" : undefined}
       className={mobileMode ? "panel inspector-panel mobile-inspector-panel" : "panel inspector-panel"}
       aria-label="Mathematical inspector"
     >

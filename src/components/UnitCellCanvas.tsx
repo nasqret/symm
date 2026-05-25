@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import type {
   CellDocument,
@@ -30,6 +30,37 @@ interface ContentTransformAnimation {
 
 type ColorCycleDirection = -1 | 1;
 
+interface CanvasViewport {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  scale: number;
+}
+
+interface PinchStart {
+  distance: number;
+  viewport: CanvasViewport;
+  anchor: { x: number; y: number };
+  ratio: { x: number; y: number };
+}
+
+const DEFAULT_VIEWPORT: CanvasViewport = {
+  x: 0,
+  y: 0,
+  width: WIDTH,
+  height: HEIGHT,
+  scale: 1,
+};
+
+function pointerDistance(points: { x: number; y: number }[]): number {
+  return Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
+}
+
+function clampZoom(value: number): number {
+  return Math.min(4, Math.max(1, value));
+}
+
 interface UnitCellCanvasProps {
   document: CellDocument;
   tool?: EditorTool;
@@ -38,6 +69,7 @@ interface UnitCellCanvasProps {
   selectedSymmetryElement?: SymmetryElement | null;
   preview?: boolean;
   immersive?: boolean;
+  enablePinchZoom?: boolean;
   showEdges?: boolean;
   showVertices?: boolean;
   latticeOverride?: Lattice;
@@ -142,6 +174,7 @@ export function UnitCellCanvas({
   selectedSymmetryElement,
   preview = false,
   immersive = false,
+  enablePinchZoom = false,
   showEdges = true,
   showVertices = true,
   latticeOverride,
@@ -160,6 +193,10 @@ export function UnitCellCanvas({
 }: UnitCellCanvasProps) {
   const swipeStart = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const suppressTouchClick = useRef(false);
+  const touchPointers = useRef(new Map<number, { x: number; y: number }>());
+  const pinchStart = useRef<PinchStart | null>(null);
+  const pinchActive = useRef(false);
+  const [viewport, setViewport] = useState(DEFAULT_VIEWPORT);
   const faces = useMemo(() => extractFaces(document), [document]);
   const displayLattice = latticeOverride ?? document.lattice;
   const transform = useMemo(
@@ -172,6 +209,7 @@ export function UnitCellCanvas({
   );
   const displayedTiles = tiles(preview ? (previewTileRange ?? 4) : 2);
   const edgeTiles = tiles(preview ? (previewTileRange ?? 4) : 1);
+  const activeViewport = enablePinchZoom ? viewport : DEFAULT_VIEWPORT;
   const beginColorSwipe = (event: React.PointerEvent<SVGSVGElement>) => {
     if (event.pointerType !== "touch" || tool !== "color" || !onCycleColor) {
       return;
@@ -202,19 +240,117 @@ export function UnitCellCanvas({
     event.stopPropagation();
     onCycleColor?.(verticalDistance < 0 ? 1 : -1);
   };
+  const beginPointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (enablePinchZoom && event.pointerType === "touch") {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      touchPointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (touchPointers.current.size >= 2) {
+        const points = Array.from(touchPointers.current.values()).slice(0, 2);
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const midpoint = {
+            x: (points[0].x + points[1].x) / 2,
+            y: (points[0].y + points[1].y) / 2,
+          };
+          const ratio = {
+            x: (midpoint.x - rect.left) / rect.width,
+            y: (midpoint.y - rect.top) / rect.height,
+          };
+          pinchStart.current = {
+            distance: Math.max(pointerDistance(points), 1),
+            viewport,
+            ratio,
+            anchor: {
+              x: viewport.x + ratio.x * viewport.width,
+              y: viewport.y + ratio.y * viewport.height,
+            },
+          };
+          pinchActive.current = true;
+          suppressTouchClick.current = true;
+          swipeStart.current = null;
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+      }
+    }
+    beginColorSwipe(event);
+  };
+  const movePointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (
+      !enablePinchZoom ||
+      event.pointerType !== "touch" ||
+      !touchPointers.current.has(event.pointerId)
+    ) {
+      return;
+    }
+    touchPointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    const start = pinchStart.current;
+    if (!pinchActive.current || !start || touchPointers.current.size < 2) {
+      return;
+    }
+    const points = Array.from(touchPointers.current.values()).slice(0, 2);
+    const nextScale = clampZoom(start.viewport.scale * (pointerDistance(points) / start.distance));
+    const width = WIDTH / nextScale;
+    const height = HEIGHT / nextScale;
+    setViewport({
+      scale: nextScale,
+      width,
+      height,
+      x: Math.min(WIDTH - width, Math.max(0, start.anchor.x - start.ratio.x * width)),
+      y: Math.min(HEIGHT - height, Math.max(0, start.anchor.y - start.ratio.y * height)),
+    });
+    suppressTouchClick.current = true;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  const endPointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (enablePinchZoom && event.pointerType === "touch") {
+      const tracked = touchPointers.current.has(event.pointerId);
+      if (tracked) {
+        touchPointers.current.delete(event.pointerId);
+      }
+      if (pinchActive.current) {
+        suppressTouchClick.current = true;
+        swipeStart.current = null;
+        if (touchPointers.current.size < 2) {
+          pinchStart.current = null;
+        }
+        if (touchPointers.current.size === 0) {
+          pinchActive.current = false;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+    }
+    endColorSwipe(event);
+  };
+  const cancelPointerGesture = (event: React.PointerEvent<SVGSVGElement>) => {
+    swipeStart.current = null;
+    if (event.pointerType === "touch") {
+      touchPointers.current.delete(event.pointerId);
+      if (touchPointers.current.size < 2) {
+        pinchStart.current = null;
+      }
+      if (touchPointers.current.size === 0) {
+        pinchActive.current = false;
+      }
+    }
+  };
 
   return (
     <svg
       className={`unit-canvas${preview ? " unit-canvas--preview" : ""}${
         immersive ? " unit-canvas--immersive" : ""
       }`}
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      viewBox={`${activeViewport.x} ${activeViewport.y} ${activeViewport.width} ${activeViewport.height}`}
+      data-zoom={enablePinchZoom ? viewport.scale.toFixed(2) : undefined}
       aria-label="Periodic unit-cell drawing canvas"
-      onPointerDownCapture={beginColorSwipe}
-      onPointerUpCapture={endColorSwipe}
-      onPointerCancel={() => {
-        swipeStart.current = null;
-      }}
+      onPointerDownCapture={beginPointerGesture}
+      onPointerMoveCapture={movePointerGesture}
+      onPointerUpCapture={endPointerGesture}
+      onPointerCancelCapture={cancelPointerGesture}
       onClickCapture={(event) => {
         if (suppressTouchClick.current) {
           suppressTouchClick.current = false;
