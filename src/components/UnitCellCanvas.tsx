@@ -265,13 +265,24 @@ export function UnitCellCanvas({
           faces.map((face) => {
             const central = tile.u === 0 && tile.v === 0;
             const transitioning = transitioningFaceSignatures?.has(face.signature) ?? false;
+            const fill = faceColor(document, face.signature);
             const transitionStyle =
               transitioning && transitioningFromDocument
                 ? ({
                     "--threshold-from-fill": faceColor(transitioningFromDocument, face.signature),
-                    "--threshold-to-fill": faceColor(document, face.signature),
+                    "--threshold-to-fill": fill,
                   } as CSSProperties)
                 : undefined;
+            const seamStyle: CSSProperties | undefined = !showEdges
+              ? {
+                  stroke: fill,
+                  strokeWidth: 1.2,
+                  strokeLinejoin: "round",
+                  paintOrder: "stroke fill",
+                }
+              : undefined;
+            const faceStyle =
+              transitionStyle || seamStyle ? { ...transitionStyle, ...seamStyle } : undefined;
             return (
               <path
                 key={`face-${face.signature}-${tile.u}-${tile.v}`}
@@ -284,8 +295,8 @@ export function UnitCellCanvas({
                 }`}
                 d={facePath(face, tile, transform)}
                 fillRule="evenodd"
-                fill={faceColor(document, face.signature)}
-                style={transitionStyle}
+                fill={fill}
+                style={faceStyle}
                 onPointerDown={(event) => {
                   if (tool === "color" && event.pointerType !== "touch") {
                     event.stopPropagation();

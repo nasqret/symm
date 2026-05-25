@@ -482,6 +482,24 @@
 - Rendered inspector spacing checks remain pending because the browser validation interface
   was unavailable in this session.
 
+## 2026-05-25: Seamless Face-Only Tiling Rendering
+
+- Diagnosed the remaining thin light lines with hidden edges as SVG anti-alias seams between
+  adjacent face paths rather than rendered motif-edge elements.
+- Added a `1.2`-pixel same-fill overlap stroke only when the edge layer is hidden. It is
+  applied inline to each face path so clean previews, SVG/PNG exports and the subgroup
+  presentation preserve the same continuous face rendering.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Source inspection confirms that seam strokes are created only while `showEdges` is false and
+  that preview export serializes the styled SVG face paths before SVG/PNG output.
+- Rendered face-only editor/preview/export checks remain pending because the browser validation
+  interface was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

@@ -203,3 +203,14 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered inspector spacing checks when the browser validation interface is
   available in the session.
+
+## Cycle Record: 2026-05-25 Seamless Face-Only Rendering
+
+- [x] Added a narrow same-fill overlap stroke to face paths only while the edge layer is
+  hidden, suppressing paper-colored anti-alias breaks between neighboring regions.
+- [x] Kept the seam suppression inline on SVG face elements so preview SVG/PNG export and
+  animated presentation rendering inherit the same visual correction.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Confirmed the export serializer clones inline face styling used for the overlap stroke.
+- [ ] Complete rendered face-only editor/preview/export checks when the browser validation
+  interface is available in the session.

@@ -82,6 +82,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   tile palette, with a light separation halo so axes and arrows remain readable over any face.
 - In compact inspector rows, reserve an explicit caption column and gap before monospace
   operation labels; allow the label column to wrap instead of colliding with its category.
+- SVG faces that share an edge may reveal background-colored anti-alias seams after motif edges
+  are hidden. In edge-free rendering, give each face a narrow same-fill overlap stroke inline
+  so the fix is retained by SVG serialization and PNG rasterization.
 
 ## Validation Debt
 
