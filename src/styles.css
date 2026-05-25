@@ -1438,7 +1438,8 @@ kbd {
   opacity: 1;
   stroke: rgba(255, 255, 255, 0.72);
   stroke-width: 0.92;
-  transition: fill 18ms linear, stroke 80ms ease;
+  fill: var(--threshold-from-fill);
+  animation: symmetry-threshold-pulse var(--threshold-duration) step-end both;
 }
 
 .demo-layer--threshold .unit-canvas--immersive {
@@ -1456,15 +1457,106 @@ kbd {
   opacity: 0.64;
 }
 
-.demo-layer--homotopy .motif-edge,
-.demo-layer--homotopy .motif-vertex {
+.demo-layer--homotopy .canvas-edges,
+.demo-layer--homotopy .canvas-vertices {
   transform-box: fill-box;
   transform-origin: center;
-  transform: scale(var(--edge-scale));
 }
 
 .demo-layer--homotopy .periodic-face--immersive {
-  stroke-width: calc(0.3px + var(--edge-scale) * 0.45px);
+  stroke-width: 0.55px;
+}
+
+.demo-layer--homotopy-from {
+  animation: homotopy-fade-out var(--homotopy-duration) cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.demo-layer--homotopy-to {
+  animation: homotopy-fade-in var(--homotopy-duration) cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.demo-layer--homotopy-from .canvas-edges,
+.demo-layer--homotopy-from .canvas-vertices {
+  animation: homotopy-contract var(--homotopy-duration) cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.demo-layer--homotopy-to .canvas-edges,
+.demo-layer--homotopy-to .canvas-vertices {
+  animation: homotopy-expand var(--homotopy-duration) cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+@keyframes homotopy-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes homotopy-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes homotopy-contract {
+  to {
+    transform: scale(0.018);
+  }
+}
+
+@keyframes homotopy-expand {
+  from {
+    transform: scale(0.018);
+  }
+}
+
+@keyframes symmetry-threshold-pulse {
+  0% {
+    fill: var(--threshold-from-fill);
+  }
+
+  22% {
+    fill: var(--threshold-to-fill);
+  }
+
+  41% {
+    fill: var(--threshold-from-fill);
+  }
+
+  56% {
+    fill: var(--threshold-to-fill);
+  }
+
+  68% {
+    fill: var(--threshold-from-fill);
+  }
+
+  77% {
+    fill: var(--threshold-to-fill);
+  }
+
+  84% {
+    fill: var(--threshold-from-fill);
+  }
+
+  89% {
+    fill: var(--threshold-to-fill);
+  }
+
+  93% {
+    fill: var(--threshold-from-fill);
+  }
+
+  96% {
+    fill: var(--threshold-to-fill);
+  }
+
+  98% {
+    fill: var(--threshold-from-fill);
+  }
+
+  100% {
+    fill: var(--threshold-to-fill);
+  }
 }
 
 .demo-viewport.is-chromatic .unit-canvas--immersive {
@@ -1616,7 +1708,7 @@ kbd {
   }
 
   .demo-layer--threshold .periodic-face--transitioning {
-    transition-duration: 1ms;
+    animation: none;
   }
 }
 

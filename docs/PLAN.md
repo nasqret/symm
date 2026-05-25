@@ -42,8 +42,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    subgroup exploration implemented on 2026-05-25; the explorer now reconstructs the supplied
    17-node standard-label hierarchy, highlights the live group, and performs the featured
    `p6mm -> p1 -> p4mm -> p4gm -> p1` exploration with fixed-lattice chromatic transitions
-   that flicker changed tiles with accelerating frequency before settling, plus a `p1`
-   homotopy when changing lattice family.
+   that flicker only minimal verified accent witnesses with accelerating frequency before
+   settling, plus an affine SVG `p1` homotopy when changing lattice family.
 
 ## Architecture Decisions
 
@@ -60,15 +60,15 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Edge and vertex visibility is presentation state stored independently from motif JSON and
   shared by editor, preview/export and animated presentation windows; omitted SVG groups stay
   omitted when the preview is serialized or rasterized.
-- Explorer-only chromatic fields color complete face orbits under a selected stage's required
-  operations while retaining one lattice family's vertices and edges; the resulting colored
-  symbol is checked before it is described in the presentation.
+- Explorer-only fields retain a common background and color the minimum complete witness orbits
+  needed for each selected stage while retaining one lattice family's vertices and edges; the
+  resulting colored symbol is checked before it is described in the presentation.
 - The subgroup display is a reconstruction of the supplied standard-symbol hierarchy for all
   17 wallpaper-group types. It is not the infinite subgroup poset: finite-index translation
   copies of a type are intentionally collapsed to one node.
 - A cross-family selection first descends to `p1` through recoloring on the unchanged lattice,
-  then interpolates lattice parameters while contracting old motif edges and expanding the new
-  mesh before applying the target colors.
+  then applies an SVG affine basis homotopy while contracting the old edge layer and expanding
+  the new one before applying the target colors.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

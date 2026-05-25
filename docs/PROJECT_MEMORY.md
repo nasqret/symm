@@ -69,6 +69,12 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   graph node and lattice fixed, flicker only faces whose target colors differ with accelerating
   frequency, then commit the new node when the target coloring settles. Under reduced-motion
   preferences, replace the flicker by one brief settled target frame.
+- Minimal explorer stages are clearer than independently vivid orbit palettes: keep one dark
+  field color, add only classifier-verified witness orbits for the target group, and compare
+  actual displayed colors when deciding which faces should pulse.
+- Dense repeated SVG views should not be rerendered for fast pulses or lattice homotopies.
+  Drive color thresholds with CSS keyframes and transform each static `p1` layer by one affine
+  SVG basis animation while CSS fades and contracts edge groups.
 
 ## Validation Debt
 

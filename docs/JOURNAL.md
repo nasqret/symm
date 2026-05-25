@@ -363,6 +363,34 @@
   retained the inspector result `p2gg`.
 - Browser page-error and console-error checks reported no application errors.
 
+## 2026-05-25: Minimal Witness Fields And Affine Homotopy
+
+- Replaced the saturated explorer-only orbit palette with a shared dark field plus the minimum
+  accent witness orbits required to classify each lattice-family/group stage exactly. Every
+  generated presentation stage is checked by `computeSymmetry` before it is shown.
+- Reduced the featured route color edits sharply: representative changes are `p6mm -> p6`
+  from `32` to `6` fundamental faces, `p6 -> p3` from `29` to `3`, `p3 -> p1` from `46` to
+  `3`, and square `p2 -> p4` from `28` to `2`.
+- Moved the accelerating threshold pulse from React face-color updates to CSS keyframes on
+  changed paths. React now commits the target state once after the threshold instead of
+  rebuilding the repeated SVG for every blink.
+- Reimplemented the cross-family `p1` bridge as two static five-by-five fields with SVG affine
+  basis animations and group-level edge contraction/fade animations, avoiding per-frame
+  regeneration of thousands of face paths.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- All supported explorer family/group stages classified to their requested symbols; the
+  authored walk now changes `6, 3, 3, bridge, 2, 2, 4, 8, 4, 2, 2` fundamental faces.
+- Browser threshold checks: controlled `p6mm -> p6` displayed only `6` changing fundamental
+  regions while retaining `p6mm` until commit; slow-motion CSS sampling observed pulse gaps
+  falling from `633 ms` to `92 ms` near the threshold.
+- Browser bridge check: a slow cross-family `p1` selection reported `Lattice homotopy` with
+  two affine layers and `2050` bridge face paths before advancing to the target recoloring.
+
 ## Journal Protocol
 
 For each working cycle append:

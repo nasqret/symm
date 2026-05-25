@@ -1,4 +1,5 @@
 import { useMemo, useRef } from "react";
+import type { CSSProperties } from "react";
 import type {
   CellDocument,
   EditorTool,
@@ -21,6 +22,12 @@ interface VertexHit {
   tile: TileOffset;
 }
 
+interface ContentTransformAnimation {
+  from: string;
+  to: string;
+  durationMs: number;
+}
+
 interface UnitCellCanvasProps {
   document: CellDocument;
   tool?: EditorTool;
@@ -33,7 +40,10 @@ interface UnitCellCanvasProps {
   showVertices?: boolean;
   latticeOverride?: Lattice;
   displayScaleOverride?: number;
+  previewTileRange?: number;
+  contentTransformAnimation?: ContentTransformAnimation;
   transitioningFaceSignatures?: ReadonlySet<string>;
+  transitioningFromDocument?: CellDocument;
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
@@ -43,7 +53,7 @@ interface UnitCellCanvasProps {
   onCoordinate?: (point: FractionalPoint | null) => void;
 }
 
-function displayTransform(lattice: Lattice, displayScaleOverride?: number): {
+export function displayTransform(lattice: Lattice, displayScaleOverride?: number): {
   origin: { x: number; y: number };
   a: { x: number; y: number };
   b: { x: number; y: number };
@@ -147,7 +157,10 @@ export function UnitCellCanvas({
   showVertices = true,
   latticeOverride,
   displayScaleOverride,
+  previewTileRange,
+  contentTransformAnimation,
   transitioningFaceSignatures,
+  transitioningFromDocument,
   onAddVertex,
   onVertexHit,
   onColorFace,
@@ -167,8 +180,8 @@ export function UnitCellCanvas({
     () => vertexGridPoints(document.lattice.type),
     [document.lattice.type],
   );
-  const displayedTiles = tiles(preview ? 4 : 2);
-  const edgeTiles = tiles(preview ? 4 : 1);
+  const displayedTiles = tiles(preview ? (previewTileRange ?? 4) : 2);
+  const edgeTiles = tiles(preview ? (previewTileRange ?? 4) : 1);
 
   const eventPoint = (event: React.PointerEvent<SVGSVGElement>): FractionalPoint => {
     const bounds = svgRef.current?.getBoundingClientRect();
@@ -199,6 +212,20 @@ export function UnitCellCanvas({
         </marker>
       </defs>
       <rect className="canvas-paper" width={WIDTH} height={HEIGHT} />
+      <g className="canvas-content">
+        {contentTransformAnimation && (
+          <animateTransform
+            attributeName="transform"
+            type="matrix"
+            from={contentTransformAnimation.from}
+            to={contentTransformAnimation.to}
+            dur={`${contentTransformAnimation.durationMs}ms`}
+            calcMode="spline"
+            keyTimes="0;1"
+            keySplines="0.45 0 0.55 1"
+            fill="freeze"
+          />
+        )}
       {!preview &&
         displayedTiles.map((tile) => {
           const cell = [
@@ -220,6 +247,14 @@ export function UnitCellCanvas({
         {displayedTiles.flatMap((tile) =>
           faces.map((face) => {
             const central = tile.u === 0 && tile.v === 0;
+            const transitioning = transitioningFaceSignatures?.has(face.signature) ?? false;
+            const transitionStyle =
+              transitioning && transitioningFromDocument
+                ? ({
+                    "--threshold-from-fill": faceColor(transitioningFromDocument, face.signature),
+                    "--threshold-to-fill": faceColor(document, face.signature),
+                  } as CSSProperties)
+                : undefined;
             return (
               <path
                 key={`face-${face.signature}-${tile.u}-${tile.v}`}
@@ -228,13 +263,12 @@ export function UnitCellCanvas({
                 }${
                   tool === "color" ? " periodic-face--paintable" : ""
                 }${immersive ? " periodic-face--immersive" : ""}${
-                  transitioningFaceSignatures?.has(face.signature)
-                    ? " periodic-face--transitioning"
-                    : ""
+                  transitioning ? " periodic-face--transitioning" : ""
                 }`}
                 d={facePath(face, tile, transform)}
                 fillRule="evenodd"
                 fill={faceColor(document, face.signature)}
+                style={transitionStyle}
                 onPointerDown={(event) => {
                   if (tool === "color") {
                     event.stopPropagation();
@@ -382,6 +416,7 @@ export function UnitCellCanvas({
           </text>
         </g>
       )}
+      </g>
     </svg>
   );
 }

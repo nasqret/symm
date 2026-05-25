@@ -1,4 +1,4 @@
-import type { CellDocument, LatticeType, PeriodicFace } from "../types";
+import type { CellDocument, FractionalPoint, LatticeType, PeriodicFace } from "../types";
 import { applyOperation, normalizePoint } from "../math/lattice";
 import { extractFaces, findFaceAtPoint } from "../math/periodicGraph";
 import { computeSymmetry } from "../math/symmetry";
@@ -215,21 +215,81 @@ export const FEATURED_WALK: ExplorerWalkStep[] = [
   },
 ];
 
-const HUE_ORIGINS: Record<LatticeType, number> = {
-  generic: 302,
-  rectangular: 22,
-  square: 188,
-  hexagonal: 324,
+interface ExplorerDecorationSeed {
+  point: FractionalPoint;
+  color: string;
+}
+
+const ACCENT_COLOR = "#ff4fa3";
+const SECONDARY_ACCENT_COLOR = "#00d7d9";
+const FIELD_COLOR = "#112c3b";
+const HEXAGONAL_SEED = { u: 4 / 15, v: 1 / 15 };
+const SQUARE_SEED = { u: 1 / 4, v: 1 / 8 };
+
+// These sparse witnesses are verified by computeSymmetry below. A stage paints only
+// enough complete target-group orbits to prevent classification as a larger group.
+const EXPLORER_DECORATIONS: Record<LatticeType, Record<string, ExplorerDecorationSeed[]>> = {
+  generic: {
+    p2: [],
+    p1: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+  },
+  rectangular: {
+    cmm: [],
+    pmm: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
+    pmg: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
+    pgg: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: { u: 0, v: 1 / 8 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+    cm: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+    pm: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+    pg: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: { u: 0, v: 1 / 8 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+    p2: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: SQUARE_SEED, color: SECONDARY_ACCENT_COLOR },
+    ],
+    p1: [
+      { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+      { point: { u: 0, v: 1 / 8 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+  },
+  square: {
+    p4m: [],
+    p4g: [{ point: SQUARE_SEED, color: ACCENT_COLOR }],
+    p4: [{ point: SQUARE_SEED, color: ACCENT_COLOR }],
+    p2: [{ point: SQUARE_SEED, color: ACCENT_COLOR }],
+    p1: [
+      { point: SQUARE_SEED, color: ACCENT_COLOR },
+      { point: { u: 1 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+  },
+  hexagonal: {
+    p6m: [],
+    p6: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
+    p3m1: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
+    p31m: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
+    p3: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
+    p2: [{ point: HEXAGONAL_SEED, color: ACCENT_COLOR }],
+    p1: [
+      { point: HEXAGONAL_SEED, color: ACCENT_COLOR },
+      { point: { u: 1 / 15, v: 1 / 15 }, color: SECONDARY_ACCENT_COLOR },
+    ],
+  },
 };
 
 const IMMERSIVE_STAGE_CACHE = new Map<string, ImmersiveStage>();
-
-function chromaticColor(index: number, latticeType: LatticeType): string {
-  const hue = (HUE_ORIGINS[latticeType] + index * 137.508) % 360;
-  const saturation = 92 + (index % 3) * 3;
-  const lightness = [56, 48, 64, 52][index % 4];
-  return `hsl(${hue.toFixed(1)}, ${saturation}%, ${lightness}%)`;
-}
 
 function assignOrbit(
   source: PeriodicFace,
@@ -273,29 +333,37 @@ export function buildImmersiveStage(symbol: string, family: LatticeType): Immers
   }
 
   const faces = extractFaces(source);
-  const assigned = new Map<string, string>();
+  const assigned = new Map(faces.map((face) => [face.signature, FIELD_COLOR]));
   const operations = operationClosure(group.operations);
-  let orbitCount = 0;
-
-  for (const face of faces) {
-    if (!assigned.has(face.signature)) {
-      assignOrbit(face, faces, operations, chromaticColor(orbitCount, family), assigned);
-      orbitCount += 1;
+  const decorations = EXPLORER_DECORATIONS[family][symbol];
+  if (!decorations) {
+    throw new Error(`Missing explorer witness definition for ${family}:${symbol}`);
+  }
+  for (const decoration of decorations) {
+    const face = findFaceAtPoint(faces, decoration.point);
+    if (!face) {
+      throw new Error(`Missing explorer witness face for ${family}:${symbol}`);
     }
+    assignOrbit(face, faces, operations, decoration.color, assigned);
   }
 
   const document: CellDocument = {
     ...source,
-    name: `${symbol} chromatic field on ${family} lattice`,
+    name: `${symbol} minimal witness field on ${family} lattice`,
     presetGroup: symbol,
     faceColors: [...assigned].map(([signature, color]) => ({ signature, color })),
   };
   const computedSymbol = computeSymmetry(document).symbol;
+  if (computedSymbol !== symbol) {
+    throw new Error(
+      `Explorer witness for ${family}:${symbol} classified as ${computedSymbol}`,
+    );
+  }
   const stage = {
     document,
-    orbitCount,
+    orbitCount: decorations.length,
     computedSymbol,
-    enriched: computedSymbol === symbol,
+    enriched: true,
   };
   IMMERSIVE_STAGE_CACHE.set(cacheKey, stage);
   return stage;

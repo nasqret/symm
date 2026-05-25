@@ -143,3 +143,14 @@ Run this checklist on every implementation cycle.
 - [x] Display a blocked-edit reason naming both the locked type and the would-be detected type.
 - [x] Ran `npm run typecheck`, `npm run build` and rendered `pgg` locked-edit regression checks
   for both blocked and accepted face-orbit recolorings without browser page errors.
+
+## Cycle Record: 2026-05-25 Minimal Witness Explorer Motion
+
+- [x] Replaced dense explorer color fields with minimal classifier-verified accent witness
+  orbits over a shared dark field.
+- [x] Moved accelerating threshold blinking to CSS keyframes so terminal pulses remain visible
+  without repeated React SVG reconstruction.
+- [x] Replaced per-frame lattice path generation with an affine SVG `p1` homotopy and grouped
+  edge contraction on a bounded bridge field.
+- [x] Ran `git diff --check`, `npm run typecheck`, `npm run build`, all-stage classification
+  checks, threshold cadence sampling and cross-family bridge browser checks.

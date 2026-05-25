@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
-import type { Lattice, LatticeType } from "../types";
+import type { LatticeType } from "../types";
 import { LATTICES } from "../math/lattice";
+import { extractFaces, faceColor } from "../math/periodicGraph";
 import { lookupGroup } from "../data/wallpaperGroups";
 import {
   buildImmersiveStage,
@@ -14,7 +15,7 @@ import {
   type ExplorerFamily,
 } from "../data/subgroupExplorer";
 import { useDisplaySettings } from "../state/useDisplaySettings";
-import { UnitCellCanvas } from "./UnitCellCanvas";
+import { displayTransform, UnitCellCanvas } from "./UnitCellCanvas";
 
 type Speed = "slow" | "medium" | "fast";
 
@@ -77,48 +78,32 @@ function familyFor(id: LatticeType): ExplorerFamily {
   return EXPLORER_FAMILIES.find((family) => family.id === id) ?? EXPLORER_FAMILIES[0];
 }
 
-function interpolateLattice(from: Lattice, to: Lattice, progress: number): Lattice {
-  const interpolate = (left: number, right: number) => left + (right - left) * progress;
-  return {
-    type: progress < 0.5 ? from.type : to.type,
-    a: interpolate(from.a, to.a),
-    b: interpolate(from.b, to.b),
-    angle: interpolate(from.angle, to.angle),
-  };
-}
-
 function displayScaleFor(family: LatticeType): number {
   return family === "rectangular" ? 192 : 205;
 }
 
-function changedFaceSignatures(from: ReturnType<typeof buildImmersiveStage>, to: ReturnType<typeof buildImmersiveStage>) {
-  const incoming = new Map(to.document.faceColors.map((entry) => [entry.signature, entry.color]));
-  return new Set(
-    from.document.faceColors
-      .filter((entry) => incoming.get(entry.signature) !== entry.color)
-      .map((entry) => entry.signature),
-  );
+function latticeTransform(fromFamily: LatticeType, toFamily: LatticeType): string {
+  const from = displayTransform(LATTICES[fromFamily], displayScaleFor(fromFamily));
+  const to = displayTransform(LATTICES[toFamily], displayScaleFor(toFamily));
+  const det = from.a.x * from.b.y - from.a.y * from.b.x;
+  const a = (to.a.x * from.b.y - to.b.x * from.a.y) / det;
+  const b = (to.a.y * from.b.y - to.b.y * from.a.y) / det;
+  const c = (-to.a.x * from.b.x + to.b.x * from.a.x) / det;
+  const d = (-to.a.y * from.b.x + to.b.y * from.a.x) / det;
+  const e = to.origin.x - a * from.origin.x - c * from.origin.y;
+  const f = to.origin.y - b * from.origin.x - d * from.origin.y;
+  return [a, b, c, d, e, f].map((value) => value.toFixed(6)).join(" ");
 }
 
-function pulsingDocument(
-  from: ReturnType<typeof buildImmersiveStage>,
-  to: ReturnType<typeof buildImmersiveStage>,
-  changed: ReadonlySet<string>,
-  showIncoming: boolean,
-) {
-  if (!showIncoming) {
-    return from.document;
-  }
-  const incoming = new Map(to.document.faceColors.map((entry) => [entry.signature, entry.color]));
-  return {
-    ...from.document,
-    name: `${from.document.name} approaching ${to.document.name}`,
-    faceColors: from.document.faceColors.map((entry) =>
-      changed.has(entry.signature)
-        ? { ...entry, color: incoming.get(entry.signature) ?? entry.color }
-        : entry,
-    ),
-  };
+function changedFaceSignatures(from: ReturnType<typeof buildImmersiveStage>, to: ReturnType<typeof buildImmersiveStage>) {
+  return new Set(
+    extractFaces(from.document)
+      .filter(
+        (face) =>
+          faceColor(from.document, face.signature) !== faceColor(to.document, face.signature),
+      )
+      .map((face) => face.signature),
+  );
 }
 
 interface SubgroupGraphProps {
@@ -240,14 +225,12 @@ export function ExplorationDemo() {
   const [selection, setSelection] = useState<ExplorerSelection>(INITIAL_SELECTION);
   const [walkIndex, setWalkIndex] = useState<number | null>(0);
   const [colorTransition, setColorTransition] = useState<ColorTransition | null>(null);
-  const [colorPulse, setColorPulse] = useState({ progress: 0, showIncoming: false });
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState<Speed>("medium");
   const [ambient, setAmbient] = useState(false);
   const [pendingBridge, setPendingBridge] = useState<BridgeRequest | null>(null);
   const [pendingAscent, setPendingAscent] = useState<PendingAscent | null>(null);
   const [bridge, setBridge] = useState<LatticeBridge | null>(null);
-  const [bridgeProgress, setBridgeProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [display, toggleDisplay] = useDisplaySettings();
   const family = familyFor(selection.family);
@@ -277,13 +260,6 @@ export function ExplorationDemo() {
         : new Set<string>(),
     [colorFromStage, colorToStage],
   );
-  const colorPulseDocument = useMemo(
-    () =>
-      colorFromStage && colorToStage
-        ? pulsingDocument(colorFromStage, colorToStage, changingSignatures, colorPulse.showIncoming)
-        : null,
-    [changingSignatures, colorFromStage, colorPulse.showIncoming, colorToStage],
-  );
   const bridgeFrom = useMemo(
     () => (bridge ? buildImmersiveStage("p1", bridge.fromFamily) : null),
     [bridge],
@@ -292,13 +268,12 @@ export function ExplorationDemo() {
     () => (bridge ? buildImmersiveStage("p1", bridge.toFamily) : null),
     [bridge],
   );
-  const interpolatedLattice = bridge
-    ? interpolateLattice(LATTICES[bridge.fromFamily], LATTICES[bridge.toFamily], bridgeProgress)
+  const bridgeTransforms = bridge
+    ? {
+        fromTo: latticeTransform(bridge.fromFamily, bridge.toFamily),
+        toFrom: latticeTransform(bridge.toFamily, bridge.fromFamily),
+      }
     : null;
-  const interpolatedScale = bridge
-    ? displayScaleFor(bridge.fromFamily) +
-      (displayScaleFor(bridge.toFamily) - displayScaleFor(bridge.fromFamily)) * bridgeProgress
-    : undefined;
 
   const transitionColor = (next: ExplorerSelection, settleWalkIndex?: number) => {
     if (next.symbol === selection.symbol && next.family === selection.family) {
@@ -307,15 +282,12 @@ export function ExplorationDemo() {
       }
       return;
     }
-    setColorPulse({ progress: 0, showIncoming: false });
     setColorTransition({ from: selection, to: next, settleWalkIndex });
   };
 
   const beginBridge = (request: BridgeRequest) => {
     setColorTransition(null);
-    setColorPulse({ progress: 0, showIncoming: false });
     setPendingBridge(null);
-    setBridgeProgress(0);
     setBridge({
       fromFamily: selection.family,
       toFamily: request.toFamily,
@@ -326,11 +298,9 @@ export function ExplorationDemo() {
 
   const clearTransientMotion = () => {
     setColorTransition(null);
-    setColorPulse({ progress: 0, showIncoming: false });
     setPendingBridge(null);
     setPendingAscent(null);
     setBridge(null);
-    setBridgeProgress(0);
   };
 
   const navigateTo = (
@@ -393,33 +363,14 @@ export function ExplorationDemo() {
         setWalkIndex(colorTransition.settleWalkIndex);
       }
       setColorTransition(null);
-      setColorPulse({ progress: 0, showIncoming: false });
     };
     if (reducedMotion) {
-      setColorPulse({ progress: 1, showIncoming: true });
       const timeout = window.setTimeout(settle, 100);
       return () => window.clearTimeout(timeout);
     }
-    const duration = Math.max(1150, Math.round(timing.fade * 1.45));
-    const started = performance.now();
-    let animationFrame = 0;
-    let previousPaint = 0;
-    const draw = (timestamp: number) => {
-      const linear = Math.min(1, Math.max(0, (timestamp - started) / duration));
-      const cycles = 0.42 * linear + 8.5 * linear ** 3;
-      const showIncoming = Math.sin(cycles * Math.PI * 2) > 0;
-      if (timestamp - previousPaint > 28 || linear === 1) {
-        previousPaint = timestamp;
-        setColorPulse({ progress: linear, showIncoming });
-      }
-      if (linear < 1) {
-        animationFrame = window.requestAnimationFrame(draw);
-        return;
-      }
-      settle();
-    };
-    animationFrame = window.requestAnimationFrame(draw);
-    return () => window.cancelAnimationFrame(animationFrame);
+    const duration = Math.max(1250, Math.round(timing.fade * 1.55));
+    const timeout = window.setTimeout(settle, duration);
+    return () => window.clearTimeout(timeout);
   }, [bridge, colorTransition, reducedMotion, timing.fade]);
 
   useEffect(() => {
@@ -434,27 +385,13 @@ export function ExplorationDemo() {
     if (!bridge) {
       return;
     }
-    const duration = Math.max(1250, Math.round(timing.fade * 1.3));
-    const started = performance.now();
-    let animationFrame = 0;
-    let previousPaint = 0;
-    const draw = (timestamp: number) => {
-      const linear = Math.min(1, Math.max(0, (timestamp - started) / duration));
-      const eased = linear * linear * (3 - 2 * linear);
-      if (timestamp - previousPaint > 28 || linear === 1) {
-        previousPaint = timestamp;
-        setBridgeProgress(eased);
-      }
-      if (linear < 1) {
-        animationFrame = window.requestAnimationFrame(draw);
-        return;
-      }
+    const duration = Math.max(2200, Math.round(timing.fade * 1.85));
+    const timeout = window.setTimeout(() => {
       setSelection({ symbol: "p1", family: bridge.toFamily });
       if (bridge.settleWalkIndex !== undefined) {
         setWalkIndex(bridge.settleWalkIndex);
       }
       setBridge(null);
-      setBridgeProgress(0);
       if (bridge.targetSymbol !== "p1") {
         setPendingAscent({
           symbol: bridge.targetSymbol,
@@ -462,9 +399,8 @@ export function ExplorationDemo() {
           settleWalkIndex: bridge.settleWalkIndex,
         });
       }
-    };
-    animationFrame = window.requestAnimationFrame(draw);
-    return () => window.cancelAnimationFrame(animationFrame);
+    }, duration);
+    return () => window.clearTimeout(timeout);
   }, [bridge, timing.fade]);
 
   useEffect(() => {
@@ -496,7 +432,8 @@ export function ExplorationDemo() {
   const activeNarrative =
     walkIndex === null ? groupDescription : FEATURED_WALK[walkIndex].narrative;
   const incomingLabel = colorTransition ? graphLabel(colorTransition.to.symbol) : null;
-  const thresholdPercent = Math.round(colorPulse.progress * 100);
+  const thresholdDuration = Math.max(1250, Math.round(timing.fade * 1.55));
+  const bridgeDuration = Math.max(2200, Math.round(timing.fade * 1.85));
 
   return (
     <main className={ambient ? "demo-page is-ambient" : "demo-page"} style={style}>
@@ -569,7 +506,7 @@ export function ExplorationDemo() {
               ? "Edges contract and regrow while p1 changes its cell."
               : colorTransition
                 ? `${changingSignatures.size} changing regions flicker faster until ${incomingLabel} locks in.`
-                : `${family.title} geometry is preserved while color orbits change.`}
+                : `${family.title} geometry is preserved while accent witnesses change.`}
           </span>
         </div>
       </section>
@@ -581,54 +518,56 @@ export function ExplorationDemo() {
           onSelectSymbol={navigateTo}
         />
         <div className="demo-viewport is-chromatic">
-          {bridge && bridgeFrom && bridgeTo && interpolatedLattice ? (
+          {bridge && bridgeFrom && bridgeTo && bridgeTransforms ? (
             <>
               <div
-                className="demo-layer demo-layer--homotopy"
-                style={
-                  {
-                    "--edge-scale": Math.max(0.018, 1 - bridgeProgress),
-                    opacity: 1 - bridgeProgress,
-                  } as CSSProperties
-                }
+                className="demo-layer demo-layer--homotopy demo-layer--homotopy-from"
+                style={{ "--homotopy-duration": `${bridgeDuration}ms` } as CSSProperties}
               >
                 <UnitCellCanvas
                   document={bridgeFrom.document}
                   preview
                   immersive
-                  latticeOverride={interpolatedLattice}
-                  displayScaleOverride={interpolatedScale}
+                  previewTileRange={2}
+                  contentTransformAnimation={{
+                    from: "1 0 0 1 0 0",
+                    to: bridgeTransforms.fromTo,
+                    durationMs: bridgeDuration,
+                  }}
                   showEdges={display.showEdges}
                   showVertices={display.showVertices}
                 />
               </div>
               <div
-                className="demo-layer demo-layer--homotopy"
-                style={
-                  {
-                    "--edge-scale": Math.max(0.018, bridgeProgress),
-                    opacity: bridgeProgress,
-                  } as CSSProperties
-                }
+                className="demo-layer demo-layer--homotopy demo-layer--homotopy-to"
+                style={{ "--homotopy-duration": `${bridgeDuration}ms` } as CSSProperties}
               >
                 <UnitCellCanvas
                   document={bridgeTo.document}
                   preview
                   immersive
-                  latticeOverride={interpolatedLattice}
-                  displayScaleOverride={interpolatedScale}
+                  previewTileRange={2}
+                  contentTransformAnimation={{
+                    from: bridgeTransforms.toFrom,
+                    to: "1 0 0 1 0 0",
+                    durationMs: bridgeDuration,
+                  }}
                   showEdges={display.showEdges}
                   showVertices={display.showVertices}
                 />
               </div>
             </>
-          ) : colorTransition && colorPulseDocument ? (
-            <div className="demo-layer demo-layer--threshold">
+          ) : colorTransition && colorFromStage && colorToStage ? (
+            <div
+              className="demo-layer demo-layer--threshold"
+              style={{ "--threshold-duration": `${thresholdDuration}ms` } as CSSProperties}
+            >
               <UnitCellCanvas
-                document={colorPulseDocument}
+                document={colorToStage.document}
                 preview
                 immersive
                 transitioningFaceSignatures={changingSignatures}
+                transitioningFromDocument={colorFromStage.document}
                 showEdges={display.showEdges}
                 showVertices={display.showVertices}
               />
@@ -649,7 +588,7 @@ export function ExplorationDemo() {
               {bridge
                 ? `${bridge.fromFamily} to ${bridge.toFamily} / p1 bridge`
                 : colorTransition
-                  ? `${family.title} / symmetry threshold ${thresholdPercent}%`
+                  ? `${family.title} / symmetry threshold in progress`
                   : `${family.title} / fixed lattice`}
             </span>
             <strong>
@@ -669,7 +608,7 @@ export function ExplorationDemo() {
                 ? "smooth metric change / contracting and expanding motif edges"
                 : colorTransition
                   ? `${changingSignatures.size} changing face regions / lattice and edges fixed`
-                  : `${immersiveStage.orbitCount} color orbits / detected symmetry ${graphLabel(immersiveStage.computedSymbol)}`}
+                  : `${immersiveStage.orbitCount} accent orbits / detected symmetry ${graphLabel(immersiveStage.computedSymbol)}`}
             </small>
           </div>
         </div>
