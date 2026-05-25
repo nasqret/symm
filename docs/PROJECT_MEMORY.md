@@ -78,6 +78,8 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - When touch swipe selection and tap-to-paint share the canvas, delay touch painting until
   pointer release and suppress the release/click after a recognized swipe. Restrict color
   swipes to paint mode so topology-edit gestures retain their original meaning.
+- Keep mathematical symmetry overlays on a dedicated annotation color that is absent from the
+  tile palette, with a light separation halo so axes and arrows remain readable over any face.
 
 ## Validation Debt
 

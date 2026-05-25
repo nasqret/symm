@@ -16,6 +16,8 @@
   --teal-soft: #d9e6e6;
   --ochre: #e0ab45;
   --coral: #d66853;
+  --symmetry-accent: #365cf5;
+  --symmetry-halo: #fffdf8;
   --shadow: 0 1px 1px rgba(36, 43, 45, 0.04), 0 7px 22px rgba(36, 43, 45, 0.04);
 }
 
@@ -557,6 +559,8 @@ kbd {
 
 .symmetry-overlay {
   pointer-events: none;
+  filter: drop-shadow(0 0 1.6px var(--symmetry-halo))
+    drop-shadow(0 0 3px rgba(54, 92, 245, 0.34));
 }
 
 #symmetry-arrowhead path {
@@ -564,44 +568,48 @@ kbd {
 }
 
 .symmetry-translation {
-  stroke: var(--coral);
+  stroke: var(--symmetry-accent);
   stroke-width: 3;
   stroke-dasharray: 8 5;
   marker-end: url("#symmetry-arrowhead");
 }
 
 .symmetry-label {
-  fill: var(--coral);
+  fill: var(--symmetry-accent);
+  stroke: var(--symmetry-halo);
+  stroke-width: 3px;
+  paint-order: stroke;
+  stroke-linejoin: round;
   font: 600 12px/1 "SFMono-Regular", monospace;
 }
 
 .symmetry-center {
-  fill: var(--coral);
-  stroke: var(--paper);
-  stroke-width: 2;
+  fill: var(--symmetry-accent);
+  stroke: var(--symmetry-halo);
+  stroke-width: 2.5;
 }
 
 .symmetry-rotation {
   fill: none;
-  stroke: var(--coral);
+  stroke: var(--symmetry-accent);
   stroke-width: 3;
   marker-end: url("#symmetry-arrowhead");
 }
 
 .symmetry-mirror {
-  stroke: var(--ochre);
+  stroke: var(--symmetry-accent);
   stroke-width: 3.2;
   stroke-dasharray: 10 6;
 }
 
 .symmetry-glide {
-  stroke: var(--teal);
+  stroke: var(--symmetry-accent);
   stroke-width: 3;
   stroke-dasharray: 10 7;
 }
 
 .symmetry-glide-arrow {
-  stroke: var(--teal);
+  stroke: var(--symmetry-accent);
   stroke-width: 3;
   marker-end: url("#symmetry-arrowhead");
 }

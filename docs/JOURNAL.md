@@ -447,6 +447,24 @@
 - Rendered keyboard and touch gesture checks remain pending because the browser validation
   interface was unavailable in this session.
 
+## 2026-05-25: Contrasting Symmetry Annotation Layer
+
+- Recolored selectable symmetry overlays from tile-palette coral, ochre and teal to a
+  dedicated electric-blue annotation accent, keeping dash and arrow forms as the operation
+  distinction.
+- Added a light halo to all symmetry marks and an outline to translation labels so they remain
+  visible over either pale background regions or heavily colored faces.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Source inspection confirms translation, rotation, mirror and glide marks all use the
+  dedicated `--symmetry-accent` annotation color while retaining distinct stroke geometry.
+- Rendered overlay checks remain pending because the browser validation interface was
+  unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:
