@@ -309,6 +309,33 @@
 - At `390 x 844`, all 17 standard-label nodes rendered with no horizontal overflow; browser
   page-error checks reported no application errors.
 
+## 2026-05-25: Accelerating Color Threshold Transitions
+
+- Replaced the within-lattice two-canvas fade with a threshold transition: the currently
+  certified group remains selected while only face signatures whose target colors differ
+  flicker between old and incoming colors.
+- Drove the flicker through an increasing-cycle progress curve so flashes accelerate toward the
+  commit threshold, then atomically settle the target coloring and advance the highlighted
+  hierarchy node.
+- Added a transient outline and saturation emphasis for changing regions, retained the separate
+  `p1` lattice-homotopy path, and added a reduced-motion branch that commits after one brief
+  target-color frame rather than repeatedly blinking.
+- Clamped animation progress at zero after rendered QA exposed a negative first-frame percentage
+  from the animation timestamp boundary.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Normal-motion browser sampling of slow `p6mm -> p6`: 36 observed threshold samples marked
+  `2592` repeated changing-face paths, held the graph at `p6mm`, started at `0%`, and settled
+  at `p6` with no marked transition paths.
+- Reduced-motion browser check: `p6mm -> p6` displayed one `100%` threshold target frame and
+  then settled without a repeated blink sequence.
+- Cross-family regression: selecting square `p4` from hexagonal `p1` reported
+  `Lattice homotopy`, mounted two homotopy layers and mounted no threshold paths.
+- Browser page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

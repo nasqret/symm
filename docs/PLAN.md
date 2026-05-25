@@ -41,7 +41,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    subgroup exploration implemented on 2026-05-25; the explorer now reconstructs the supplied
    17-node standard-label hierarchy, highlights the live group, and performs the featured
    `p6mm -> p1 -> p4mm -> p4gm -> p1` exploration with fixed-lattice chromatic transitions
-   and a `p1` homotopy when changing lattice family.
+   that flicker changed tiles with accelerating frequency before settling, plus a `p1`
+   homotopy when changing lattice family.
 
 ## Architecture Decisions
 

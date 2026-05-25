@@ -123,3 +123,14 @@ Run this checklist on every implementation cycle.
 - [x] Cancelled queued animation phases when manual graph exploration or walk restart takes over.
 - [x] Ran `npm run typecheck`, `npm run build`, desktop hierarchy/motion checks and a mobile
   17-node no-overflow check without browser page errors.
+
+## Cycle Record: 2026-05-25 Accelerating Color Threshold
+
+- [x] Replaced color-only crossfades with a staged transition that keeps the source group
+  selected until the incoming coloring is committed.
+- [x] Limited flicker and transient outlining to face signatures whose colors change, with
+  frequency accelerating toward settlement.
+- [x] Preserved lattice homotopy as a distinct cross-family transition and bypassed repeated
+  flicker for reduced-motion users.
+- [x] Ran `npm run typecheck`, `npm run build`, normal-motion threshold sampling,
+  reduced-motion settlement and `p1` lattice-homotopy browser checks without page errors.

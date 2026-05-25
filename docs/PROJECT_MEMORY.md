@@ -61,6 +61,10 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Any manual group selection must cancel queued fades, lattice bridges and ascents before it
   changes the current group; otherwise an earlier autoplay path can overwrite an intentional
   mathematical state.
+- A color-only subgroup transition is most legible as a pre-commit threshold: keep the current
+  graph node and lattice fixed, flicker only faces whose target colors differ with accelerating
+  frequency, then commit the new node when the target coloring settles. Under reduced-motion
+  preferences, replace the flicker by one brief settled target frame.
 
 ## Validation Debt
 

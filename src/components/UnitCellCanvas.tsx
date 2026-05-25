@@ -33,6 +33,7 @@ interface UnitCellCanvasProps {
   showVertices?: boolean;
   latticeOverride?: Lattice;
   displayScaleOverride?: number;
+  transitioningFaceSignatures?: ReadonlySet<string>;
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
@@ -146,6 +147,7 @@ export function UnitCellCanvas({
   showVertices = true,
   latticeOverride,
   displayScaleOverride,
+  transitioningFaceSignatures,
   onAddVertex,
   onVertexHit,
   onColorFace,
@@ -225,7 +227,11 @@ export function UnitCellCanvas({
                   preview ? " periodic-face--preview" : central ? " periodic-face--active" : ""
                 }${
                   tool === "color" ? " periodic-face--paintable" : ""
-                }${immersive ? " periodic-face--immersive" : ""}`}
+                }${immersive ? " periodic-face--immersive" : ""}${
+                  transitioningFaceSignatures?.has(face.signature)
+                    ? " periodic-face--transitioning"
+                    : ""
+                }`}
                 d={facePath(face, tile, transform)}
                 fillRule="evenodd"
                 fill={faceColor(document, face.signature)}

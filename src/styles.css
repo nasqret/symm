@@ -989,7 +989,6 @@ kbd {
 }
 
 .demo-page {
-  --demo-fade-duration: 1500ms;
   --branch-accent: #ff4fa3;
   --branch-glow: rgba(255, 79, 163, 0.62);
   height: 100vh;
@@ -1431,6 +1430,21 @@ kbd {
   stroke-width: 0.55;
 }
 
+.demo-layer--threshold .periodic-face--immersive:not(.periodic-face--transitioning) {
+  opacity: 0.83;
+}
+
+.demo-layer--threshold .periodic-face--transitioning {
+  opacity: 1;
+  stroke: rgba(255, 255, 255, 0.72);
+  stroke-width: 0.92;
+  transition: fill 18ms linear, stroke 80ms ease;
+}
+
+.demo-layer--threshold .unit-canvas--immersive {
+  filter: saturate(1.55) contrast(1.11);
+}
+
 .unit-canvas--immersive .motif-edge {
   stroke: rgba(241, 246, 250, 0.72);
   opacity: 0.42;
@@ -1456,36 +1470,6 @@ kbd {
 .demo-viewport.is-chromatic .unit-canvas--immersive {
   filter: saturate(1.42) contrast(1.09);
   animation: chromatic-spectrum 18s linear infinite;
-}
-
-.demo-layer--arriving {
-  animation: demo-arrive var(--demo-fade-duration) ease forwards;
-}
-
-.demo-layer--departing {
-  animation: demo-depart var(--demo-fade-duration) ease forwards;
-}
-
-@keyframes demo-arrive {
-  from {
-    opacity: 0;
-    transform: scale(1.018);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes demo-depart {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
 }
 
 @keyframes chromatic-spectrum {
@@ -1631,9 +1615,8 @@ kbd {
     animation: none;
   }
 
-  .demo-layer--arriving,
-  .demo-layer--departing {
-    animation-duration: 1ms;
+  .demo-layer--threshold .periodic-face--transitioning {
+    transition-duration: 1ms;
   }
 }
 
