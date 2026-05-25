@@ -14,7 +14,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 4. Implement vertex insertion, periodic edge creation, face coloring and clearing, merge-colored
    vertex/edge deletion, palette selection, history, JSON save/load, and autosave.
    The editor now uses foldable construction sections and grays preset motifs outside the
-   selected canonical lattice family.
+   selected canonical lattice family; paint swatches support numeric keys and vertical swipe
+   cycling while painting.
 5. Extract face cycles from the periodic graph for colored symmetry computation; keep the
    CW-complex diagnostic inventory hidden from the current editor surface.
 6. Test lattice-compatible symmetry operations against geometry and colors; display accepted generators and the classified plane group.

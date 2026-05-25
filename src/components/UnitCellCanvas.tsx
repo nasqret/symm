@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type { CSSProperties } from "react";
 import type {
   CellDocument,
@@ -28,6 +28,8 @@ interface ContentTransformAnimation {
   durationMs: number;
 }
 
+type ColorCycleDirection = -1 | 1;
+
 interface UnitCellCanvasProps {
   document: CellDocument;
   tool?: EditorTool;
@@ -47,6 +49,7 @@ interface UnitCellCanvasProps {
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
+  onCycleColor?: (direction: ColorCycleDirection) => void;
   onSelectEdge?: (edgeId: string) => void;
   onDeleteEdge?: (edgeId: string) => void;
   onDeleteVertex?: (vertexId: string) => void;
@@ -150,10 +153,13 @@ export function UnitCellCanvas({
   onAddVertex,
   onVertexHit,
   onColorFace,
+  onCycleColor,
   onSelectEdge,
   onDeleteEdge,
   onDeleteVertex,
 }: UnitCellCanvasProps) {
+  const swipeStart = useRef<{ pointerId: number; x: number; y: number } | null>(null);
+  const suppressTouchClick = useRef(false);
   const faces = useMemo(() => extractFaces(document), [document]);
   const displayLattice = latticeOverride ?? document.lattice;
   const transform = useMemo(
@@ -166,6 +172,36 @@ export function UnitCellCanvas({
   );
   const displayedTiles = tiles(preview ? (previewTileRange ?? 4) : 2);
   const edgeTiles = tiles(preview ? (previewTileRange ?? 4) : 1);
+  const beginColorSwipe = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (event.pointerType !== "touch" || tool !== "color" || !onCycleColor) {
+      return;
+    }
+    suppressTouchClick.current = false;
+    swipeStart.current = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+    };
+  };
+  const endColorSwipe = (event: React.PointerEvent<SVGSVGElement>) => {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (!start || start.pointerId !== event.pointerId) {
+      return;
+    }
+    const horizontalDistance = event.clientX - start.x;
+    const verticalDistance = event.clientY - start.y;
+    if (
+      Math.abs(verticalDistance) < 42 ||
+      Math.abs(verticalDistance) <= Math.abs(horizontalDistance) * 1.15
+    ) {
+      return;
+    }
+    suppressTouchClick.current = true;
+    event.preventDefault();
+    event.stopPropagation();
+    onCycleColor?.(verticalDistance < 0 ? 1 : -1);
+  };
 
   return (
     <svg
@@ -174,6 +210,18 @@ export function UnitCellCanvas({
       }`}
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       aria-label="Periodic unit-cell drawing canvas"
+      onPointerDownCapture={beginColorSwipe}
+      onPointerUpCapture={endColorSwipe}
+      onPointerCancel={() => {
+        swipeStart.current = null;
+      }}
+      onClickCapture={(event) => {
+        if (suppressTouchClick.current) {
+          suppressTouchClick.current = false;
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }}
     >
       <defs>
         <marker id="symmetry-arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -239,7 +287,13 @@ export function UnitCellCanvas({
                 fill={faceColor(document, face.signature)}
                 style={transitionStyle}
                 onPointerDown={(event) => {
-                  if (tool === "color") {
+                  if (tool === "color" && event.pointerType !== "touch") {
+                    event.stopPropagation();
+                    onColorFace?.(face);
+                  }
+                }}
+                onPointerUp={(event) => {
+                  if (tool === "color" && event.pointerType === "touch") {
                     event.stopPropagation();
                     onColorFace?.(face);
                   }

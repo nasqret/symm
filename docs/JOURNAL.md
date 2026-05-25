@@ -428,6 +428,25 @@
 - Rendered folding and disabled-preset interaction checks remain pending because the browser
   validation interface was unavailable in this session.
 
+## 2026-05-25: Palette Keyboard And Touch Swipe Controls
+
+- Added direct palette selection through number keys `1` through `7`; selecting a keyboard
+  swatch enters Color face mode and identifies the chosen swatch in the status bar.
+- Added canvas vertical swipe detection in Color face mode. Swipe up advances and swipe down
+  reverses through the cyclic palette, while an ordinary touch tap still colors or clears its
+  face on release.
+- Deferred touch face painting until pointer release and suppresses a recognized swipe's
+  resulting tap, preventing a color-cycle gesture from also editing a tile. Swipe recognition
+  is limited to Color face mode so vertex and edge editing gestures are unchanged.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered keyboard and touch gesture checks remain pending because the browser validation
+  interface was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

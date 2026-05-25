@@ -112,19 +112,27 @@ export function ToolPanel({
       </FoldSection>
       <FoldSection title="Face Color">
         <div className="palette" aria-label="Color palette">
-          {EDITOR_PALETTE.map((color) => (
+          {EDITOR_PALETTE.map((color, index) => (
             <button
               key={color}
               type="button"
               className={color === selectedColor ? "swatch is-selected" : "swatch"}
               style={{ backgroundColor: color }}
+              aria-keyshortcuts={String(index + 1)}
               aria-label={
-                color === FACE_BACKGROUND_COLOR ? "Select background color" : `Select ${color}`
+                color === FACE_BACKGROUND_COLOR
+                  ? `Select background color, key ${index + 1}`
+                  : `Select ${color}, key ${index + 1}`
               }
+              title={`Paint color ${index + 1} (key ${index + 1})`}
               onClick={() => onColorChange(color)}
             />
           ))}
         </div>
+        <p className="help-text">
+          Keys 1-7 select a swatch. In Color face mode, swipe up or down on the canvas to cycle
+          paint colors without changing a face.
+        </p>
         <p className="help-text">
           Edges may terminate in a translated copy of a vertex. Use visible neighboring cells to
           draw boundary-crossing geometry.

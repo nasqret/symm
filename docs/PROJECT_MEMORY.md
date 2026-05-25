@@ -75,6 +75,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Dense repeated SVG views should not be rerendered for fast pulses or lattice homotopies.
   Drive color thresholds with CSS keyframes and transform each static `p1` layer by one affine
   SVG basis animation while CSS fades and contracts edge groups.
+- When touch swipe selection and tap-to-paint share the canvas, delay touch painting until
+  pointer release and suppress the release/click after a recognized swipe. Restrict color
+  swipes to paint mode so topology-edit gestures retain their original meaning.
 
 ## Validation Debt
 

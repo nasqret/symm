@@ -172,3 +172,14 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, cursor-path source checks, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered folding/preset-button interaction verification when the browser
   validation interface is available in the session.
+
+## Cycle Record: 2026-05-25 Palette Keyboard And Swipe Selection
+
+- [x] Assigned keys `1`-`7` to the seven palette swatches and switched into Color face mode
+  when a keyboard color is selected.
+- [x] Added vertical swipe cycling on the editor canvas in Color face mode, with tap painting
+  deferred to release so a recognized swipe does not paint or clear a face.
+- [x] Kept swipe cycling inactive in topology modes to avoid modifying vertex or edge actions.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered keyboard/touch interaction verification when the browser validation
+  interface is available in the session.

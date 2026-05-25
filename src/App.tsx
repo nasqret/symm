@@ -111,6 +111,25 @@ function Editor() {
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
   const selectedSymmetryElement =
     symmetry.elements.find((element) => element.id === selectedSymmetryElementId) ?? null;
+  const selectPaletteColor = useCallback((color: string, message?: string) => {
+    setSelectedColor(color);
+    setTool("color");
+    if (message) {
+      setNotice(message);
+    }
+  }, []);
+  const cyclePaletteColor = useCallback(
+    (direction: -1 | 1) => {
+      const currentIndex = Math.max(0, EDITOR_PALETTE.indexOf(selectedColor));
+      const nextIndex =
+        (currentIndex + direction + EDITOR_PALETTE.length) % EDITOR_PALETTE.length;
+      selectPaletteColor(
+        EDITOR_PALETTE[nextIndex],
+        `Swipe ${direction === 1 ? "up" : "down"}: paint color ${nextIndex + 1} of ${EDITOR_PALETTE.length} selected`,
+      );
+    },
+    [selectPaletteColor, selectedColor],
+  );
 
   const commitEdit = useCallback(
     (changed: CellDocument, standardNotice: string, lockedNotice: string): boolean => {
@@ -146,6 +165,9 @@ function Editor() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const command = event.metaKey || event.ctrlKey;
+      const target = event.target as HTMLElement;
+      const textEntry =
+        ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable;
       if (command && event.key.toLowerCase() === "z") {
         event.preventDefault();
         if (event.shiftKey) {
@@ -154,8 +176,22 @@ function Editor() {
           undo();
         }
       }
+      const colorIndex = Number(event.key) - 1;
+      if (
+        !command &&
+        !event.altKey &&
+        !textEntry &&
+        colorIndex >= 0 &&
+        colorIndex < EDITOR_PALETTE.length
+      ) {
+        event.preventDefault();
+        selectPaletteColor(
+          EDITOR_PALETTE[colorIndex],
+          `Keyboard: paint color ${colorIndex + 1} of ${EDITOR_PALETTE.length} selected`,
+        );
+        return;
+      }
       if ((event.key === "Delete" || event.key === "Backspace") && selectedEdgeId) {
-        const target = event.target as HTMLElement;
         if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
           const accepted = commitEdit(
             symmetryLock
@@ -181,7 +217,16 @@ function Editor() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [commitEdit, document, redo, selectedColor, selectedEdgeId, symmetryLock, undo]);
+  }, [
+    commitEdit,
+    document,
+    redo,
+    selectPaletteColor,
+    selectedColor,
+    selectedEdgeId,
+    symmetryLock,
+    undo,
+  ]);
 
   const saveDocument = () => {
     const contents = JSON.stringify(document, null, 2);
@@ -283,10 +328,7 @@ function Editor() {
             setTool(nextTool);
             setEdgeStart(null);
           }}
-          onColorChange={(color) => {
-            setSelectedColor(color);
-            setTool("color");
-          }}
+          onColorChange={(color) => selectPaletteColor(color)}
           onToggleSymmetryLock={() => {
             if (symmetryLock) {
               setSymmetryLock(null);
@@ -339,6 +381,7 @@ function Editor() {
             selectedSymmetryElement={selectedSymmetryElement}
             showEdges={display.showEdges}
             showVertices={display.showVertices}
+            onCycleColor={cyclePaletteColor}
             onAddVertex={(point) => {
               commitEdit(
                 symmetryLock
