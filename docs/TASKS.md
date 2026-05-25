@@ -86,3 +86,11 @@ Run this checklist on every implementation cycle.
 - [x] Corrected hash navigation and skew-lattice coverage found during rendered QA.
 - [x] Ran `npm run typecheck`, `npm run build`, artifact dimension checks, desktop interaction
   checks and mobile no-overflow checks.
+
+## Cycle Record: 2026-05-25 Face-Only Display And Export
+
+- [x] Added persisted edge and vertex layer controls shared by editor, preview/export and demo.
+- [x] Suppressed hidden motif groups, and the vertex editing grid, directly in SVG rendering.
+- [x] Verified live preview synchronization and downloaded face-only SVG/PNG output.
+- [x] Ran `npm run typecheck`, `npm run build`, rendered desktop checks and mobile no-overflow
+  checks without browser page errors.

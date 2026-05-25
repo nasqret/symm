@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { buildPresetDocument } from "../data/wallpaperGroups";
+import { useDisplaySettings } from "../state/useDisplaySettings";
 import { UnitCellCanvas } from "./UnitCellCanvas";
 
 interface DemoStage {
@@ -66,6 +67,7 @@ export function ExplorationDemo() {
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState<Speed>("medium");
   const [ambient, setAmbient] = useState(false);
+  const [display, toggleDisplay] = useDisplaySettings();
   const branch = DEMO_BRANCHES.find((entry) => entry.id === branchId) ?? DEMO_BRANCHES[0];
   const activeStage = branch.stages[activeIndex];
   const currentDocument = useMemo(
@@ -160,6 +162,24 @@ export function ExplorationDemo() {
               )}
             </select>
           </label>
+          <div className="presentation-layers" role="group" aria-label="Visible tiling layers">
+            <button
+              type="button"
+              className={display.showEdges ? "is-selected" : ""}
+              aria-pressed={display.showEdges}
+              onClick={() => toggleDisplay("showEdges")}
+            >
+              Edges
+            </button>
+            <button
+              type="button"
+              className={display.showVertices ? "is-selected" : ""}
+              aria-pressed={display.showVertices}
+              onClick={() => toggleDisplay("showVertices")}
+            >
+              Vertices
+            </button>
+          </div>
         </div>
         <div className="demo-stages" role="group" aria-label={`${branch.title} stages`}>
           {branch.stages.map((stage, index) => (
@@ -178,11 +198,21 @@ export function ExplorationDemo() {
       <div className="demo-viewport">
         {previousDocument && (
           <div className="demo-layer demo-layer--departing" key={`old-${branchId}-${previousIndex}`}>
-            <UnitCellCanvas document={previousDocument} preview />
+            <UnitCellCanvas
+              document={previousDocument}
+              preview
+              showEdges={display.showEdges}
+              showVertices={display.showVertices}
+            />
           </div>
         )}
         <div className="demo-layer demo-layer--arriving" key={`new-${branchId}-${activeIndex}`}>
-          <UnitCellCanvas document={currentDocument} preview />
+          <UnitCellCanvas
+            document={currentDocument}
+            preview
+            showEdges={display.showEdges}
+            showVertices={display.showVertices}
+          />
         </div>
         <div className="demo-caption" aria-live="polite">
           <span>{branch.title}</span>

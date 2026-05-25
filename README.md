@@ -18,6 +18,8 @@ The editor supports:
   double-click vertex/edge deletion with merge coloring, undo/redo, JSON export/import, and
   autosave;
 - a separate repeated-tiling preview window;
+- persistent display switches for hiding edges and vertices in the editor, preview, animated
+  presentation and exported images, including a face-only output mode;
 - preview export as standalone SVG or PNG at low (`900 x 690`), medium (`1800 x 1380`) and
   high (`3600 x 2760`) resolution, with an ambient display mode;
 - an animated subgroup-exploration presentation with hexagonal, square and rectangular descent

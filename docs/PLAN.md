@@ -35,7 +35,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 1. Support free lattice-parameter editing and constraint-aware snapping.
 2. Add robust face editing, vertex dragging, edge splitting and color legend management.
 3. Export SVG/PNG tiles and a structured CW-complex/symmetry report. Standalone preview SVG
-   export and low/medium/high PNG output implemented on 2026-05-25; structured report remains.
+   export and low/medium/high PNG output implemented on 2026-05-25, together with persistent
+   edge/vertex layer hiding for face-only editor and export views; structured report remains.
 4. Package sharable examples and a teaching tour of all groups. Ambient preview and animated
    subgroup-exploration branches implemented on 2026-05-25.
 
@@ -51,6 +52,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Export and animated presentation operate on the clean repeated-tiling view, without the
   editor's unit-cell outlines or highlight; skewed lattice previews render a wider periodic
   neighborhood so the rectangular output viewport remains completely filled.
+- Edge and vertex visibility is presentation state stored independently from motif JSON and
+  shared by editor, preview/export and animated presentation windows; omitted SVG groups stay
+  omitted when the preview is serialized or rasterized.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

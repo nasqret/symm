@@ -304,6 +304,42 @@ code {
   color: #ffffff;
 }
 
+.visibility-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.visibility-button {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #43575c;
+  border-radius: 6px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #d3dcda;
+  font-size: 0.78rem;
+}
+
+.visibility-button strong {
+  color: #a6b5b6;
+  font: 600 0.66rem/1 "SFMono-Regular", monospace;
+  text-transform: uppercase;
+}
+
+.visibility-button:hover,
+.visibility-button.is-visible {
+  border-color: #73c3ca;
+  background: #126779;
+  color: #ffffff;
+}
+
+.visibility-button.is-visible strong {
+  color: #ffffff;
+}
+
 kbd {
   font: 600 0.65rem/1 "SFMono-Regular", monospace;
   border: 1px solid #43575c;
@@ -814,11 +850,13 @@ kbd {
   background: rgba(251, 249, 242, 0.86);
 }
 
-.png-actions span {
+.png-actions span,
+.presentation-layers span {
   padding: 0 9px;
   font-size: 0.66rem;
   letter-spacing: 0.09em;
   color: var(--muted);
+  text-transform: uppercase;
 }
 
 .png-actions button {
@@ -828,6 +866,29 @@ kbd {
   border-radius: 0;
   padding: 0 9px;
   text-transform: capitalize;
+}
+
+.presentation-layers {
+  height: 37px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(251, 249, 242, 0.86);
+}
+
+.presentation-layers button {
+  min-height: 35px;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  padding: 0 9px;
+}
+
+.presentation-layers button.is-selected {
+  background: var(--teal-soft);
+  color: var(--teal-dark);
 }
 
 .preview-canvas-frame {
@@ -880,14 +941,21 @@ kbd {
 }
 
 .preview-page.is-ambient .preview-actions button,
-.preview-page.is-ambient .png-actions {
+.preview-page.is-ambient .png-actions,
+.preview-page.is-ambient .presentation-layers {
   color: #e3e9e8;
   background: #20343b;
   border-color: #385058;
 }
 
-.preview-page.is-ambient .png-actions button {
+.preview-page.is-ambient .png-actions button,
+.preview-page.is-ambient .presentation-layers button {
   border-left-color: #385058;
+}
+
+.preview-page.is-ambient .presentation-layers button.is-selected {
+  background: #1e6374;
+  color: white;
 }
 
 .preview-page.is-ambient .preview-canvas-frame {
@@ -1018,6 +1086,23 @@ kbd {
   color: #edf0eb;
   padding: 8px 7px;
   font: inherit;
+}
+
+.demo-playback .presentation-layers {
+  border-color: #34515b;
+  background: #20343b;
+}
+
+.demo-playback .presentation-layers button {
+  color: #bdcbcb;
+  border-left-color: #34515b;
+  font-size: 0.7rem;
+}
+
+.demo-playback .presentation-layers button.is-selected,
+.demo-playback .presentation-layers button:hover {
+  color: #ffffff;
+  background: #1e6374;
 }
 
 .demo-stages {

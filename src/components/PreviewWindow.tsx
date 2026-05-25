@@ -8,6 +8,7 @@ import {
   pngDimensions,
   type PngResolution,
 } from "../utils/tilingExport";
+import { useDisplaySettings } from "../state/useDisplaySettings";
 import { UnitCellCanvas } from "./UnitCellCanvas";
 
 export const STORAGE_KEY = "unit-cell-designer.document.v1";
@@ -28,6 +29,7 @@ export function PreviewWindow() {
   const [document, setDocument] = useState(readStoredDocument);
   const [ambient, setAmbient] = useState(false);
   const [notice, setNotice] = useState("Ready to export");
+  const [display, toggleDisplay] = useDisplaySettings();
   const drawing = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const sync = (event: StorageEvent) => {
@@ -86,6 +88,25 @@ export function PreviewWindow() {
           >
             Explore subgroups
           </button>
+          <div className="presentation-layers" role="group" aria-label="Visible tiling layers">
+            <span>Layers</span>
+            <button
+              type="button"
+              className={display.showEdges ? "is-selected" : ""}
+              aria-pressed={display.showEdges}
+              onClick={() => toggleDisplay("showEdges")}
+            >
+              Edges
+            </button>
+            <button
+              type="button"
+              className={display.showVertices ? "is-selected" : ""}
+              aria-pressed={display.showVertices}
+              onClick={() => toggleDisplay("showVertices")}
+            >
+              Vertices
+            </button>
+          </div>
           <button type="button" onClick={saveSvg}>
             Export SVG
           </button>
@@ -106,7 +127,12 @@ export function PreviewWindow() {
         </nav>
       </header>
       <div className="preview-canvas-frame" ref={drawing}>
-        <UnitCellCanvas document={document} preview />
+        <UnitCellCanvas
+          document={document}
+          preview
+          showEdges={display.showEdges}
+          showVertices={display.showVertices}
+        />
       </div>
       <p className="preview-notice" aria-live="polite">
         {notice}

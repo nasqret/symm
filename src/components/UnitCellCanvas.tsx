@@ -27,6 +27,8 @@ interface UnitCellCanvasProps {
   selectedEdgeId?: string | null;
   selectedSymmetryElement?: SymmetryElement | null;
   preview?: boolean;
+  showEdges?: boolean;
+  showVertices?: boolean;
   onAddVertex?: (point: FractionalPoint) => void;
   onVertexHit?: (hit: VertexHit) => void;
   onColorFace?: (face: PeriodicFace) => void;
@@ -135,6 +137,8 @@ export function UnitCellCanvas({
   selectedEdgeId,
   selectedSymmetryElement,
   preview = false,
+  showEdges = true,
+  showVertices = true,
   onAddVertex,
   onVertexHit,
   onColorFace,
@@ -238,51 +242,50 @@ export function UnitCellCanvas({
           )}
         />
       )}
-      <g className="canvas-edges">
-        {edgeTiles.flatMap((tile) =>
-          document.edges.map((edge) => {
-            const from = document.vertices.find((vertex) => vertex.id === edge.from);
-            const to = document.vertices.find((vertex) => vertex.id === edge.to);
-            if (!from || !to) {
-              return null;
-            }
-            const start = toDisplay(addPoint(from, tile), transform);
-            const end = toDisplay(
-              addPoint(addPoint(to, edge.shift), tile),
-              transform,
-            );
-            return (
-              <line
-                key={`${edge.id}-${tile.u}-${tile.v}`}
-                className={`motif-edge${
-                  preview
-                    ? " motif-edge--preview"
-                    : tile.u === 0 && tile.v === 0
-                      ? " motif-edge--active"
-                      : ""
-                }${edge.id === selectedEdgeId ? " motif-edge--selected" : ""}`}
-                x1={start.x}
-                y1={start.y}
-                x2={end.x}
-                y2={end.y}
-                onPointerDown={(event) => {
-                  if (tool === "select" && tile.u === 0 && tile.v === 0) {
-                    event.stopPropagation();
-                    onSelectEdge?.(edge.id);
-                  }
-                }}
-                onDoubleClick={(event) => {
-                  if (tool === "select") {
-                    event.stopPropagation();
-                    onDeleteEdge?.(edge.id);
-                  }
-                }}
-              />
-            );
-          }),
-        )}
-      </g>
-      {!preview && tool === "vertex" && (
+      {showEdges && (
+        <g className="canvas-edges">
+          {edgeTiles.flatMap((tile) =>
+            document.edges.map((edge) => {
+              const from = document.vertices.find((vertex) => vertex.id === edge.from);
+              const to = document.vertices.find((vertex) => vertex.id === edge.to);
+              if (!from || !to) {
+                return null;
+              }
+              const start = toDisplay(addPoint(from, tile), transform);
+              const end = toDisplay(addPoint(addPoint(to, edge.shift), tile), transform);
+              return (
+                <line
+                  key={`${edge.id}-${tile.u}-${tile.v}`}
+                  className={`motif-edge${
+                    preview
+                      ? " motif-edge--preview"
+                      : tile.u === 0 && tile.v === 0
+                        ? " motif-edge--active"
+                        : ""
+                  }${edge.id === selectedEdgeId ? " motif-edge--selected" : ""}`}
+                  x1={start.x}
+                  y1={start.y}
+                  x2={end.x}
+                  y2={end.y}
+                  onPointerDown={(event) => {
+                    if (tool === "select" && tile.u === 0 && tile.v === 0) {
+                      event.stopPropagation();
+                      onSelectEdge?.(edge.id);
+                    }
+                  }}
+                  onDoubleClick={(event) => {
+                    if (tool === "select") {
+                      event.stopPropagation();
+                      onDeleteEdge?.(edge.id);
+                    }
+                  }}
+                />
+              );
+            }),
+          )}
+        </g>
+      )}
+      {!preview && showVertices && tool === "vertex" && (
         <g className="canvas-vertex-grid" aria-label="Permitted vertex grid">
           {gridPoints.map((point) => {
             const positioned = toDisplay(point, transform);
@@ -302,40 +305,42 @@ export function UnitCellCanvas({
           })}
         </g>
       )}
-      <g className="canvas-vertices">
-        {edgeTiles.flatMap((tile) =>
-          document.vertices.map((vertex) => {
-            const positioned = toDisplay(addPoint(vertex, tile), transform);
-            const starting =
-              edgeStart?.vertexId === vertex.id &&
-              edgeStart.tile.u === tile.u &&
-              edgeStart.tile.v === tile.v;
-            return (
-              <circle
-                key={`${vertex.id}-${tile.u}-${tile.v}`}
-                className={`motif-vertex${preview ? " motif-vertex--preview" : ""}${
-                  starting ? " motif-vertex--start" : ""
-                }`}
-                cx={positioned.x}
-                cy={positioned.y}
-                r={starting ? 7 : 5}
-                onPointerDown={(event) => {
-                  if (tool === "edge") {
-                    event.stopPropagation();
-                    onVertexHit?.({ vertexId: vertex.id, tile });
-                  }
-                }}
-                onDoubleClick={(event) => {
-                  if (tool === "select" || tool === "vertex") {
-                    event.stopPropagation();
-                    onDeleteVertex?.(vertex.id);
-                  }
-                }}
-              />
-            );
-          }),
-        )}
-      </g>
+      {showVertices && (
+        <g className="canvas-vertices">
+          {edgeTiles.flatMap((tile) =>
+            document.vertices.map((vertex) => {
+              const positioned = toDisplay(addPoint(vertex, tile), transform);
+              const starting =
+                edgeStart?.vertexId === vertex.id &&
+                edgeStart.tile.u === tile.u &&
+                edgeStart.tile.v === tile.v;
+              return (
+                <circle
+                  key={`${vertex.id}-${tile.u}-${tile.v}`}
+                  className={`motif-vertex${preview ? " motif-vertex--preview" : ""}${
+                    starting ? " motif-vertex--start" : ""
+                  }`}
+                  cx={positioned.x}
+                  cy={positioned.y}
+                  r={starting ? 7 : 5}
+                  onPointerDown={(event) => {
+                    if (tool === "edge") {
+                      event.stopPropagation();
+                      onVertexHit?.({ vertexId: vertex.id, tile });
+                    }
+                  }}
+                  onDoubleClick={(event) => {
+                    if (tool === "select" || tool === "vertex") {
+                      event.stopPropagation();
+                      onDeleteVertex?.(vertex.id);
+                    }
+                  }}
+                />
+              );
+            }),
+          )}
+        </g>
+      )}
       {!preview && selectedSymmetryElement && (
         <SymmetryOverlay
           element={selectedSymmetryElement}

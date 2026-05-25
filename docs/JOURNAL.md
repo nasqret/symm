@@ -192,6 +192,31 @@
 - Mobile QA at `390 x 844`: preview and non-ambient demo controls rendered without horizontal
   overflow; browser page-error checks reported no application errors.
 
+## 2026-05-25: Face-Only Display And Export
+
+- Added persistent display switches for `Edges` and `Vertices` in the editor, clean preview and
+  animated exploration view.
+- Stored visibility as presentation state independent from motif JSON and synchronized it
+  between already-open windows through local storage.
+- Conditioned SVG rendering on the active layer choices. Hidden vertices also suppress their
+  construction grid; face-only preview exports therefore serialize and rasterize no visible
+  motif edges or vertices.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered editor check on colored `p1`: switching both layers off left face paths displayed and
+  removed the `canvas-edges` and `canvas-vertices` groups; re-enabling vertices in vertex mode
+  restored its 289 permitted grid points.
+- Live-window synchronization check: enabling only edges in the editor immediately updated an
+  already-open preview to one edge group and no vertex group.
+- Artifact check: a face-only downloaded SVG contained `canvas-faces` but no `canvas-edges` or
+  `canvas-vertices`; a low-resolution PNG download was verified as `900 x 690`.
+- Animated-view check: `#demo` inherited face-only settings and mounted no edge or vertex
+  groups. Editor, preview and demo showed no horizontal overflow at `390 x 844`; browser
+  page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

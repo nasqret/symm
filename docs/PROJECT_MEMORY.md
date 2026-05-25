@@ -41,6 +41,10 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - A fixed square translation neighborhood does not necessarily cover a rectangular viewport
   under a slanted lattice basis. Presentation/export views should include enough translated
   copies to cover viewport corners, especially for hexagonal animation frames.
+- Keep display-only layer preferences outside motif JSON and synchronize them across presentation
+  windows through browser storage. When exports serialize the live preview SVG, conditionally
+  omitting hidden edge/vertex groups yields the same face-only result in SVG and PNG without a
+  separate export filter.
 
 ## Validation Debt
 

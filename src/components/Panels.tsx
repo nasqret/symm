@@ -24,10 +24,14 @@ interface ToolPanelProps {
   tool: EditorTool;
   selectedColor: string;
   symmetryLock: string | null;
+  showEdges: boolean;
+  showVertices: boolean;
   onLatticeChange: (value: LatticeType) => void;
   onToolChange: (value: EditorTool) => void;
   onColorChange: (value: string) => void;
   onToggleSymmetryLock: () => void;
+  onToggleEdges: () => void;
+  onToggleVertices: () => void;
 }
 
 const TOOLS: { id: EditorTool; name: string; shortcut: string }[] = [
@@ -42,10 +46,14 @@ export function ToolPanel({
   tool,
   selectedColor,
   symmetryLock,
+  showEdges,
+  showVertices,
   onLatticeChange,
   onToolChange,
   onColorChange,
   onToggleSymmetryLock,
+  onToggleEdges,
+  onToggleVertices,
 }: ToolPanelProps) {
   return (
     <aside className="panel tools-panel" aria-label="Editor tools">
@@ -106,6 +114,33 @@ export function ToolPanel({
           existing vertex to remove it. In Color face mode, click a filled face to clear it.
           Double-clicking an edge in Select / delete mode uses the selected swatch for the merged
           face.
+        </p>
+      </section>
+      <section>
+        <h2>Display</h2>
+        <div className="visibility-list" role="group" aria-label="Visible motif layers">
+          <button
+            type="button"
+            className={showEdges ? "visibility-button is-visible" : "visibility-button"}
+            aria-pressed={showEdges}
+            onClick={onToggleEdges}
+          >
+            <span>Edges</span>
+            <strong>{showEdges ? "Shown" : "Hidden"}</strong>
+          </button>
+          <button
+            type="button"
+            className={showVertices ? "visibility-button is-visible" : "visibility-button"}
+            aria-pressed={showVertices}
+            onClick={onToggleVertices}
+          >
+            <span>Vertices</span>
+            <strong>{showVertices ? "Shown" : "Hidden"}</strong>
+          </button>
+        </div>
+        <p className="help-text">
+          Hide both motif layers for a face-only pattern view. The same choices apply to preview
+          exports.
         </p>
       </section>
       <section>

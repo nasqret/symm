@@ -28,6 +28,7 @@ import {
   deleteVertex,
 } from "./state/mutations";
 import { useDocumentHistory } from "./state/useDocumentHistory";
+import { useDisplaySettings } from "./state/useDisplaySettings";
 import { Inspector, ToolPanel, EDITOR_PALETTE } from "./components/Panels";
 import { ExplorationDemo } from "./components/ExplorationDemo";
 import { PreviewWindow, STORAGE_KEY } from "./components/PreviewWindow";
@@ -107,6 +108,7 @@ function Editor() {
   const [notice, setNotice] = useState<string>("Autosaved locally");
   const [selectedSymmetryElementId, setSelectedSymmetryElementId] = useState<string | null>(null);
   const [symmetryLock, setSymmetryLock] = useState<SymmetryLock | null>(null);
+  const [display, toggleDisplay] = useDisplaySettings();
   const fileInput = useRef<HTMLInputElement>(null);
   const faces = useMemo(() => extractFaces(document), [document]);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
@@ -253,6 +255,8 @@ function Editor() {
           tool={tool}
           selectedColor={selectedColor}
           symmetryLock={symmetryLock?.symbol ?? null}
+          showEdges={display.showEdges}
+          showVertices={display.showVertices}
           onLatticeChange={(lattice) => {
             const changed = changeLattice(document, lattice);
             commit(changed);
@@ -278,6 +282,8 @@ function Editor() {
               setNotice(`Edits will preserve ${symmetry.symbol} symmetry`);
             }
           }}
+          onToggleEdges={() => toggleDisplay("showEdges")}
+          onToggleVertices={() => toggleDisplay("showVertices")}
         />
         <main className="workspace">
           <div className="workspace-heading">
@@ -318,6 +324,8 @@ function Editor() {
             edgeStart={edgeStart}
             selectedEdgeId={selectedEdgeId}
             selectedSymmetryElement={selectedSymmetryElement}
+            showEdges={display.showEdges}
+            showVertices={display.showVertices}
             onCoordinate={setPointer}
             onAddVertex={(point) => {
               commit(
