@@ -29,30 +29,31 @@ This verifies the application's own generated motives and classifier together. S
 ## Minimal Decoration Presets: 2026-05-25
 
 Method: retain each generated periodic mesh, search target-group face orbits for the smallest
-non-background decoration that remains classified as the intended group, including alternatives
-using two distinct marker colors, and then re-run the full classification sweep. The `p1`, `pm`
-and `cm` witnesses use two colors because a single-color choice would retain additional symmetry
-or require more painted faces.
+nonempty non-background decoration that remains classified as the intended group, including
+alternatives using two distinct marker colors, and then re-run the full classification sweep.
+The `p1`, `pm` and `cm` witnesses use two colors because a single-color choice would retain
+additional symmetry or require more painted faces. On 2026-05-25 this nonempty constraint was
+applied to formerly blank maximal presets.
 
 | Preset | Computed | Painted faces | Non-background colors |
 | --- | --- | ---: | ---: |
 | p1 | p1 | 2 | 2 |
-| p2 | p2 | 0 | 0 |
+| p2 | p2 | 2 | 1 |
 | pm | pm | 2 | 2 |
 | pg | pg | 4 | 1 |
 | cm | cm | 4 | 2 |
 | pmm | pmm | 2 | 1 |
 | pmg | pmg | 2 | 1 |
 | pgg | pgg | 8 | 1 |
-| cmm | cmm | 0 | 0 |
+| cmm | cmm | 4 | 1 |
 | p4 | p4 | 4 | 1 |
-| p4m | p4m | 0 | 0 |
+| p4m | p4m | 4 | 1 |
 | p4g | p4g | 8 | 1 |
 | p3 | p3 | 3 | 1 |
 | p3m1 | p3m1 | 1 | 1 |
 | p31m | p31m | 6 | 1 |
 | p6 | p6 | 6 | 1 |
-| p6m | p6m | 0 | 0 |
+| p6m | p6m | 2 | 1 |
 
 The older saved `p4m` release 0.1 JSON fixture remains an archival fully decorated example; the
-current in-app `p4m` preset is the unfilled minimal witness listed above.
+current in-app `p4m` preset is the smallest nonempty single-color witness listed above.

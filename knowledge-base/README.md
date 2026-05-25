@@ -2,8 +2,9 @@
 
 This vault is organized by the 17 two-dimensional crystallographic plane groups. Each group file records properties, the app preset, saved user motifs, and its validation state.
 
-The built-in presets use minimal non-background decorations for the shared generated meshes:
-each example paints the fewest face regions found to retain exactly its computed target symmetry.
+The built-in presets use minimal nonempty non-background decorations for the shared generated
+meshes: each example paints the fewest visible face regions found to retain exactly its
+computed target symmetry.
 See [PRESET_VALIDATION.md](PRESET_VALIDATION.md) for the painted-region counts and regression
 record.
 

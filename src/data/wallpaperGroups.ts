@@ -227,14 +227,14 @@ interface DecorationSeed {
 const ACCENT_COLOR = "#d66853";
 const SECONDARY_ACCENT_COLOR = "#1f7185";
 
-// Each seed expands over its target group's operation closure. The sets are minimal
+// Each seed expands over its target group's operation closure. The sets are minimal nonempty
 // non-background witnesses for the generated mesh under the current symmetry classifier.
 const MINIMAL_PRESET_DECORATIONS: Record<string, DecorationSeed[]> = {
   p1: [
     { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
     { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
   ],
-  p2: [],
+  p2: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
   pm: [
     { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
     { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
@@ -253,15 +253,15 @@ const MINIMAL_PRESET_DECORATIONS: Record<string, DecorationSeed[]> = {
     { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
     { point: { u: 0, v: 1 / 8 }, color: ACCENT_COLOR },
   ],
-  cmm: [],
+  cmm: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
   p4: [{ point: { u: 1 / 4, v: 1 / 8 }, color: ACCENT_COLOR }],
-  p4m: [],
+  p4m: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
   p4g: [{ point: { u: 1 / 4, v: 1 / 8 }, color: ACCENT_COLOR }],
   p3: [{ point: { u: 4 / 15, v: 1 / 15 }, color: ACCENT_COLOR }],
   p3m1: [{ point: { u: 1 / 3, v: 1 / 3 }, color: ACCENT_COLOR }],
   p31m: [{ point: { u: 4 / 15, v: 1 / 15 }, color: ACCENT_COLOR }],
   p6: [{ point: { u: 4 / 15, v: 1 / 15 }, color: ACCENT_COLOR }],
-  p6m: [],
+  p6m: [{ point: { u: 1 / 3, v: 1 / 3 }, color: ACCENT_COLOR }],
 };
 
 function keyForCoordinate(value: number): string {
@@ -385,6 +385,9 @@ export function buildPresetDocument(symbol: string): CellDocument {
         assigned.set(target.signature, seed.color);
       }
     }
+  }
+  if (assigned.size === 0) {
+    throw new Error(`Minimal decoration for ${group.symbol} must color at least one face`);
   }
   return {
     ...base,

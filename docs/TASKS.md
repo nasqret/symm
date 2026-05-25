@@ -247,3 +247,15 @@ Run this checklist on every implementation cycle.
 - [x] Confirmed by source inspection that the editor's initial `EditorTool` state is `color`.
 - [ ] Complete rendered initial-tool verification when the browser validation interface is
   available in the session.
+
+## Cycle Record: 2026-05-25 Nonblank Minimal Presets
+
+- [x] Identified blank built-in preset decorations for `p2`, `cmm`, `p4m` and `p6m`.
+- [x] Found smallest nonempty one-color target-group orbits: `2`, `4`, `4` and `2`
+  painted faces respectively, each classifying to its requested group.
+- [x] Added an invariant rejecting future zero-face built-in preset decorations.
+- [x] Ran the full 17-preset classifier sweep: every generated starter is nonblank and
+  classifies to its requested group.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered preset sampling when the browser validation interface is available
+  in the session.

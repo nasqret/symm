@@ -12,6 +12,8 @@ The maximal hexagonal plane group combines six-fold rotations with reflection fa
 
 Status: implemented, certification pending.
 Generator target: `T(a)`, `T(b)`, `C6`, mirror.
+Minimal visible witness: one sixfold-mirror orbit, painting `2` faces with one accent color
+while recomputing as `p6m`.
 
 ## Saved Motifs
 

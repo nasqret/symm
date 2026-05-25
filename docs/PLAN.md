@@ -19,7 +19,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 5. Extract face cycles from the periodic graph for colored symmetry computation; keep the
    CW-complex diagnostic inventory hidden from the current editor surface.
 6. Test lattice-compatible symmetry operations against geometry and colors; display accepted generators and the classified plane group.
-7. Supply editable starting motives and notes for all 17 plane groups.
+7. Supply editable starting motives and notes for all 17 plane groups, using nonempty minimal
+   visible decorations so every starter demonstrates face coloring.
 8. Provide a first-open guide and an About page to introduce the construction and analysis
    workflow. Implemented on 2026-05-25.
 9. Verify builds and core browser workflows, commit locally, and sync to a private GitHub repository. Completed on `main` with the private `origin` remote `nasqret/symm`.

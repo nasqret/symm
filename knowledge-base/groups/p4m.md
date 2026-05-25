@@ -12,8 +12,8 @@ Four-fold rotation centers coexist with axial and diagonal mirror families.
 
 Status: implemented as the initial editor document, certification pending.
 Generator target: `T(a)`, `T(b)`, `C4`, mirror.
-The current generated preset needs no filled faces: its square mesh already has exactly the
-reported maximal symmetry.
+Minimal visible witness: one fourfold-mirror orbit, painting `4` faces with one accent color
+while recomputing as `p4m`.
 
 ## Saved Motifs
 

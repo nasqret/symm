@@ -37,7 +37,7 @@ The editor supports:
   wallpaper group; it can be disabled for free symmetry-breaking edits;
 - a first-open guide overlay and an About page describing the editor and its mathematical
   purpose; and
-- minimally decorated editable starter motifs for the 17 plane groups.
+- nonblank minimally decorated editable starter motifs for the 17 plane groups.
 
 ## Documentation
 

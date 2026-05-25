@@ -12,6 +12,8 @@ This is the centered rectangular mirror group with two mirror families and two-f
 
 Status: implemented in a conventional rectangular cell, certification pending.
 Generator target: `T(a)`, `T(b)`, perpendicular mirrors, centering translation.
+Minimal visible witness: one centered-mirror orbit, painting `4` faces with one accent color
+while recomputing as `cmm`.
 
 ## Saved Motifs
 

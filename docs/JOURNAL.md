@@ -550,6 +550,27 @@
 - Rendered initial-tool verification remains pending because the browser validation interface
   was unavailable in this session.
 
+## 2026-05-25: Nonblank Minimal Fundamental Presets
+
+- Found that `p2`, `cmm`, `p4m` and `p6m` intentionally used zero-face witnesses, producing
+  white starter examples even though their undecorated meshes classified correctly.
+- Replaced those entries with the smallest nonempty one-color closure orbits validated by the
+  existing classifier: `p2` paints `2` faces, `cmm` `4`, `p4m` `4`, and `p6m` `2`.
+- Added a runtime invariant so a future built-in preset cannot be generated without at least
+  one visible colored face, and updated the group knowledge-base descriptions.
+
+### Validation Evidence
+
+- Minimal-orbit results: `p2 = 2`, `cmm = 4`, `p4m = 4`, `p6m = 2` painted faces,
+  each retaining its requested classified symbol.
+- Full 17-preset classifier sweep: passed; every generated starter has at least one colored
+  face and recomputes to its requested group.
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered preset sampling remains pending because the browser validation interface was
+  unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:
