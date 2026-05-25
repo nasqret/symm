@@ -391,6 +391,23 @@
 - Browser bridge check: a slow cross-family `p1` selection reported `Lattice homotopy` with
   two affine layers and `2050` bridge face paths before advancing to the target recoloring.
 
+## 2026-05-25: Hide CW Diagnostic Panel
+
+- Removed the rendered CW-complex inventory section from the mathematical inspector because it
+  is not part of the current presentation workflow.
+- Kept periodic face extraction and colored-complex symmetry evaluation in place; only the
+  visible diagnostic surface and its redundant editor-level face extraction were removed.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Static render-source review confirms that `Inspector` retains Current Symmetry and the
+  17 Plane Groups selector but no longer renders the `CW Complex` section.
+- Rendered inspector verification remains pending because the browser validation interface was
+  unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

@@ -8,7 +8,7 @@ import type {
   TileOffset,
 } from "./types";
 import { buildPresetDocument, operationClosure } from "./data/wallpaperGroups";
-import { extractFaces, faceColor, FACE_BACKGROUND_COLOR } from "./math/periodicGraph";
+import { faceColor, FACE_BACKGROUND_COLOR } from "./math/periodicGraph";
 import { computeSymmetry } from "./math/symmetry";
 import {
   addEdgeInOrbit,
@@ -110,7 +110,6 @@ function Editor() {
   const [symmetryLock, setSymmetryLock] = useState<SymmetryLock | null>(null);
   const [display, toggleDisplay] = useDisplaySettings();
   const fileInput = useRef<HTMLInputElement>(null);
-  const faces = useMemo(() => extractFaces(document), [document]);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
   const selectedSymmetryElement =
     symmetry.elements.find((element) => element.id === selectedSymmetryElementId) ?? null;
@@ -427,7 +426,6 @@ function Editor() {
         <Inspector
           document={document}
           symmetry={symmetry}
-          faces={faces}
           pointer={pointer}
           selectedSymmetryElementId={selectedSymmetryElementId}
           onSelectSymmetryElement={(elementId) =>

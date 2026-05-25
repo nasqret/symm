@@ -3,11 +3,10 @@ import type {
   EditorTool,
   FractionalPoint,
   LatticeType,
-  PeriodicFace,
   SymmetryResult,
 } from "../types";
 import { WALLPAPER_GROUPS } from "../data/wallpaperGroups";
-import { faceColor, FACE_BACKGROUND_COLOR } from "../math/periodicGraph";
+import { FACE_BACKGROUND_COLOR } from "../math/periodicGraph";
 
 export const EDITOR_PALETTE = [
   "#d66853",
@@ -166,7 +165,6 @@ export function ToolPanel({
 interface InspectorProps {
   document: CellDocument;
   symmetry: SymmetryResult;
-  faces: PeriodicFace[];
   pointer: FractionalPoint | null;
   selectedSymmetryElementId: string | null;
   onSelectSymmetryElement: (elementId: string) => void;
@@ -176,13 +174,11 @@ interface InspectorProps {
 export function Inspector({
   document,
   symmetry,
-  faces,
   pointer,
   selectedSymmetryElementId,
   onSelectSymmetryElement,
   onLoadPreset,
 }: InspectorProps) {
-  const euler = document.vertices.length - document.edges.length + faces.length;
   return (
     <aside className="panel inspector-panel" aria-label="Mathematical inspector">
       <section className="symmetry-block">
@@ -214,41 +210,6 @@ export function Inspector({
           {symmetry.accepted.length} accepted operations; {symmetry.rejectedCount} color/geometry
           conflicts tested.
         </p>
-      </section>
-      <section className="cw-block">
-        <h2>CW Complex</h2>
-        <div className="cw-counts">
-          <div>
-            <strong>{document.vertices.length}</strong>
-            <span>0-cells</span>
-          </div>
-          <div>
-            <strong>{document.edges.length}</strong>
-            <span>1-cells</span>
-          </div>
-          <div>
-            <strong>{faces.length}</strong>
-            <span>2-cells</span>
-          </div>
-        </div>
-        <p className={euler === 0 ? "euler valid" : "euler warning"}>
-          Euler check on torus: V - E + F = {euler}
-        </p>
-        <div className="face-list">
-          {faces.slice(0, 6).map((face, index) => (
-            <div key={face.signature}>
-              <span
-                className="face-chip"
-                style={{ backgroundColor: faceColor(document, face.signature) }}
-              />
-              <span>face {index + 1}</span>
-              <code>
-                ({face.centroid.u.toFixed(2)}, {face.centroid.v.toFixed(2)})
-              </code>
-            </div>
-          ))}
-          {faces.length > 6 && <p className="minor">+ {faces.length - 6} additional faces</p>}
-        </div>
       </section>
       <section className="presets-block">
         <h2>17 Plane Groups</h2>

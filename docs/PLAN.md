@@ -13,7 +13,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 3. Render the central unit cell together with translated copies so edges and faces crossing the boundary are visible.
 4. Implement vertex insertion, periodic edge creation, face coloring and clearing, merge-colored
    vertex/edge deletion, palette selection, history, JSON save/load, and autosave.
-5. Extract face cycles from the periodic graph and show the resulting CW-complex inventory.
+5. Extract face cycles from the periodic graph for colored symmetry computation; keep the
+   CW-complex diagnostic inventory hidden from the current editor surface.
 6. Test lattice-compatible symmetry operations against geometry and colors; display accepted generators and the classified plane group.
 7. Supply editable starting motives and notes for all 17 plane groups.
 8. Verify builds and core browser workflows, commit locally, and sync to a private GitHub repository. Completed on `main` with the private `origin` remote `nasqret/symm`.

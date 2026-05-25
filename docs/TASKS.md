@@ -154,3 +154,12 @@ Run this checklist on every implementation cycle.
   edge contraction on a bounded bridge field.
 - [x] Ran `git diff --check`, `npm run typecheck`, `npm run build`, all-stage classification
   checks, threshold cadence sampling and cross-family bridge browser checks.
+
+## Cycle Record: 2026-05-25 Hidden CW Diagnostic Panel
+
+- [x] Removed the CW-complex inventory section from the rendered mathematical inspector.
+- [x] Removed editor-only face extraction passed solely to that hidden view while preserving
+  face-based symmetry and canvas behavior.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered inspector verification when the browser validation interface is
+  available in the session.

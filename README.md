@@ -1,6 +1,6 @@
 # Unit Cell Designer
 
-A browser editor for constructing periodic colored tilings, viewing their CW-complex data, and inspecting symmetry operations against the current coloring.
+A browser editor for constructing periodic colored tilings and inspecting symmetry operations against the current coloring. CW-complex data remains part of the internal computation, but its diagnostic panel is currently hidden.
 
 ## Run
 
