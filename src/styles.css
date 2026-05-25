@@ -677,7 +677,9 @@ kbd {
 .generator-button {
   width: 100%;
   display: grid;
-  grid-template-columns: 74px 1fr;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 14px;
   border-bottom: 1px solid var(--line);
   padding: 8px 10px;
   color: var(--text);
@@ -702,6 +704,7 @@ kbd {
 
 .generator-button code {
   font: 500 0.72rem/1.35 "SFMono-Regular", monospace;
+  overflow-wrap: anywhere;
 }
 
 .generator-button.is-selected code {

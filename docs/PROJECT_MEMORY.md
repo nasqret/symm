@@ -80,6 +80,8 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   swipes to paint mode so topology-edit gestures retain their original meaning.
 - Keep mathematical symmetry overlays on a dedicated annotation color that is absent from the
   tile palette, with a light separation halo so axes and arrows remain readable over any face.
+- In compact inspector rows, reserve an explicit caption column and gap before monospace
+  operation labels; allow the label column to wrap instead of colliding with its category.
 
 ## Validation Debt
 

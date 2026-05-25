@@ -465,6 +465,23 @@
 - Rendered overlay checks remain pending because the browser validation interface was
   unavailable in this session.
 
+## 2026-05-25: Separate Symmetry Row Caption And Name
+
+- Adjusted right-panel symmetry rows so the transformation category occupies a wider first
+  column with an explicit gap before the operation name.
+- Allowed operation names to wrap inside their column, avoiding crowding when labels are
+  longer than the available inspector width.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Source inspection confirms the symmetry row layout now reserves a 92-pixel caption column
+  followed by a 14-pixel gap and a wrapping operation-name column.
+- Rendered inspector spacing checks remain pending because the browser validation interface
+  was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

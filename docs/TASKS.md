@@ -193,3 +193,13 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered selection checks for translation, rotation, mirror and glide overlays
   when the browser validation interface is available in the session.
+
+## Cycle Record: 2026-05-25 Symmetry List Spacing
+
+- [x] Widened the transformation-type column and added explicit separation before each
+  transformation name in the right-panel symmetry list.
+- [x] Allowed unusually long transformation names to wrap inside their assigned column rather
+  than crowding their caption.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered inspector spacing checks when the browser validation interface is
+  available in the session.
