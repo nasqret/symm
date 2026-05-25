@@ -126,6 +126,8 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - A fully collapsed mobile drawing surface must retain the choices otherwise hidden in its
   panels: compact in-canvas lattice/preset selectors and a live symmetry label that toggles
   generator overlays preserve orientation without reopening chrome.
+- Keep preview navigation and undo/redo available in a bottom mobile canvas dock: these are
+  high-frequency painting actions that must remain reachable while upper chrome is collapsed.
 
 ## Validation Debt
 

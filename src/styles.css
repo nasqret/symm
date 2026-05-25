@@ -170,7 +170,8 @@ code {
 .mobile-menu-hide,
 .mobile-menu-reveal,
 .mobile-control-rail,
-.mobile-studio-bar {
+.mobile-studio-bar,
+.mobile-canvas-actions {
   display: none;
 }
 
@@ -2614,6 +2615,61 @@ kbd {
     border-color: rgba(118, 194, 202, 0.74);
     background: rgba(27, 56, 64, 0.92);
     box-shadow: 0 0 0 1px rgba(118, 194, 202, 0.14);
+  }
+
+  .mobile-canvas-actions {
+    position: absolute;
+    right: 50%;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid rgba(118, 194, 202, 0.32);
+    border-radius: 21px;
+    background: rgba(20, 36, 43, 0.78);
+    box-shadow: 0 8px 19px rgba(20, 36, 43, 0.16);
+    backdrop-filter: blur(14px);
+    transform: translateX(50%);
+  }
+
+  .mobile-canvas-actions button {
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    border: 1px solid transparent;
+    border-radius: 15px;
+    color: #e4eae8;
+    background: transparent;
+    touch-action: manipulation;
+  }
+
+  .mobile-canvas-actions button:not(:disabled):active,
+  .mobile-canvas-actions .mobile-preview-action {
+    border-color: rgba(118, 194, 202, 0.31);
+    background: rgba(45, 78, 87, 0.66);
+  }
+
+  .mobile-canvas-actions button:disabled {
+    color: rgba(196, 208, 206, 0.36);
+  }
+
+  .mobile-canvas-actions svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .mobile-canvas-actions .mobile-preview-action {
+    width: 47px;
+    height: 47px;
+    color: #78d4dd;
   }
 
   .is-mobile-editor.mobile-panels-hidden.mobile-menu-hidden .workspace {

@@ -879,6 +879,26 @@
 - Interactive long-press screenshot verification remains pending because the Browser plugin's
   required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Mobile Canvas Action Dock
+
+- Added a compact translucent icon dock at the bottom of the mobile drawing window, centered
+  over the tessellation rather than requiring access to the upper document menu.
+- Added a highlighted tiling-grid action that opens the existing preview route and paired
+  counterclockwise/clockwise arrow actions that invoke the existing undo and redo history.
+- Kept desktop layout unchanged and automatically dims the history actions until their
+  corresponding stack direction becomes available.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Vite production assets generated successfully.
+- Source checks passed: the dock renders only under `mobileMode`, its preview action reuses
+  the existing preview handler, and undo/redo use the current history callbacks and disabled
+  availability flags.
+- Interactive mobile dock screenshots remain pending because the Browser plugin's required
+  execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

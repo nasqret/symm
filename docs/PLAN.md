@@ -67,6 +67,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
 5. Keep the active unit-cell frame visible in mobile face-only editing and expose in-canvas
    lattice/group selectors plus tap-to-show current symmetry generators when all outer panels
    are hidden. Implemented on 2026-05-26.
+6. Keep core mobile navigation reachable from the drawing surface with a bottom icon dock for
+   tiling preview, undo and redo. Implemented on 2026-05-26.
 
 ## Architecture Decisions
 
@@ -104,6 +106,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
   retains one active unit-cell outline so lattice changes remain legible in face-only mode.
 - Fully collapsed mobile editing keeps lattice and starter-group selection inside the canvas,
   with the live detected group acting as a toggle for its visual generators.
+- The mobile canvas footer repeats the preview and history actions as icon buttons so users do
+  not need to restore the document menu during direct recoloring.
 - GitHub Pages publishes the repository application under `/symm/`, so the Vite production
   base path is part of deployment correctness.
 

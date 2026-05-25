@@ -436,3 +436,14 @@ Run this checklist on every implementation cycle.
   unchanged while visual dimensions and placement are enlarged.
 - [ ] Complete interactive press-and-hold screenshot verification when the Browser interface
   is exposed in the session.
+
+## Cycle Record: 2026-05-26 Mobile Canvas Action Dock
+
+- [x] Added a bottom mobile canvas icon dock for tiling preview, undo and redo.
+- [x] Reused the existing preview/history action handlers and disabled history buttons when
+  unavailable.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified mobile-only dock rendering, shared preview handler wiring and disabled
+  undo/redo bindings in source.
+- [ ] Complete interactive mobile dock screenshot verification when the Browser interface is
+  exposed in the session.

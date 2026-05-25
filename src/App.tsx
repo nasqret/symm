@@ -178,6 +178,9 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   const openAbout = useCallback(() => {
     window.open(`${window.location.pathname}#about`, "unit-cell-about");
   }, []);
+  const openPreview = useCallback(() => {
+    window.open(`${window.location.pathname}#preview`, "tiling-preview");
+  }, []);
   const selectPaletteColor = useCallback((color: string, message?: string) => {
     setSelectedColor(color);
     setTool("color");
@@ -422,7 +425,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
             <button
               className="primary-action"
               type="button"
-              onClick={() => window.open(`${window.location.pathname}#preview`, "tiling-preview")}
+              onClick={openPreview}
             >
               Open Tiling Preview
             </button>
@@ -731,6 +734,33 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
                 );
               }}
             />
+            {mobileMode ? (
+              <nav className="mobile-canvas-actions" aria-label="Canvas actions">
+                <button type="button" onClick={undo} disabled={!canUndo} aria-label="Undo">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M 9 7 L 4.5 11.2 L 9 15.4" />
+                    <path d="M 5 11.2 H 13.2 C 17.2 11.2 19.4 13.7 19.4 17" />
+                  </svg>
+                </button>
+                <button
+                  className="mobile-preview-action"
+                  type="button"
+                  onClick={openPreview}
+                  aria-label="Open tiling preview"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M 4 7 H 20 V 18 H 4 Z" />
+                    <path d="M 8 7 V 18 M 12 7 V 18 M 16 7 V 18 M 4 12.5 H 20" />
+                  </svg>
+                </button>
+                <button type="button" onClick={redo} disabled={!canRedo} aria-label="Redo">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M 15 7 L 19.5 11.2 L 15 15.4" />
+                    <path d="M 19 11.2 H 10.8 C 6.8 11.2 4.6 13.7 4.6 17" />
+                  </svg>
+                </button>
+              </nav>
+            ) : null}
           </div>
           {!mobileMode ? (
             <footer className="workspace-status">
