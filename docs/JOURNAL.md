@@ -111,6 +111,26 @@
   121-point tenth-step grid.
 - Browser page-error checks reported no application errors.
 
+## 2026-05-25: Minimal Preset Decorations
+
+- Replaced the generated all-orbits color assignment with minimal non-background witness seeds
+  expanded by each target group's required operations.
+- Reduced the built-in presentation examples from 32 or 50 filled regions to between 0 and 8:
+  `p2`, `cmm`, `p4m` and `p6m` need no fill; only `p1`, `pm` and `cm` require two colors for
+  their minimal witnesses.
+- Recorded the painted-region count for every group in the knowledge base and marked the saved
+  release 0.1 `p4m` JSON as an archived fully decorated fixture.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered full-preset sweep through the local `agent-browser` fallback: selecting each of the
+  17 group presets reported its requested computed symbol and `V - E + F = 0`.
+- Rendered examples: `p1` showed two filled faces in the fundamental cell and reported `p1`;
+  `p4m` showed zero filled faces and still reported `p4m`.
+- Browser page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

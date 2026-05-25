@@ -219,28 +219,50 @@ export const WALLPAPER_GROUPS: WallpaperGroup[] = [
   },
 ];
 
-const PRESET_COLORS = [
-  "#d66853",
-  "#1f7185",
-  "#e0ab45",
-  "#547a6b",
-  "#8c6c93",
-  "#ca8f72",
-  "#4d88a5",
-  "#c59c42",
-  "#90624f",
-  "#6d877a",
-  "#b66f82",
-  "#5872a0",
-  "#df9260",
-  "#708b42",
-  "#936aa7",
-  "#3f817e",
-  "#c96b41",
-  "#447492",
-  "#b48b36",
-  "#626f68",
-];
+interface DecorationSeed {
+  point: FractionalPoint;
+  color: string;
+}
+
+const ACCENT_COLOR = "#d66853";
+const SECONDARY_ACCENT_COLOR = "#1f7185";
+
+// Each seed expands over its target group's operation closure. The sets are minimal
+// non-background witnesses for the generated mesh under the current symmetry classifier.
+const MINIMAL_PRESET_DECORATIONS: Record<string, DecorationSeed[]> = {
+  p1: [
+    { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+    { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+  ],
+  p2: [],
+  pm: [
+    { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+    { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+  ],
+  pg: [
+    { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+    { point: { u: 0, v: 1 / 8 }, color: ACCENT_COLOR },
+  ],
+  cm: [
+    { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+    { point: { u: 3 / 8, v: 0 }, color: SECONDARY_ACCENT_COLOR },
+  ],
+  pmm: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
+  pmg: [{ point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR }],
+  pgg: [
+    { point: { u: 1 / 8, v: 0 }, color: ACCENT_COLOR },
+    { point: { u: 0, v: 1 / 8 }, color: ACCENT_COLOR },
+  ],
+  cmm: [],
+  p4: [{ point: { u: 1 / 4, v: 1 / 8 }, color: ACCENT_COLOR }],
+  p4m: [],
+  p4g: [{ point: { u: 1 / 4, v: 1 / 8 }, color: ACCENT_COLOR }],
+  p3: [{ point: { u: 4 / 15, v: 1 / 15 }, color: ACCENT_COLOR }],
+  p3m1: [{ point: { u: 1 / 3, v: 1 / 3 }, color: ACCENT_COLOR }],
+  p31m: [{ point: { u: 4 / 15, v: 1 / 15 }, color: ACCENT_COLOR }],
+  p6: [{ point: { u: 4 / 15, v: 1 / 15 }, color: ACCENT_COLOR }],
+  p6m: [],
+};
 
 function keyForCoordinate(value: number): string {
   return String(Math.round(mod1(value) * 10000)).padStart(4, "0");
@@ -344,25 +366,23 @@ export function buildPresetDocument(symbol: string): CellDocument {
   const faces = extractFaces(base);
   const closure = operationClosure(group.operations);
   const assigned = new Map<string, string>();
-  let colorIndex = 0;
-  for (const face of faces) {
-    if (assigned.has(face.signature)) {
-      continue;
+  const seeds = MINIMAL_PRESET_DECORATIONS[group.symbol];
+  if (!seeds) {
+    throw new Error(`Missing minimal decoration definition for ${group.symbol}`);
+  }
+  for (const seed of seeds) {
+    const face = findFaceAtPoint(faces, seed.point);
+    if (!face) {
+      throw new Error(`Missing decoration seed face for ${group.symbol}`);
     }
-    const color =
-      PRESET_COLORS[colorIndex] ??
-      `hsl(${Math.round((colorIndex * 137.508 + 19) % 360)} ${48 + (colorIndex % 4) * 5}% ${
-        58 + (colorIndex % 3) * 5
-      }%)`;
-    colorIndex += 1;
-    assigned.set(face.signature, color);
+    assigned.set(face.signature, seed.color);
     for (const symmetry of closure) {
       const target = findFaceAtPoint(
         faces,
         normalizePoint(applyOperation(symmetry, face.samplePoint)),
       );
       if (target) {
-        assigned.set(target.signature, color);
+        assigned.set(target.signature, seed.color);
       }
     }
   }

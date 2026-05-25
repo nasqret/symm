@@ -15,7 +15,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Face-cycle extraction over a repeated lift supplies both SVG fills and CW-complex diagnostics.
 - Candidate affine-operation testing gives an explainable colored-symmetry engine: accepted generators can be presented directly to learners.
 - A separate preview window synchronized by browser storage is useful for live presentation without exposing editor chrome.
-- For a preset library whose colors define exact subgroups, each color orbit must be distinct enough to break unintended supergroups; a coarse symmetric mesh silently preserves larger groups.
+- For a preset library whose colors define exact subgroups, search for minimal colored witness
+  orbits rather than coloring every orbit: four maximal generated groups need no paint, while
+  lower-symmetry groups retain only the smallest decoration needed to break supergroups.
 - Cache extracted faces once per symmetry computation: candidate-operation loops otherwise turn an interactive edit into repeated geometry reconstruction.
 - Topology deletion should paint only newly created face signatures located at the removed edge
   midpoint or vertex position, while dropping color records for faces that no longer exist.

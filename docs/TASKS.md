@@ -62,3 +62,9 @@ Run this checklist on every implementation cycle.
 - [x] Replaced implicit free-canvas vertex placement with visible permitted grid points.
 - [x] Enabled double-click vertex removal directly in Add / remove vertex mode.
 - [x] Ran `npm run typecheck`, `npm run build` and browser interaction verification.
+
+## Cycle Record: 2026-05-25 Minimal Preset Decorations
+
+- [x] Replaced all-orbit coloring with minimal target-symmetry witness decorations.
+- [x] Recorded per-group painted-region counts and clarified the archived `p4m` JSON fixture.
+- [x] Ran `npm run typecheck`, `npm run build` and rendered full-preset regression checks.
