@@ -329,3 +329,11 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete interactive hover screenshot verification when the Browser interface is exposed
   in the session.
+
+## Cycle Record: 2026-05-26 Centered Mobile About Mark
+
+- [x] Replaced fixed logo stroke offsets with center-anchored diagonal geometry.
+- [x] Removed mobile-only stroke offset compensation so the About logo remains centered.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete interactive mobile About verification when the Browser interface is exposed in
+  the session.

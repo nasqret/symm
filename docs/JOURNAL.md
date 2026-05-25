@@ -686,6 +686,21 @@
 - Interactive hover screenshot verification remains pending because the Browser plugin's
   required execution interface was not exposed in this session.
 
+## 2026-05-26: Centered Mobile About Mark
+
+- Replaced hard-coded horizontal/vertical logo stroke offsets with two center-anchored
+  diagonals sized from the surrounding square.
+- Removed the compact editor's separate stroke compensation so the About header and editor
+  header share the same logo geometry at mobile widths.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Interactive mobile About screenshot verification remains pending because the Browser
+  plugin's required execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

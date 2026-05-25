@@ -99,23 +99,19 @@ code {
 .brand-mark::after {
   content: "";
   position: absolute;
+  width: 2px;
+  height: calc(100% + 8px);
+  top: -4px;
+  left: 50%;
   background: #56adba;
 }
 
 .brand-mark::before {
-  width: 2px;
-  height: 34px;
-  left: 13px;
-  top: -4px;
-  transform: rotate(45deg);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .brand-mark::after {
-  height: 2px;
-  width: 34px;
-  top: 13px;
-  left: -4px;
-  transform: rotate(45deg);
+  transform: translateX(-50%) rotate(-45deg);
 }
 
 .brand h1 {
@@ -2072,16 +2068,6 @@ kbd {
   .is-mobile-editor .brand-mark {
     width: 27px;
     height: 27px;
-  }
-
-  .is-mobile-editor .brand-mark::before {
-    height: 31px;
-    left: 12px;
-  }
-
-  .is-mobile-editor .brand-mark::after {
-    width: 31px;
-    top: 12px;
   }
 
   .header-actions {
