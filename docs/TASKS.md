@@ -316,4 +316,6 @@ Run this checklist on every implementation cycle.
   blocks the `#demo` route, while desktop retains construction and explorer controls.
 - [ ] Verify the responsive rendered surface interactively when the Browser interface is
   exposed in the session.
-- [ ] Publish the repository and confirm the live Pages deployment.
+- [x] Made `nasqret/symm` public, enabled workflow-backed GitHub Pages through administrator
+  configuration after the Actions token could not provision it, reran the deployment
+  successfully and confirmed that the published app responds with HTTP `200`.

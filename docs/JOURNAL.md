@@ -659,6 +659,11 @@
 - After the public repository transition, the first pushed Pages run failed during
   `configure-pages` because no Pages site existed while `enablement` defaulted to `false`;
   the workflow now requests Pages enablement before artifact upload/deployment.
+- The follow-up run demonstrated that its workflow token cannot create the Pages site, so the
+  administrator CLI configured Pages with `build_type=workflow`; rerunning the job then passed
+  through build, Pages setup, artifact upload and deployment.
+- GitHub repository metadata confirms `nasqret/symm` is public, Pages metadata reports its
+  public workflow-backed site, and an HTTP request to the published application returned `200`.
 - Interactive screenshot verification remains pending because the Browser plugin's required
   execution interface was not exposed in this session.
 
