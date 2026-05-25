@@ -273,3 +273,18 @@ Run this checklist on every implementation cycle.
 - [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
 - [ ] Complete rendered walk verification when the browser validation interface is available
   in the session.
+
+## Cycle Record: 2026-05-25 Stroke-Free Face-Only Rendering
+
+- [x] Diagnosed the hidden-edge bezel as the same-fill overlap stroke previously applied to
+  each face to mask anti-aliased seams.
+- [x] Removed per-face overlap strokes and marked the hidden-edge SVG face group with
+  serialized `shape-rendering="crispEdges"`.
+- [x] Suppressed temporary threshold outlines when the animated explorer is also in
+  hidden-edge mode.
+- [x] Verified generated hidden-edge SVG markup contains the serialized crisp-edge face group
+  with no overlap-stroke style and no `canvas-edges` group; visible-edge SVG still contains
+  the motif-edge group.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [ ] Complete rendered editor/preview/export verification when the browser validation
+  interface is available in the session.

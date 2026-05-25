@@ -595,6 +595,31 @@
 - Rendered walk verification remains pending because the Browser plugin's required execution
   interface was not exposed in this session.
 
+## 2026-05-25: Stroke-Free Face-Only Rendering
+
+- Found that the hidden-edge mode itself was drawing the reported tiny face borders: the
+  earlier seam correction put a `1.2`-pixel same-fill stroke around every face, which becomes
+  visible as a bezel at color boundaries.
+- Removed all hidden-edge face strokes and applied `shape-rendering="crispEdges"` to the SVG
+  face group instead, preserving a stroke-free serialized SVG/PNG path while avoiding
+  anti-aliased background cracks.
+- When hidden-edge mode is used in the subgroup walk, changing regions now blink without the
+  temporary transition outline; the color transition remains visible through fill changes.
+
+### Validation Evidence
+
+- Generated SVG output check: hidden-edge markup contains
+  `shape-rendering="crispEdges"` on `canvas-faces--edge-free`, contains no
+  overlap-stroke styling and no `canvas-edges` group; visible-edge markup retains its
+  `canvas-edges` group.
+- Source inspection confirms that hidden-edge subgroup threshold regions override the
+  temporary transition stroke to `none`.
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered editor/preview/export verification remains pending because the Browser plugin's
+  required execution interface was not exposed in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

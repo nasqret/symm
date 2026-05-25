@@ -1672,6 +1672,10 @@ kbd {
   animation: symmetry-threshold-pulse var(--threshold-duration) step-end both;
 }
 
+.canvas-faces--edge-free .periodic-face--transitioning {
+  stroke: none;
+}
+
 .unit-canvas--immersive .motif-edge {
   stroke: #8b857b;
   opacity: 0.6;

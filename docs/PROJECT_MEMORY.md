@@ -83,8 +83,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - In compact inspector rows, reserve an explicit caption column and gap before monospace
   operation labels; allow the label column to wrap instead of colliding with its category.
 - SVG faces that share an edge may reveal background-colored anti-alias seams after motif edges
-  are hidden. In edge-free rendering, give each face a narrow same-fill overlap stroke inline
-  so the fix is retained by SVG serialization and PNG rasterization.
+  are hidden, but a same-fill overlap stroke becomes a visible bezel between different colors.
+  In edge-free rendering, apply serialized `shape-rendering="crispEdges"` on the face group
+  and emit no face stroke; this is retained by SVG serialization and PNG rasterization.
 - Initialize Preserve symmetry from the detected group of the document loaded into a new
   editor session. Keep the control switchable because deliberate symmetry-breaking experiments
   still require a free-editing mode.

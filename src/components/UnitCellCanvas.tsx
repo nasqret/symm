@@ -260,7 +260,10 @@ export function UnitCellCanvas({
             />
           );
         })}
-      <g className="canvas-faces">
+      <g
+        className={`canvas-faces${showEdges ? "" : " canvas-faces--edge-free"}`}
+        shapeRendering={showEdges ? undefined : "crispEdges"}
+      >
         {displayedTiles.flatMap((tile) =>
           faces.map((face) => {
             const central = tile.u === 0 && tile.v === 0;
@@ -273,16 +276,6 @@ export function UnitCellCanvas({
                     "--threshold-to-fill": fill,
                   } as CSSProperties)
                 : undefined;
-            const seamStyle: CSSProperties | undefined = !showEdges
-              ? {
-                  stroke: fill,
-                  strokeWidth: 1.2,
-                  strokeLinejoin: "round",
-                  paintOrder: "stroke fill",
-                }
-              : undefined;
-            const faceStyle =
-              transitionStyle || seamStyle ? { ...transitionStyle, ...seamStyle } : undefined;
             return (
               <path
                 key={`face-${face.signature}-${tile.u}-${tile.v}`}
@@ -296,7 +289,7 @@ export function UnitCellCanvas({
                 d={facePath(face, tile, transform)}
                 fillRule="evenodd"
                 fill={fill}
-                style={faceStyle}
+                style={transitionStyle}
                 onPointerDown={(event) => {
                   if (tool === "color" && event.pointerType !== "touch") {
                     event.stopPropagation();
