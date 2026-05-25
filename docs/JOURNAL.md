@@ -899,6 +899,27 @@
 - Interactive mobile dock screenshots remain pending because the Browser plugin's required
   execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Reversible Mobile Clean View
+
+- Added a cog icon to the mobile bottom dock. While the controls are visible the cog uses a
+  stronger tone; tapping it suppresses the upper menu, studio rail, foldable panels,
+  in-canvas selector/symmetry menu and all other bottom-dock actions.
+- In the clean drawing view a single pale cog remains at the bottom of the canvas as the
+  restore affordance, and the tessellation expands to the hidden-interface canvas height.
+- Implemented clean view as a separate display state instead of overwriting the menu/panel
+  fold state, so restoring returns to the exact arrangement active before hiding everything.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Vite production assets generated successfully.
+- Source checks passed: clean view is represented by independent `mobileInterfaceHidden`
+  state, suppresses mobile header/rail/panels/quick controls and the other footer actions,
+  while its lone cog reverses that state without changing stored menu or panel visibility.
+- Interactive mobile cog-toggle screenshots remain pending because the Browser plugin's
+  required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

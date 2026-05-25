@@ -69,6 +69,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    are hidden. Implemented on 2026-05-26.
 6. Keep core mobile navigation reachable from the drawing surface with a bottom icon dock for
    tiling preview, undo and redo. Implemented on 2026-05-26.
+7. Add a reversible mobile clean-view cog that suppresses every menu and dock action except
+   its pale restore affordance while retaining the prior fold state. Implemented on 2026-05-26.
 
 ## Architecture Decisions
 
@@ -108,6 +110,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
   with the live detected group acting as a toggle for its visual generators.
 - The mobile canvas footer repeats the preview and history actions as icon buttons so users do
   not need to restore the document menu during direct recoloring.
+- The mobile cog clean view suppresses chrome without overwriting menu/panel fold state; its
+  lone pale restore cog must remain reachable over the drawing surface.
 - GitHub Pages publishes the repository application under `/symm/`, so the Vite production
   base path is part of deployment correctness.
 

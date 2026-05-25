@@ -128,6 +128,9 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   generator overlays preserve orientation without reopening chrome.
 - Keep preview navigation and undo/redo available in a bottom mobile canvas dock: these are
   high-frequency painting actions that must remain reachable while upper chrome is collapsed.
+- For a drawing-only mobile toggle, suppress chrome with a separate view state rather than
+  mutating the stored menu/panel fold state. Leave one low-contrast restore control visible
+  so reopening restores the exact prior arrangement.
 
 ## Validation Debt
 

@@ -447,3 +447,16 @@ Run this checklist on every implementation cycle.
   undo/redo bindings in source.
 - [ ] Complete interactive mobile dock screenshot verification when the Browser interface is
   exposed in the session.
+
+## Cycle Record: 2026-05-26 Reversible Mobile Clean View
+
+- [x] Added a cog action to the mobile canvas dock for hiding all editor chrome.
+- [x] Left only a pale restore cog visible while the chrome is inactive, and styled the cog
+  darker while controls are visible.
+- [x] Preserved underlying menu and panel visibility state so restoring returns to the same
+  collapsed or expanded arrangement.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified source-state boundaries for mobile-only suppression, single restore-cog
+  rendering, full-height canvas styling and nonmutating restoration behavior.
+- [ ] Complete interactive mobile cog-toggle screenshot verification when the Browser
+  interface is exposed in the session.

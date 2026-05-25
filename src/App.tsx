@@ -149,14 +149,17 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   );
   const [mobileMenuVisible, setMobileMenuVisible] = useState(true);
   const [mobilePanelsVisible, setMobilePanelsVisible] = useState(true);
+  const [mobileInterfaceHidden, setMobileInterfaceHidden] = useState(false);
   const [showMobileSymmetryGenerators, setShowMobileSymmetryGenerators] = useState(false);
   const [display, toggleDisplay] = useDisplaySettings(mobileMode);
   const fileInput = useRef<HTMLInputElement>(null);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
   const selectedSymmetryElement =
     symmetry.elements.find((element) => element.id === selectedSymmetryElementId) ?? null;
-  const mobileCanvasControlsVisible =
+  const mobileCanvasControlsEnabled =
     mobileMode && !mobilePanelsVisible && !mobileMenuVisible;
+  const mobileCanvasControlsVisible =
+    mobileCanvasControlsEnabled && !mobileInterfaceHidden;
   const compatiblePresetGroups = WALLPAPER_GROUPS.filter(
     (group) => group.latticeType === document.lattice.type,
   );
@@ -166,7 +169,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
     ? document.presetGroup
     : "";
   const visibleSymmetryElements =
-    mobileCanvasControlsVisible && showMobileSymmetryGenerators
+    mobileCanvasControlsEnabled && showMobileSymmetryGenerators
       ? symmetry.elements
       : selectedSymmetryElement
         ? [selectedSymmetryElement]
@@ -255,6 +258,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
     } else {
       setMobileMenuVisible(true);
       setMobilePanelsVisible(true);
+      setMobileInterfaceHidden(false);
     }
   }, [mobileMode]);
 
@@ -268,12 +272,12 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
   }, [selectedSymmetryElementId, symmetry.elements]);
 
   useEffect(() => {
-    if (mobileCanvasControlsVisible) {
+    if (mobileCanvasControlsEnabled) {
       setSelectedSymmetryElementId(null);
     } else {
       setShowMobileSymmetryGenerators(false);
     }
-  }, [mobileCanvasControlsVisible]);
+  }, [mobileCanvasControlsEnabled]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -376,13 +380,14 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
     mobileMode ? "is-mobile-editor" : "",
     mobileMode && !mobilePanelsVisible ? "mobile-panels-hidden" : "",
     mobileMode && !mobileMenuVisible ? "mobile-menu-hidden" : "",
+    mobileMode && mobileInterfaceHidden ? "mobile-interface-hidden" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
     <div className={shellClassName}>
-      {!mobileMode || mobileMenuVisible ? (
+      {!mobileMode || (!mobileInterfaceHidden && mobileMenuVisible) ? (
         <header className="app-header">
           <div className="brand">
             <span className="brand-mark" />
@@ -456,7 +461,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
           />
         </header>
       ) : null}
-      {mobileMode ? (
+      {mobileMode && !mobileInterfaceHidden ? (
         <div className="mobile-control-rail">
           <div className="mobile-studio-bar">
             <strong>Touch color studio</strong>
@@ -483,7 +488,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
         </div>
       ) : null}
       <div className="editor-grid">
-        {!mobileMode || mobilePanelsVisible ? (
+        {!mobileMode || (!mobileInterfaceHidden && mobilePanelsVisible) ? (
           <ToolPanel
             mobileMode={mobileMode}
             latticeType={document.lattice.type}
@@ -735,28 +740,49 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
               }}
             />
             {mobileMode ? (
-              <nav className="mobile-canvas-actions" aria-label="Canvas actions">
-                <button type="button" onClick={undo} disabled={!canUndo} aria-label="Undo">
-                  <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M 9 7 L 4.5 11.2 L 9 15.4" />
-                    <path d="M 5 11.2 H 13.2 C 17.2 11.2 19.4 13.7 19.4 17" />
-                  </svg>
-                </button>
+              <nav
+                className={`mobile-canvas-actions${
+                  mobileInterfaceHidden ? " is-interface-hidden" : ""
+                }`}
+                aria-label="Canvas actions"
+              >
+                {!mobileInterfaceHidden ? (
+                  <>
+                    <button type="button" onClick={undo} disabled={!canUndo} aria-label="Undo">
+                      <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M 9 7 L 4.5 11.2 L 9 15.4" />
+                        <path d="M 5 11.2 H 13.2 C 17.2 11.2 19.4 13.7 19.4 17" />
+                      </svg>
+                    </button>
+                    <button
+                      className="mobile-preview-action"
+                      type="button"
+                      onClick={openPreview}
+                      aria-label="Open tiling preview"
+                    >
+                      <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M 4 7 H 20 V 18 H 4 Z" />
+                        <path d="M 8 7 V 18 M 12 7 V 18 M 16 7 V 18 M 4 12.5 H 20" />
+                      </svg>
+                    </button>
+                    <button type="button" onClick={redo} disabled={!canRedo} aria-label="Redo">
+                      <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M 15 7 L 19.5 11.2 L 15 15.4" />
+                        <path d="M 19 11.2 H 10.8 C 6.8 11.2 4.6 13.7 4.6 17" />
+                      </svg>
+                    </button>
+                  </>
+                ) : null}
                 <button
-                  className="mobile-preview-action"
+                  className="mobile-interface-toggle"
                   type="button"
-                  onClick={openPreview}
-                  aria-label="Open tiling preview"
+                  aria-label={mobileInterfaceHidden ? "Restore menus" : "Hide all menus"}
+                  aria-pressed={mobileInterfaceHidden}
+                  onClick={() => setMobileInterfaceHidden((hidden) => !hidden)}
                 >
                   <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M 4 7 H 20 V 18 H 4 Z" />
-                    <path d="M 8 7 V 18 M 12 7 V 18 M 16 7 V 18 M 4 12.5 H 20" />
-                  </svg>
-                </button>
-                <button type="button" onClick={redo} disabled={!canRedo} aria-label="Redo">
-                  <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M 15 7 L 19.5 11.2 L 15 15.4" />
-                    <path d="M 19 11.2 H 10.8 C 6.8 11.2 4.6 13.7 4.6 17" />
+                    <path d="M 12 8.3 A 3.7 3.7 0 1 0 12 15.7 A 3.7 3.7 0 1 0 12 8.3" />
+                    <path d="M 9.7 4.3 L 14.3 4.3 L 14.8 6.3 L 16.2 7.1 L 18.2 6.5 L 20.5 10.4 L 18.9 11.9 L 18.9 13.4 L 20.5 14.9 L 18.2 18.9 L 16.2 18.2 L 14.8 19 L 14.3 21 L 9.7 21 L 9.2 19 L 7.8 18.2 L 5.8 18.9 L 3.5 14.9 L 5.1 13.4 L 5.1 11.9 L 3.5 10.4 L 5.8 6.5 L 7.8 7.1 L 9.2 6.3 Z" />
                   </svg>
                 </button>
               </nav>
@@ -771,7 +797,7 @@ function Editor({ mobileMode }: { mobileMode: boolean }) {
             </footer>
           ) : null}
         </main>
-        {!mobileMode || mobilePanelsVisible ? (
+        {!mobileMode || (!mobileInterfaceHidden && mobilePanelsVisible) ? (
           <Inspector
             mobileMode={mobileMode}
             document={document}

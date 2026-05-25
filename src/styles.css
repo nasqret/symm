@@ -2672,12 +2672,55 @@ kbd {
     color: #78d4dd;
   }
 
+  .mobile-canvas-actions .mobile-interface-toggle {
+    border-color: rgba(31, 74, 85, 0.16);
+    background: rgba(251, 249, 242, 0.9);
+    color: #1b4a57;
+  }
+
+  .mobile-canvas-actions.is-interface-hidden {
+    padding: 0;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .mobile-canvas-actions.is-interface-hidden .mobile-interface-toggle {
+    border-color: rgba(31, 74, 85, 0.07);
+    background: rgba(251, 249, 242, 0.26);
+    color: rgba(31, 62, 69, 0.3);
+  }
+
   .is-mobile-editor.mobile-panels-hidden.mobile-menu-hidden .workspace {
     min-height: calc(100svh - 79px);
   }
 
   .is-mobile-editor.mobile-panels-hidden.mobile-menu-hidden .unit-canvas {
     min-height: calc(100svh - 99px);
+  }
+
+  .is-mobile-editor.mobile-interface-hidden {
+    height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+
+  .is-mobile-editor.mobile-interface-hidden .workspace,
+  .is-mobile-editor.mobile-interface-hidden .canvas-stage,
+  .is-mobile-editor.mobile-interface-hidden .unit-canvas {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .is-mobile-editor.mobile-interface-hidden .workspace {
+    padding: 0;
+  }
+
+  .is-mobile-editor.mobile-interface-hidden .unit-canvas {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .mobile-inspector-panel {

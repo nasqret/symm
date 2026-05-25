@@ -23,8 +23,9 @@ The editor supports:
   hidden, supports collapsible menu/panels, pinch zoom and a press-and-hold tile color roller,
   preserves the active unit-cell frame, and provides lattice/group selectors with a tappable
   live-symmetry generator view when the panels are fully hidden; a bottom canvas dock keeps
-  preview, undo and redo reachable; it disables topology editing and subgroup exploration on
-  small screens;
+  preview, undo and redo reachable, with a cog toggle for a clean drawing-only view that
+  restores the prior panel arrangement; it disables topology editing and subgroup exploration
+  on small screens;
 - grid-constrained periodic vertices and edges, including edges whose endpoint is in a
   neighboring cell;
 - detected bounded face cycles including nested interior regions, palette coloring/clearing,
