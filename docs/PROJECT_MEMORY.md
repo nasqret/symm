@@ -110,6 +110,10 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Mobile ambient preview must not depend on hover-revealed desktop overlays or continuously
   translate the pinch target. Use a compact always-reachable exit control and center an
   oversized, stable SVG field so the phone viewport remains filled with the tiling.
+- Face-only rendering, especially when scaled or pinch-transformed on mobile, can expose
+  subpixel cracks despite `crispEdges`. Hide construction-cell outlines with the edge layer,
+  render edge-free faces opaquely, and add serialized stroke-only underpainting behind those
+  fills; never place overlap strokes on top of adjacent colors.
 
 ## Validation Debt
 

@@ -768,6 +768,29 @@
 - Interactive mobile ambient screenshots remain pending because the Browser plugin's required
   execution interface was not exposed after the prescribed discovery sequence in this session.
 
+## 2026-05-26: Seamless Mobile Face-Only Rendering
+
+- Identified two mobile sources of visible lines after edges and vertices were hidden:
+  editor-only construction cell outlines were still rendered, and scaled/pinch-transformed SVG
+  faces can expose fractional-pixel background cracks despite `crispEdges`.
+- Suppressed construction cell boundaries and the active cell outline whenever the edge layer
+  is hidden.
+- Made face-only fills opaque and introduced a serialized stroke underlay behind the visible
+  faces in the editor, preview and downloaded output. The underlay closes subpixel cracks
+  without painting a border on top of adjacent colors, avoiding the bezel regression from the
+  earlier overlap-stroke attempt.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Server-rendered SVG checks passed: edge-free editor and preview states render the underlay
+  while omitting cell-outline and motif-edge layers; layered mode retains construction
+  outlines and does not render the seam underlay.
+- Interactive mobile screenshot verification remains pending because the Browser plugin's
+  required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

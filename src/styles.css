@@ -798,6 +798,20 @@ kbd {
   transition: opacity 120ms ease;
 }
 
+.canvas-face-underlay {
+  pointer-events: none;
+}
+
+.periodic-face-underlay {
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.canvas-faces--edge-free .periodic-face {
+  opacity: 1;
+}
+
 .periodic-face--active {
   opacity: 0.92;
 }

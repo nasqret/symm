@@ -12,6 +12,8 @@ const PNG_SCALES: Record<PngResolution, number> = {
 const STANDALONE_STYLES = `
 .canvas-paper { fill: #fbf9f2; }
 .periodic-face { stroke: none; opacity: 0.92; }
+.periodic-face-underlay { fill: none; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.canvas-faces--edge-free .periodic-face { opacity: 1; }
 .motif-edge { stroke: #3e4a4c; stroke-width: 2; opacity: 0.58; }
 .motif-vertex { fill: #2d3839; stroke: #fbf9f2; stroke-width: 1.4; opacity: 0.65; }
 `;

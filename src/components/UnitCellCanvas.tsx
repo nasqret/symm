@@ -210,6 +210,7 @@ export function UnitCellCanvas({
   const displayedTiles = tiles(preview ? (previewTileRange ?? 4) : 2);
   const edgeTiles = tiles(preview ? (previewTileRange ?? 4) : 1);
   const activeViewport = enablePinchZoom ? viewport : DEFAULT_VIEWPORT;
+  const paintSeamUnderlay = !showEdges;
   const beginColorSwipe = (event: React.PointerEvent<SVGSVGElement>) => {
     if (event.pointerType !== "touch" || tool !== "color" || !onCycleColor) {
       return;
@@ -380,6 +381,7 @@ export function UnitCellCanvas({
           />
         )}
       {!preview &&
+        showEdges &&
         displayedTiles.map((tile) => {
           const cell = [
             { u: tile.u, v: tile.v },
@@ -396,6 +398,22 @@ export function UnitCellCanvas({
             />
           );
         })}
+      {paintSeamUnderlay && (
+        <g className="canvas-face-underlay" aria-hidden="true">
+          {displayedTiles.flatMap((tile) =>
+            faces.map((face) => (
+              <path
+                key={`face-underlay-${face.signature}-${tile.u}-${tile.v}`}
+                className="periodic-face-underlay"
+                d={facePath(face, tile, transform)}
+                fill="none"
+                fillRule="evenodd"
+                stroke={faceColor(document, face.signature)}
+              />
+            )),
+          )}
+        </g>
+      )}
       <g
         className={`canvas-faces${showEdges ? "" : " canvas-faces--edge-free"}`}
         shapeRendering={showEdges ? undefined : "crispEdges"}
@@ -443,7 +461,7 @@ export function UnitCellCanvas({
           }),
         )}
       </g>
-      {!preview && (
+      {!preview && showEdges && (
         <polygon
           className="cell-outline-overlay"
           points={polygonPoints(

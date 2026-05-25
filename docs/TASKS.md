@@ -374,3 +374,15 @@ Run this checklist on every implementation cycle.
   boundaries.
 - [ ] Complete interactive mobile ambient screenshot verification when the Browser interface is
   exposed in the session.
+
+## Cycle Record: 2026-05-26 Seamless Mobile Face-Only Rendering
+
+- [x] Suppressed construction-cell boundary overlays whenever the edge layer is hidden.
+- [x] Added a serialized behind-fill seam underlay and opaque edge-free fills so responsive
+  SVG scaling, exports and mobile pinch zoom do not expose paper-colored cracks.
+- [x] Kept the underlay behind visible color paths instead of restoring top-painted face
+  strokes that previously appeared as bezels.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified server-rendered SVG layer boundaries for edge-free and layered states.
+- [ ] Complete interactive mobile seam verification when the Browser interface is exposed in
+  the session.
