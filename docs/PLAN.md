@@ -20,7 +20,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
    CW-complex diagnostic inventory hidden from the current editor surface.
 6. Test lattice-compatible symmetry operations against geometry and colors; display accepted generators and the classified plane group.
 7. Supply editable starting motives and notes for all 17 plane groups.
-8. Verify builds and core browser workflows, commit locally, and sync to a private GitHub repository. Completed on `main` with the private `origin` remote `nasqret/symm`.
+8. Provide a first-open guide and an About page to introduce the construction and analysis
+   workflow. Implemented on 2026-05-25.
+9. Verify builds and core browser workflows, commit locally, and sync to a private GitHub repository. Completed on `main` with the private `origin` remote `nasqret/symm`.
 
 ## Release 0.2: Mathematical Validation
 
@@ -31,7 +33,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
    remains.
 4. Provide symmetry-preserving editing by applying motif and color edits over a locked
    generator closure. Implemented on 2026-05-25; exact-group validation now blocks a propagated
-   edit that would accidentally enlarge or reduce the locked symmetry type.
+   edit that would accidentally enlarge or reduce the locked symmetry type, and the editor now
+   enables this lock by default for the initially loaded group.
 5. Add automated regression fixtures: each standard preset must classify as its target group before and after JSON round-trip.
 6. Record saved user motives in group-specific knowledge-base manifests.
 
@@ -57,7 +60,8 @@ Status: implemented, browser-verified, committed and synchronized to the private
   vertices, edges and face colors correctly, including faces with nested holes.
 - Symmetry-preserving editing closes only the displayed group generators when enabled; periodic
   translations are already encoded by the motif, and incidental accepted subcell translations
-  must not over-propagate a user's edit.
+  must not over-propagate a user's edit. The loaded group's lock is enabled when an editor
+  session starts and remains explicitly switchable for unconstrained work.
 - Export and animated presentation operate on the clean repeated-tiling view, without the
   editor's unit-cell outlines or highlight; skewed lattice previews render a wider periodic
   neighborhood so the rectangular output viewport remains completely filled.

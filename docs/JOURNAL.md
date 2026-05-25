@@ -500,6 +500,27 @@
 - Rendered face-only editor/preview/export checks remain pending because the browser validation
   interface was unavailable in this session.
 
+## 2026-05-25: Guided Entry And Default Symmetric Editing
+
+- Enabled Preserve symmetry when the editor starts, locking the group detected from the loaded
+  motif while keeping the existing control available to turn the constraint off.
+- Added a first-open Guide overlay explaining lattice construction, face coloring, computed
+  symmetry and presentation output. Its dismissal is remembered locally, and the header
+  exposes a Guide action for reopening it.
+- Added an `#about` page, opened independently from the working editor, with a concise
+  description of the app and the requested `Copyright Bartosz Naskrecki 2026` notice.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Source inspection confirms that the initial symmetry lock is computed from the document
+  loaded into the editor, the `#about` route is wired into application routing, and the About
+  page contains `Copyright Bartosz Naskrecki 2026`.
+- Rendered Guide and About interaction checks remain pending because the browser validation
+  interface was unavailable in this session.
+
 ## Journal Protocol
 
 For each working cycle append:

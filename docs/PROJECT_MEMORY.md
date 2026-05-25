@@ -85,6 +85,12 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - SVG faces that share an edge may reveal background-colored anti-alias seams after motif edges
   are hidden. In edge-free rendering, give each face a narrow same-fill overlap stroke inline
   so the fix is retained by SVG serialization and PNG rasterization.
+- Initialize Preserve symmetry from the detected group of the document loaded into a new
+  editor session. Keep the control switchable because deliberate symmetry-breaking experiments
+  still require a free-editing mode.
+- Introductory UI should not disrupt an active design session: persist dismissal of the
+  first-open guide locally, provide a Guide reopen action, and open the About page separately
+  from the editor's history-bearing window.
 
 ## Validation Debt
 

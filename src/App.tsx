@@ -30,9 +30,12 @@ import { useDocumentHistory } from "./state/useDocumentHistory";
 import { useDisplaySettings } from "./state/useDisplaySettings";
 import { Inspector, ToolPanel, EDITOR_PALETTE } from "./components/Panels";
 import { ExplorationDemo } from "./components/ExplorationDemo";
+import { AboutPage, StartOverlay } from "./components/InformationViews";
 import { PreviewWindow, STORAGE_KEY } from "./components/PreviewWindow";
 import { UnitCellCanvas } from "./components/UnitCellCanvas";
 import "./styles.css";
+
+const INTRO_DISMISSED_KEY = "unit-cell-designer.intro-dismissed.v1";
 
 interface SymmetryLock {
   symbol: string;
@@ -89,12 +92,16 @@ export default function App() {
   if (route === "#demo") {
     return <ExplorationDemo />;
   }
+  if (route === "#about") {
+    return <AboutPage />;
+  }
   return <Editor />;
 }
 
 function Editor() {
+  const [initialDocument] = useState(loadInitialDocument);
   const { document, canUndo, canRedo, commit, replace, undo, redo } = useDocumentHistory(
-    loadInitialDocument(),
+    initialDocument,
   );
   const [tool, setTool] = useState<EditorTool>("select");
   const [selectedColor, setSelectedColor] = useState(EDITOR_PALETTE[0]);
@@ -103,14 +110,26 @@ function Editor() {
     tile: TileOffset;
   } | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string>("Autosaved locally");
+  const [notice, setNotice] = useState<string>("Preserve symmetry active; autosaved locally");
   const [selectedSymmetryElementId, setSelectedSymmetryElementId] = useState<string | null>(null);
-  const [symmetryLock, setSymmetryLock] = useState<SymmetryLock | null>(null);
+  const [symmetryLock, setSymmetryLock] = useState<SymmetryLock | null>(() =>
+    createSymmetryLock(computeSymmetry(initialDocument)),
+  );
+  const [showStartOverlay, setShowStartOverlay] = useState(
+    () => window.localStorage.getItem(INTRO_DISMISSED_KEY) !== "true",
+  );
   const [display, toggleDisplay] = useDisplaySettings();
   const fileInput = useRef<HTMLInputElement>(null);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
   const selectedSymmetryElement =
     symmetry.elements.find((element) => element.id === selectedSymmetryElementId) ?? null;
+  const dismissStartOverlay = useCallback(() => {
+    window.localStorage.setItem(INTRO_DISMISSED_KEY, "true");
+    setShowStartOverlay(false);
+  }, []);
+  const openAbout = useCallback(() => {
+    window.open(`${window.location.pathname}#about`, "unit-cell-about");
+  }, []);
   const selectPaletteColor = useCallback((color: string, message?: string) => {
     setSelectedColor(color);
     setTool("color");
@@ -164,6 +183,9 @@ function Editor() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if (showStartOverlay) {
+        return;
+      }
       const command = event.metaKey || event.ctrlKey;
       const target = event.target as HTMLElement;
       const textEntry =
@@ -224,6 +246,7 @@ function Editor() {
     selectPaletteColor,
     selectedColor,
     selectedEdgeId,
+    showStartOverlay,
     symmetryLock,
     undo,
   ]);
@@ -276,6 +299,13 @@ function Editor() {
           </button>
           <button type="button" onClick={redo} disabled={!canRedo}>
             Redo
+          </button>
+          <span className="separator" />
+          <button type="button" onClick={() => setShowStartOverlay(true)}>
+            Guide
+          </button>
+          <button type="button" onClick={openAbout}>
+            About
           </button>
           <button
             className="primary-action"
@@ -484,6 +514,7 @@ function Editor() {
           }}
         />
       </div>
+      {showStartOverlay && <StartOverlay onClose={dismissStartOverlay} onOpenAbout={openAbout} />}
     </div>
   );
 }

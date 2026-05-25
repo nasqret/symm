@@ -214,3 +214,16 @@ Run this checklist on every implementation cycle.
 - [x] Confirmed the export serializer clones inline face styling used for the overlap stroke.
 - [ ] Complete rendered face-only editor/preview/export checks when the browser validation
   interface is available in the session.
+
+## Cycle Record: 2026-05-25 Introduction And Default Symmetry Editing
+
+- [x] Initialized Preserve symmetry as enabled for the detected group of the document loaded
+  at editor startup, while retaining the manual off switch for unrestricted edits.
+- [x] Added a dismissible first-open Guide overlay with a header action for reopening it.
+- [x] Added a `#about` page describing construction, symmetry analysis and presentation,
+  including `Copyright Bartosz Naskrecki 2026`.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Confirmed by source inspection that the lock initializes from the loaded document and
+  that the About route contains the requested copyright notice.
+- [ ] Complete rendered checks for guide dismissal/reopening, About navigation and the
+  initially active symmetry lock when the browser validation interface is available.
