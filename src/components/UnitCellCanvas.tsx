@@ -150,8 +150,8 @@ export function UnitCellCanvas({
     () => vertexGridPoints(document.lattice.type),
     [document.lattice.type],
   );
-  const displayedTiles = tiles(preview ? 2 : 2);
-  const edgeTiles = tiles(preview ? 2 : 1);
+  const displayedTiles = tiles(preview ? 4 : 2);
+  const edgeTiles = tiles(preview ? 4 : 1);
 
   const eventPoint = (event: React.PointerEvent<SVGSVGElement>): FractionalPoint => {
     const bounds = svgRef.current?.getBoundingClientRect();
@@ -180,22 +180,23 @@ export function UnitCellCanvas({
         </marker>
       </defs>
       <rect className="canvas-paper" width={WIDTH} height={HEIGHT} />
-      {displayedTiles.map((tile) => {
-        const cell = [
-          { u: tile.u, v: tile.v },
-          { u: tile.u + 1, v: tile.v },
-          { u: tile.u + 1, v: tile.v + 1 },
-          { u: tile.u, v: tile.v + 1 },
-        ];
-        const central = tile.u === 0 && tile.v === 0;
-        return (
-          <polygon
-            key={`cell-${tile.u}-${tile.v}`}
-            className={central ? "cell-boundary cell-boundary--active" : "cell-boundary"}
-            points={polygonPoints(cell, { u: 0, v: 0 }, transform)}
-          />
-        );
-      })}
+      {!preview &&
+        displayedTiles.map((tile) => {
+          const cell = [
+            { u: tile.u, v: tile.v },
+            { u: tile.u + 1, v: tile.v },
+            { u: tile.u + 1, v: tile.v + 1 },
+            { u: tile.u, v: tile.v + 1 },
+          ];
+          const central = tile.u === 0 && tile.v === 0;
+          return (
+            <polygon
+              key={`cell-${tile.u}-${tile.v}`}
+              className={central ? "cell-boundary cell-boundary--active" : "cell-boundary"}
+              points={polygonPoints(cell, { u: 0, v: 0 }, transform)}
+            />
+          );
+        })}
       <g className="canvas-faces">
         {displayedTiles.flatMap((tile) =>
           faces.map((face) => {
@@ -203,7 +204,9 @@ export function UnitCellCanvas({
             return (
               <path
                 key={`face-${face.signature}-${tile.u}-${tile.v}`}
-                className={`periodic-face${central ? " periodic-face--active" : ""}${
+                className={`periodic-face${
+                  preview ? " periodic-face--preview" : central ? " periodic-face--active" : ""
+                }${
                   tool === "color" ? " periodic-face--paintable" : ""
                 }`}
                 d={facePath(face, tile, transform)}
@@ -220,19 +223,21 @@ export function UnitCellCanvas({
           }),
         )}
       </g>
-      <polygon
-        className="cell-outline-overlay"
-        points={polygonPoints(
-          [
+      {!preview && (
+        <polygon
+          className="cell-outline-overlay"
+          points={polygonPoints(
+            [
+              { u: 0, v: 0 },
+              { u: 1, v: 0 },
+              { u: 1, v: 1 },
+              { u: 0, v: 1 },
+            ],
             { u: 0, v: 0 },
-            { u: 1, v: 0 },
-            { u: 1, v: 1 },
-            { u: 0, v: 1 },
-          ],
-          { u: 0, v: 0 },
-          transform,
-        )}
-      />
+            transform,
+          )}
+        />
+      )}
       <g className="canvas-edges">
         {edgeTiles.flatMap((tile) =>
           document.edges.map((edge) => {
@@ -250,7 +255,11 @@ export function UnitCellCanvas({
               <line
                 key={`${edge.id}-${tile.u}-${tile.v}`}
                 className={`motif-edge${
-                  tile.u === 0 && tile.v === 0 ? " motif-edge--active" : ""
+                  preview
+                    ? " motif-edge--preview"
+                    : tile.u === 0 && tile.v === 0
+                      ? " motif-edge--active"
+                      : ""
                 }${edge.id === selectedEdgeId ? " motif-edge--selected" : ""}`}
                 x1={start.x}
                 y1={start.y}
@@ -304,7 +313,9 @@ export function UnitCellCanvas({
             return (
               <circle
                 key={`${vertex.id}-${tile.u}-${tile.v}`}
-                className={`motif-vertex${starting ? " motif-vertex--start" : ""}`}
+                className={`motif-vertex${preview ? " motif-vertex--preview" : ""}${
+                  starting ? " motif-vertex--start" : ""
+                }`}
                 cx={positioned.x}
                 cy={positioned.y}
                 r={starting ? 7 : 5}

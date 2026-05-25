@@ -162,6 +162,36 @@
 - Locked edge removal changed the `p4m` counts from `32/64/32` to `32/60/29` and retained
   `p4m`; browser page-error checks reported no application errors.
 
+## 2026-05-25: Tiling Export, Ambient Preview And Animated Exploration
+
+- Converted the repeated-tiling preview into a clean output surface: it now displays translated
+  tiles uniformly without central or repeated unit-cell construction outlines.
+- Added standalone SVG export and PNG export at low (`900 x 690`), medium (`1800 x 1380`) and
+  high (`3600 x 2760`) resolutions from the preview surface.
+- Added ambient preview mode with subdued overlay controls and slow drifting presentation.
+- Added the interactive `#demo` route, with hexagonal, square and rectangular subgroup-descent
+  branches, play/pause, playback speeds, manual stage selection and an ambient mode. Stages
+  cross-fade so changing coloring and changing motifs evolve smoothly between verified presets.
+- Fixed hash routing so transitions between editor, preview and demo update an already-open app
+  tab, and widened preview repetition coverage so slanted hexagonal tilings fill the export and
+  animation viewport without an empty wedge.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Rendered preview through the local `agent-browser` fallback: the output canvas contained no
+  unit-cell construction outlines or active-face emphasis and ambient mode enabled its drift
+  animation.
+- Download verification: SVG exported as an SVG image; low, medium and high PNG exports were
+  verified as `900 x 690`, `1800 x 1380` and `3600 x 2760` images respectively.
+- Rendered demo transition: fast hexagonal playback advanced `p6m` to `p6` with simultaneous
+  departing and arriving layers during the cross-fade, with full skew-lattice canvas coverage.
+- Interactive demo controls: pause, square-branch selection, manual `p2` selection, ambient
+  mode and Return to editor all produced the corresponding rendered state.
+- Mobile QA at `390 x 844`: preview and non-ambient demo controls rendered without horizontal
+  overflow; browser page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

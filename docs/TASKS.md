@@ -77,3 +77,12 @@ Run this checklist on every implementation cycle.
 - [x] Kept persisted document state backward-compatible and recorded the generator-closure rule.
 - [x] Ran `npm run typecheck`, `npm run build` and rendered checks for translation, centering,
   mirror, rotation, glide, coloring, vertex insertion/removal and edge removal paths.
+
+## Cycle Record: 2026-05-25 Export, Ambient Preview And Animated Exploration
+
+- [x] Converted preview rendering into a clean, uniformly repeated tiling output surface.
+- [x] Added standalone SVG and three-resolution PNG export from the preview.
+- [x] Added ambient preview display and animated subgroup-exploration presentation controls.
+- [x] Corrected hash navigation and skew-lattice coverage found during rendered QA.
+- [x] Ran `npm run typecheck`, `npm run build`, artifact dimension checks, desktop interaction
+  checks and mobile no-overflow checks.

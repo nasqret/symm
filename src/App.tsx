@@ -29,6 +29,7 @@ import {
 } from "./state/mutations";
 import { useDocumentHistory } from "./state/useDocumentHistory";
 import { Inspector, ToolPanel, EDITOR_PALETTE } from "./components/Panels";
+import { ExplorationDemo } from "./components/ExplorationDemo";
 import { PreviewWindow, STORAGE_KEY } from "./components/PreviewWindow";
 import { UnitCellCanvas } from "./components/UnitCellCanvas";
 import "./styles.css";
@@ -74,8 +75,19 @@ function isCellDocument(value: unknown): value is CellDocument {
 }
 
 export default function App() {
-  if (window.location.hash === "#preview") {
+  const [route, setRoute] = useState(window.location.hash);
+
+  useEffect(() => {
+    const syncRoute = () => setRoute(window.location.hash);
+    window.addEventListener("hashchange", syncRoute);
+    return () => window.removeEventListener("hashchange", syncRoute);
+  }, []);
+
+  if (route === "#preview") {
     return <PreviewWindow />;
+  }
+  if (route === "#demo") {
+    return <ExplorationDemo />;
   }
   return <Editor />;
 }
@@ -210,6 +222,13 @@ function Editor() {
             onClick={() => window.open(`${window.location.pathname}#preview`, "tiling-preview")}
           >
             Open Tiling Preview
+          </button>
+          <button
+            className="primary-action demo-action"
+            type="button"
+            onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
+          >
+            Explore Subgroups
           </button>
         </nav>
         <input

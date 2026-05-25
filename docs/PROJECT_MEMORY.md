@@ -34,6 +34,13 @@ This file records reusable decisions and discoveries for future Unit Cell Design
 - Symmetry overlays are best derived from the same affine operations used by the classifier, so
   the visible axes, centers and arrows track the actual colored-complex result rather than a
   preset label alone.
+- Export from a clean presentation SVG rather than the editing view: unit-cell outlines,
+  highlighting and interaction affordances are useful during construction but misleading in a
+  tiling image. Inline the essential SVG styles before downloading or rasterizing so vector
+  files remain standalone outside the app.
+- A fixed square translation neighborhood does not necessarily cover a rectangular viewport
+  under a slanted lattice basis. Presentation/export views should include enough translated
+  copies to cover viewport corners, especially for hexagonal animation frames.
 
 ## Validation Debt
 

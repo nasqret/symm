@@ -34,8 +34,10 @@ Status: implemented, browser-verified, committed and synchronized to the private
 
 1. Support free lattice-parameter editing and constraint-aware snapping.
 2. Add robust face editing, vertex dragging, edge splitting and color legend management.
-3. Export SVG/PNG tiles and a structured CW-complex/symmetry report.
-4. Package sharable examples and a teaching tour of all groups.
+3. Export SVG/PNG tiles and a structured CW-complex/symmetry report. Standalone preview SVG
+   export and low/medium/high PNG output implemented on 2026-05-25; structured report remains.
+4. Package sharable examples and a teaching tour of all groups. Ambient preview and animated
+   subgroup-exploration branches implemented on 2026-05-25.
 
 ## Architecture Decisions
 
@@ -46,6 +48,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Symmetry-preserving editing closes only the displayed group generators when enabled; periodic
   translations are already encoded by the motif, and incidental accepted subcell translations
   must not over-propagate a user's edit.
+- Export and animated presentation operate on the clean repeated-tiling view, without the
+  editor's unit-cell outlines or highlight; skewed lattice previews render a wider periodic
+  neighborhood so the rectangular output viewport remains completely filled.
 - Presets are editable starting points, while the knowledge base tracks mathematical validation status separately.
 
 ## Acceptance Checks For Every Cycle

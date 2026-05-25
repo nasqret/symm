@@ -1,7 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CellDocument } from "../types";
 import { buildPresetDocument } from "../data/wallpaperGroups";
 import { computeSymmetry } from "../math/symmetry";
+import {
+  exportTilingPng,
+  exportTilingSvg,
+  pngDimensions,
+  type PngResolution,
+} from "../utils/tilingExport";
 import { UnitCellCanvas } from "./UnitCellCanvas";
 
 export const STORAGE_KEY = "unit-cell-designer.document.v1";
@@ -20,6 +26,9 @@ function readStoredDocument(): CellDocument {
 
 export function PreviewWindow() {
   const [document, setDocument] = useState(readStoredDocument);
+  const [ambient, setAmbient] = useState(false);
+  const [notice, setNotice] = useState("Ready to export");
+  const drawing = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const sync = (event: StorageEvent) => {
       if (event.key === STORAGE_KEY && event.newValue) {
@@ -30,10 +39,36 @@ export function PreviewWindow() {
     return () => window.removeEventListener("storage", sync);
   }, []);
   const symmetry = useMemo(() => computeSymmetry(document), [document]);
+
+  const getSvg = (): SVGSVGElement | null =>
+    drawing.current?.querySelector<SVGSVGElement>("svg") ?? null;
+
+  const saveSvg = () => {
+    const svg = getSvg();
+    if (!svg) {
+      return;
+    }
+    exportTilingSvg(svg, document.name);
+    setNotice("SVG tiling exported");
+  };
+
+  const savePng = async (resolution: PngResolution) => {
+    const svg = getSvg();
+    if (!svg) {
+      return;
+    }
+    try {
+      await exportTilingPng(svg, document.name, resolution);
+      setNotice(`${resolution} PNG exported at ${pngDimensions(resolution)}`);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "PNG export failed");
+    }
+  };
+
   return (
-    <main className="preview-page">
+    <main className={ambient ? "preview-page is-ambient" : "preview-page"}>
       <header className="preview-header">
-        <div>
+        <div className="preview-title">
           <h1>{document.name}</h1>
           <p>Live periodic tiling preview</p>
         </div>
@@ -41,8 +76,41 @@ export function PreviewWindow() {
           <span>colored symmetry</span>
           <strong>{symmetry.symbol}</strong>
         </div>
+        <nav className="preview-actions" aria-label="Tiling export and presentation actions">
+          <button type="button" onClick={() => setAmbient((active) => !active)}>
+            {ambient ? "Exit ambient" : "Ambient mode"}
+          </button>
+          <button
+            type="button"
+            onClick={() => window.open(`${window.location.pathname}#demo`, "tiling-demo")}
+          >
+            Explore subgroups
+          </button>
+          <button type="button" onClick={saveSvg}>
+            Export SVG
+          </button>
+          <div className="png-actions" role="group" aria-label="Export PNG resolution">
+            <span>PNG</span>
+            {(["low", "medium", "high"] as PngResolution[]).map((resolution) => (
+              <button
+                key={resolution}
+                type="button"
+                aria-label={`Export PNG ${resolution} resolution`}
+                title={`${resolution} ${pngDimensions(resolution)}`}
+                onClick={() => void savePng(resolution)}
+              >
+                {resolution}
+              </button>
+            ))}
+          </div>
+        </nav>
       </header>
-      <UnitCellCanvas document={document} preview />
+      <div className="preview-canvas-frame" ref={drawing}>
+        <UnitCellCanvas document={document} preview />
+      </div>
+      <p className="preview-notice" aria-live="polite">
+        {notice}
+      </p>
     </main>
   );
 }
