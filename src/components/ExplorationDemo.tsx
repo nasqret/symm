@@ -8,6 +8,7 @@ import {
   EXPLORER_FAMILIES,
   EXPLORER_GRAPH_EDGES,
   EXPLORER_GRAPH_NODES,
+  FEATURED_WALK,
   primaryFamilyForSymbol,
   supportsFamilySymbol,
   type ExplorerFamily,
@@ -39,9 +40,25 @@ const SPEEDS: Record<Speed, { hold: number; fade: number; label: string }> = {
   fast: { hold: 2500, fade: 900, label: "Fast" },
 };
 
-const INITIAL_SELECTION: ExplorerSelection = { symbol: "p6m", family: "hexagonal" };
+const INITIAL_SELECTION: ExplorerSelection = FEATURED_WALK[0];
 const GRAPH_POSITIONS = new Map(
   EXPLORER_GRAPH_NODES.map((node) => [node.symbol, { x: node.x, y: node.y }]),
+);
+const GRAPH_LABELS = new Map(EXPLORER_GRAPH_NODES.map((node) => [node.symbol, node.label]));
+
+function graphLabel(symbol: string): string {
+  return GRAPH_LABELS.get(symbol) ?? symbol;
+}
+
+function edgeKey(left: string, right: string): string {
+  return [left, right].sort().join(":");
+}
+
+const WALK_EDGES = new Set(
+  FEATURED_WALK.slice(1)
+    .map((step, index) => [FEATURED_WALK[index].symbol, step.symbol] as const)
+    .filter(([from, to]) => from !== to)
+    .map(([from, to]) => edgeKey(from, to)),
 );
 
 function familyFor(id: LatticeType): ExplorerFamily {
@@ -65,26 +82,40 @@ function displayScaleFor(family: LatticeType): number {
 interface SubgroupGraphProps {
   selection: ExplorerSelection;
   bridge: LatticeBridge | null;
+  walkIndex: number | null;
   onSelectSymbol: (symbol: string) => void;
 }
 
-function SubgroupGraph({ selection, bridge, onSelectSymbol }: SubgroupGraphProps) {
-  const outgoing = EXPLORER_GRAPH_EDGES.filter((edge) => edge.from === selection.symbol);
-  const connectedSymbols = new Set(outgoing.map((edge) => edge.to));
+function SubgroupGraph({ selection, bridge, walkIndex, onSelectSymbol }: SubgroupGraphProps) {
+  const currentSymbol = bridge ? "p1" : selection.symbol;
+  const connectedSymbols = new Set(
+    EXPLORER_GRAPH_EDGES.flatMap((edge) =>
+      edge.from === currentSymbol ? [edge.to] : edge.to === currentSymbol ? [edge.from] : [],
+    ),
+  );
+  const traversedEdges = new Set(
+    walkIndex === null
+      ? []
+      : FEATURED_WALK.slice(1, walkIndex + 1)
+          .map((step, index) => [FEATURED_WALK[index].symbol, step.symbol] as const)
+          .filter(([from, to]) => from !== to)
+          .map(([from, to]) => edgeKey(from, to)),
+  );
+  const activeStep = walkIndex === null ? null : FEATURED_WALK[walkIndex];
 
   return (
-    <aside className="subgroup-graph" aria-label="Full wallpaper subgroup type graph">
+    <aside className="subgroup-graph" aria-label="Wallpaper subgroup hierarchy">
       <header className="subgroup-graph-heading">
         <div>
-          <p>Subgroup type graph</p>
-          <h2>{bridge ? "p1" : selection.symbol}</h2>
+          <p>Plane-group hierarchy</p>
+          <h2>{graphLabel(currentSymbol)}</h2>
         </div>
-        <strong>17 types</strong>
+        <strong>{walkIndex === null ? "free exploration" : `walk ${walkIndex + 1}/${FEATURED_WALK.length}`}</strong>
       </header>
       <p className="subgroup-route">
         {bridge
-          ? `${familyFor(bridge.fromFamily).title} to ${familyFor(bridge.toFamily).title}`
-          : `${familyFor(selection.family).title} / fixed geometry`}
+          ? "p1 lattice homotopy in progress"
+          : activeStep?.chapter ?? `${familyFor(selection.family).title} / free selection`}
       </p>
       <div className="subgroup-map">
         <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -94,33 +125,34 @@ function SubgroupGraph({ selection, bridge, onSelectSymbol }: SubgroupGraphProps
             if (!from || !to) {
               return null;
             }
-            const active = edge.from === selection.symbol;
-            const fixed =
-              supportsFamilySymbol(selection.family, edge.from) &&
-              supportsFamilySymbol(selection.family, edge.to);
+            const key = edgeKey(edge.from, edge.to);
+            const onWalk = WALK_EDGES.has(key);
+            const traversed = traversedEdges.has(key);
+            const active = edge.from === currentSymbol || edge.to === currentSymbol;
             return (
               <line
                 key={`${edge.from}-${edge.to}`}
-                className={`subgroup-edge${fixed ? " is-fixed" : ""}${active ? " is-focus" : ""}`}
+                className={`subgroup-edge${onWalk ? " is-walk" : ""}${
+                  traversed ? " is-traversed" : ""
+                }${active ? " is-focus" : ""}`}
                 x1={from.x}
                 y1={from.y}
                 x2={to.x}
                 y2={to.y}
-              >
-                <title>{`${edge.from} -> ${edge.to} / index ${edge.index}`}</title>
-              </line>
+              />
             );
           })}
         </svg>
         {EXPLORER_GRAPH_NODES.map((node) => {
-          const isCurrent = node.symbol === selection.symbol && !bridge;
+          const isCurrent = node.symbol === currentSymbol;
+          const onWalk = FEATURED_WALK.some((step) => step.symbol === node.symbol);
           return (
             <button
               type="button"
               key={node.symbol}
-              className={`subgroup-node${connectedSymbols.has(node.symbol) ? " is-related" : ""}${
-                isCurrent ? " is-current" : ""
-              }`}
+              className={`subgroup-node${onWalk ? " is-walk" : ""}${
+                connectedSymbols.has(node.symbol) ? " is-related" : ""
+              }${isCurrent ? " is-current" : ""}`}
               style={
                 {
                   "--node-x": `${node.x}%`,
@@ -130,24 +162,29 @@ function SubgroupGraph({ selection, bridge, onSelectSymbol }: SubgroupGraphProps
               aria-current={isCurrent ? "step" : undefined}
               onClick={() => onSelectSymbol(node.symbol)}
             >
-              {node.symbol}
+              {node.label}
             </button>
           );
         })}
       </div>
       <div className="subgroup-legend" aria-label="Connection legend">
-        <span className="is-color">color-only in active lattice</span>
-        <span className="is-type">possible type relation</span>
+        <span className="is-current">current group</span>
+        <span className="is-path">authored walk</span>
+        <span className="is-type">hierarchy connection</span>
       </div>
-      <p className="subgroup-connections">
-        <strong>{selection.symbol} subgroups:</strong>{" "}
-        {outgoing.length
-          ? outgoing.map((edge) => `${edge.to} (i${edge.index})`).join(", ")
-          : "no lower type other than finite-index copies of itself"}
-      </p>
+      <div className="subgroup-walk" aria-label="Authored exploration walk">
+        <p>Featured walk</p>
+        <div className="subgroup-walk-track">
+          {FEATURED_WALK.map((step, index) => (
+            <span key={`${step.symbol}-${step.family}-${index}`} className={index === walkIndex ? "is-current" : ""}>
+              {graphLabel(step.symbol)}
+            </span>
+          ))}
+        </div>
+      </div>
       <p className="subgroup-note">
-        Type quotient shown: translation-index copies are suppressed. Cross-lattice selections
-        pass through a p1 homotopy.
+        Standard labels follow the supplied hierarchy. Translation-index copies are suppressed;
+        the colored frame marks the live pattern.
       </p>
     </aside>
   );
@@ -159,6 +196,7 @@ function openEditor(): void {
 
 export function ExplorationDemo() {
   const [selection, setSelection] = useState<ExplorerSelection>(INITIAL_SELECTION);
+  const [walkIndex, setWalkIndex] = useState<number | null>(0);
   const [leaving, setLeaving] = useState<ExplorerSelection | null>(null);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState<Speed>("medium");
@@ -213,6 +251,14 @@ export function ExplorationDemo() {
     });
   };
 
+  const clearTransientMotion = () => {
+    setLeaving(null);
+    setPendingBridge(null);
+    setPendingAscent(null);
+    setBridge(null);
+    setBridgeProgress(0);
+  };
+
   const navigateTo = (
     symbol: string,
     requestedFamily?: LatticeType,
@@ -220,6 +266,8 @@ export function ExplorationDemo() {
   ) => {
     if (pausePlayback) {
       setPlaying(false);
+      setWalkIndex(null);
+      clearTransientMotion();
     }
     const targetFamily =
       requestedFamily ??
@@ -238,6 +286,18 @@ export function ExplorationDemo() {
     }
     setPendingBridge(request);
     transitionColor({ symbol: "p1", family: selection.family });
+  };
+
+  const advanceWalk = (nextIndex: number) => {
+    const target = FEATURED_WALK[nextIndex];
+    setWalkIndex(nextIndex);
+    navigateTo(target.symbol, target.family, false);
+  };
+
+  const restartWalk = () => {
+    setPlaying(false);
+    clearTransientMotion();
+    advanceWalk(0);
   };
 
   useEffect(() => {
@@ -299,22 +359,11 @@ export function ExplorationDemo() {
   }, [bridge, pendingAscent, selection]);
 
   useEffect(() => {
-    if (!playing || bridge || pendingBridge || pendingAscent) {
+    if (!playing || bridge || pendingBridge || pendingAscent || walkIndex === null) {
       return;
     }
     const timeout = window.setTimeout(() => {
-      const pathIndex = family.tour.indexOf(selection.symbol);
-      if (pathIndex >= 0 && pathIndex < family.tour.length - 1) {
-        navigateTo(family.tour[pathIndex + 1], selection.family, false);
-        return;
-      }
-      if (selection.symbol !== "p1") {
-        navigateTo("p1", selection.family, false);
-        return;
-      }
-      const familyIndex = EXPLORER_FAMILIES.findIndex((entry) => entry.id === selection.family);
-      const nextFamily = EXPLORER_FAMILIES[(familyIndex + 1) % EXPLORER_FAMILIES.length];
-      navigateTo(nextFamily.tour[0], nextFamily.id, false);
+      advanceWalk((walkIndex + 1) % FEATURED_WALK.length);
     }, timing.hold);
     return () => window.clearTimeout(timeout);
   });
@@ -325,13 +374,15 @@ export function ExplorationDemo() {
     "--branch-glow": family.glow,
   } as CSSProperties;
   const groupDescription = lookupGroup(selection.symbol)?.feature ?? "Translations only.";
+  const activeNarrative =
+    walkIndex === null ? groupDescription : FEATURED_WALK[walkIndex].narrative;
 
   return (
     <main className={ambient ? "demo-page is-ambient" : "demo-page"} style={style}>
       <header className="demo-header">
         <div className="demo-heading">
           <p>Animated subgroup exploration</p>
-          <h1>Color descent on a fixed lattice</h1>
+          <h1>A continuous walk through symmetry</h1>
         </div>
         <nav className="demo-actions" aria-label="Exploration actions">
           <button type="button" onClick={() => setAmbient((active) => !active)}>
@@ -343,17 +394,11 @@ export function ExplorationDemo() {
         </nav>
       </header>
       <section className="demo-controls" aria-label="Animation controls">
-        <div className="demo-branches">
-          {EXPLORER_FAMILIES.map((entry) => (
-            <button
-              key={entry.id}
-              type="button"
-              className={entry.id === selection.family ? "is-selected" : ""}
-              onClick={() => navigateTo(entry.tour[0], entry.id)}
-            >
-              {entry.title}
-            </button>
-          ))}
+        <div className="demo-branches demo-walk-control">
+          <button type="button" className={walkIndex !== null ? "is-selected" : ""} onClick={restartWalk}>
+            Restart featured walk
+          </button>
+          <span>p6mm to p1 to p4mm, returning through p4gm</span>
         </div>
         <div className="demo-playback">
           <button type="button" className="play-toggle" onClick={() => setPlaying((active) => !active)}>
@@ -395,7 +440,7 @@ export function ExplorationDemo() {
           </div>
         </div>
         <div className="demo-visual-mode">
-          <strong>{bridge ? "Lattice homotopy" : "Color-only transition"}</strong>
+          <strong>{bridge ? "Lattice homotopy" : "Smooth color transition"}</strong>
           <span>
             {bridge
               ? "Edges contract and regrow while p1 changes its cell."
@@ -404,7 +449,12 @@ export function ExplorationDemo() {
         </div>
       </section>
       <section className="demo-experience">
-        <SubgroupGraph selection={selection} bridge={bridge} onSelectSymbol={navigateTo} />
+        <SubgroupGraph
+          selection={selection}
+          bridge={bridge}
+          walkIndex={walkIndex}
+          onSelectSymbol={navigateTo}
+        />
         <div className="demo-viewport is-chromatic">
           {bridge && bridgeFrom && bridgeTo && interpolatedLattice ? (
             <>
@@ -480,16 +530,16 @@ export function ExplorationDemo() {
                 ? `${bridge.fromFamily} to ${bridge.toFamily} / p1 bridge`
                 : `${family.title} / fixed lattice`}
             </span>
-            <strong>{bridge ? "p1" : selection.symbol}</strong>
+            <strong>{graphLabel(bridge ? "p1" : selection.symbol)}</strong>
             <p>
               {bridge
                 ? "The coloring stays free while old edges collapse into the new cell geometry."
-                : groupDescription}
+                : activeNarrative}
             </p>
             <small>
               {bridge
                 ? "smooth metric change / contracting and expanding motif edges"
-                : `${immersiveStage.orbitCount} color orbits / detected symmetry ${immersiveStage.computedSymbol}`}
+                : `${immersiveStage.orbitCount} color orbits / detected symmetry ${graphLabel(immersiveStage.computedSymbol)}`}
             </small>
           </div>
         </div>

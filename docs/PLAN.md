@@ -38,9 +38,10 @@ Status: implemented, browser-verified, committed and synchronized to the private
    export and low/medium/high PNG output implemented on 2026-05-25, together with persistent
    edge/vertex layer hiding for face-only editor and export views; structured report remains.
 4. Package sharable examples and a teaching tour of all groups. Ambient preview and animated
-   subgroup exploration implemented on 2026-05-25; the explorer now renders all 17 type nodes,
-   indexed possible subgroup relations, fixed-lattice chromatic transitions and a `p1`
-   homotopy for moves into another lattice family.
+   subgroup exploration implemented on 2026-05-25; the explorer now reconstructs the supplied
+   17-node standard-label hierarchy, highlights the live group, and performs the featured
+   `p6mm -> p1 -> p4mm -> p4gm -> p1` exploration with fixed-lattice chromatic transitions
+   and a `p1` homotopy when changing lattice family.
 
 ## Architecture Decisions
 
@@ -60,9 +61,9 @@ Status: implemented, browser-verified, committed and synchronized to the private
 - Explorer-only chromatic fields color complete face orbits under a selected stage's required
   operations while retaining one lattice family's vertices and edges; the resulting colored
   symbol is checked before it is described in the presentation.
-- The subgroup display is a graph of all 17 wallpaper-group types and the indexed type
-  relations recorded by the standard relation table. It is not the infinite subgroup poset:
-  finite-index translation copies of a type are intentionally collapsed to one node.
+- The subgroup display is a reconstruction of the supplied standard-symbol hierarchy for all
+  17 wallpaper-group types. It is not the infinite subgroup poset: finite-index translation
+  copies of a type are intentionally collapsed to one node.
 - A cross-family selection first descends to `p1` through recoloring on the unchanged lattice,
   then interpolates lattice parameters while contracting old motif edges and expanding the new
   mesh before applying the target colors.

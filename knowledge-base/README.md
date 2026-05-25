@@ -7,10 +7,12 @@ each example paints the fewest face regions found to retain exactly its computed
 See [PRESET_VALIDATION.md](PRESET_VALIDATION.md) for the painted-region counts and regression
 record.
 
-The animated explorer uses these 17 entries as a type-level subgroup graph. It renders indexed
-possible subgroup relationships between the types, not a separate node for every finite-index
-translation sublattice. Color descent within a current lattice family keeps the generated mesh
-fixed; changing lattice family is shown only through the explicit `p1` homotopy.
+The animated explorer uses these 17 entries to reconstruct the supplied hierarchy with standard
+plane-group labels. It renders the selected hierarchy connections, not a separate node for every
+finite-index translation sublattice. The featured walk travels from `p6mm` down to `p1`, rises
+through the square `p4mm` direction, and returns through `p4gm`. Color descent within a current
+lattice family keeps the generated mesh fixed; changing lattice family is shown only through the
+explicit `p1` homotopy.
 
 ## Notation
 

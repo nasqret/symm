@@ -9,11 +9,11 @@ export interface ExplorerFamily {
   title: string;
   accent: string;
   glow: string;
-  tour: string[];
 }
 
 export interface ExplorerGraphNode {
   symbol: string;
+  label: string;
   x: number;
   y: number;
 }
@@ -21,7 +21,13 @@ export interface ExplorerGraphNode {
 export interface ExplorerGraphEdge {
   from: string;
   to: string;
-  index: number;
+}
+
+export interface ExplorerWalkStep {
+  symbol: string;
+  family: LatticeType;
+  chapter: string;
+  narrative: string;
 }
 
 export interface ImmersiveStage {
@@ -37,28 +43,24 @@ export const EXPLORER_FAMILIES: ExplorerFamily[] = [
     title: "Hexagonal lattice",
     accent: "#ff4fa3",
     glow: "rgba(255, 79, 163, 0.62)",
-    tour: ["p6m", "p6", "p3", "p1"],
   },
   {
     id: "square",
     title: "Square lattice",
     accent: "#00e6ff",
     glow: "rgba(0, 230, 255, 0.62)",
-    tour: ["p4m", "p4", "p2", "p1"],
   },
   {
     id: "rectangular",
     title: "Rectangular lattice",
     accent: "#ffb400",
     glow: "rgba(255, 180, 0, 0.62)",
-    tour: ["cmm", "pmm", "pm", "p1"],
   },
   {
     id: "generic",
     title: "Generic lattice",
     accent: "#9d80ff",
     glow: "rgba(157, 128, 255, 0.62)",
-    tour: ["p2", "p1"],
   },
 ];
 
@@ -78,104 +80,140 @@ export function primaryFamilyForSymbol(symbol: string): LatticeType {
 }
 
 export const EXPLORER_GRAPH_NODES: ExplorerGraphNode[] = [
-  { symbol: "p6m", x: 10, y: 9 },
-  { symbol: "p4m", x: 38, y: 9 },
-  { symbol: "p4g", x: 55, y: 9 },
-  { symbol: "cmm", x: 82, y: 9 },
-  { symbol: "p6", x: 6, y: 29 },
-  { symbol: "p3m1", x: 18, y: 29 },
-  { symbol: "p31m", x: 29, y: 29 },
-  { symbol: "p4", x: 46, y: 29 },
-  { symbol: "pmm", x: 63, y: 29 },
-  { symbol: "pmg", x: 77, y: 29 },
-  { symbol: "pgg", x: 91, y: 29 },
-  { symbol: "p3", x: 18, y: 51 },
-  { symbol: "cm", x: 61, y: 51 },
-  { symbol: "pm", x: 76, y: 51 },
-  { symbol: "pg", x: 91, y: 51 },
-  { symbol: "p2", x: 43, y: 67 },
-  { symbol: "p1", x: 50, y: 91 },
+  { symbol: "p1", label: "p1", x: 50, y: 5 },
+  { symbol: "p2", label: "p2", x: 21, y: 18 },
+  { symbol: "pg", label: "p1g1", x: 51, y: 18 },
+  { symbol: "p3", label: "p3", x: 84, y: 19 },
+  { symbol: "p4", label: "p4", x: 9, y: 38 },
+  { symbol: "pgg", label: "p2gg", x: 26, y: 38 },
+  { symbol: "pm", label: "p1m1", x: 46, y: 31 },
+  { symbol: "cm", label: "c1m1", x: 61, y: 31 },
+  { symbol: "pmg", label: "p2mg", x: 39, y: 53 },
+  { symbol: "p3m1", label: "p3m1", x: 69, y: 53 },
+  { symbol: "p31m", label: "p31m", x: 84, y: 53 },
+  { symbol: "pmm", label: "p2mm", x: 14, y: 70 },
+  { symbol: "cmm", label: "c2mm", x: 35, y: 70 },
+  { symbol: "p6", label: "p6", x: 94, y: 77 },
+  { symbol: "p4g", label: "p4gm", x: 11, y: 85 },
+  { symbol: "p4m", label: "p4mm", x: 7, y: 96 },
+  { symbol: "p6m", label: "p6mm", x: 72, y: 96 },
 ];
 
-// Type-level subgroup indices from the standard 17 wallpaper-group relation table.
-// Self-type finite-index subgroups are omitted from this visualization.
-const TYPE_RELATIONS: Record<string, Array<[string, number]>> = {
-  p2: [["p1", 2]],
-  pg: [["p1", 2]],
-  pm: [["p1", 2], ["pg", 2], ["cm", 2]],
-  cm: [["p1", 2], ["pg", 2], ["pm", 2]],
-  pgg: [["p1", 4], ["p2", 2], ["pg", 2]],
-  pmg: [["p1", 4], ["p2", 2], ["pg", 2], ["pm", 2], ["cm", 4], ["pgg", 2]],
-  pmm: [
-    ["p1", 4],
-    ["p2", 2],
-    ["pg", 4],
-    ["pm", 2],
-    ["cm", 4],
-    ["pgg", 4],
-    ["pmg", 2],
-    ["cmm", 2],
-  ],
-  cmm: [
-    ["p1", 4],
-    ["p2", 2],
-    ["pg", 4],
-    ["pm", 4],
-    ["cm", 2],
-    ["pgg", 2],
-    ["pmg", 2],
-    ["pmm", 2],
-  ],
-  p4: [["p1", 4], ["p2", 2]],
-  p4g: [
-    ["p1", 8],
-    ["p2", 4],
-    ["pg", 4],
-    ["pm", 8],
-    ["cm", 4],
-    ["pgg", 2],
-    ["pmg", 4],
-    ["pmm", 4],
-    ["cmm", 2],
-    ["p4", 2],
-  ],
-  p4m: [
-    ["p1", 8],
-    ["p2", 4],
-    ["pg", 8],
-    ["pm", 4],
-    ["cm", 4],
-    ["pgg", 4],
-    ["pmg", 4],
-    ["pmm", 2],
-    ["cmm", 2],
-    ["p4", 2],
-    ["p4g", 2],
-  ],
-  p3: [["p1", 3]],
-  p3m1: [["p1", 6], ["pg", 6], ["pm", 6], ["cm", 3], ["p3", 2], ["p31m", 3]],
-  p31m: [["p1", 6], ["pg", 6], ["pm", 6], ["cm", 3], ["p3", 2], ["p3m1", 3]],
-  p6: [["p1", 6], ["p2", 3], ["p3", 2]],
-  p6m: [
-    ["p1", 12],
-    ["p2", 6],
-    ["pg", 12],
-    ["pm", 12],
-    ["cm", 6],
-    ["pgg", 6],
-    ["pmg", 6],
-    ["pmm", 6],
-    ["cmm", 3],
-    ["p3", 4],
-    ["p3m1", 2],
-    ["p31m", 2],
-    ["p6", 2],
-  ],
-};
+// The visual hierarchy follows the supplied standard-symbol reference sheet. Connections
+// indicate represented subgroup paths; finite-index same-type copies remain suppressed.
+export const EXPLORER_GRAPH_EDGES: ExplorerGraphEdge[] = [
+  { from: "p1", to: "p2" },
+  { from: "p1", to: "pg" },
+  { from: "p1", to: "p3" },
+  { from: "p2", to: "p4" },
+  { from: "p2", to: "pgg" },
+  { from: "p2", to: "pmg" },
+  { from: "pg", to: "pgg" },
+  { from: "pg", to: "pm" },
+  { from: "pg", to: "cm" },
+  { from: "pm", to: "cm" },
+  { from: "pm", to: "pmg" },
+  { from: "pm", to: "p3m1" },
+  { from: "pm", to: "p31m" },
+  { from: "cm", to: "pmg" },
+  { from: "cm", to: "p3m1" },
+  { from: "cm", to: "p31m" },
+  { from: "p3", to: "p3m1" },
+  { from: "p3", to: "p31m" },
+  { from: "p3", to: "p6" },
+  { from: "p4", to: "p4g" },
+  { from: "p4", to: "p4m" },
+  { from: "pgg", to: "pmg" },
+  { from: "pgg", to: "p4g" },
+  { from: "pmg", to: "pmm" },
+  { from: "pmg", to: "cmm" },
+  { from: "pmm", to: "cmm" },
+  { from: "pmm", to: "p4g" },
+  { from: "pmm", to: "p4m" },
+  { from: "cmm", to: "p4g" },
+  { from: "cmm", to: "p4m" },
+  { from: "p4g", to: "p4m" },
+  { from: "p3m1", to: "p6m" },
+  { from: "p31m", to: "p6m" },
+  { from: "p6", to: "p6m" },
+  { from: "pmm", to: "p6m" },
+  { from: "cmm", to: "p6m" },
+];
 
-export const EXPLORER_GRAPH_EDGES: ExplorerGraphEdge[] = Object.entries(TYPE_RELATIONS).flatMap(
-  ([from, relations]) => relations.map(([to, index]) => ({ from, to, index })),
-);
+export const FEATURED_WALK: ExplorerWalkStep[] = [
+  {
+    symbol: "p6m",
+    family: "hexagonal",
+    chapter: "Hexagonal descent",
+    narrative: "Begin at p6mm: six-fold rotations and mirrors lock the color field.",
+  },
+  {
+    symbol: "p6",
+    family: "hexagonal",
+    chapter: "Hexagonal descent",
+    narrative: "Mirrors dissolve while the six-fold rotational lattice stays fixed.",
+  },
+  {
+    symbol: "p3",
+    family: "hexagonal",
+    chapter: "Hexagonal descent",
+    narrative: "A color shift leaves only the three-fold rotational subgroup.",
+  },
+  {
+    symbol: "p1",
+    family: "hexagonal",
+    chapter: "Hexagonal descent",
+    narrative: "At p1, coloring is unconstrained and the hexagonal cell is still visible.",
+  },
+  {
+    symbol: "p1",
+    family: "square",
+    chapter: "Lattice homotopy",
+    narrative: "Within p1, edges contract and regrow as the lattice becomes square.",
+  },
+  {
+    symbol: "p2",
+    family: "square",
+    chapter: "Four-fold ascent",
+    narrative: "Half-turn relations appear by smooth recoloring on the square mesh.",
+  },
+  {
+    symbol: "p4",
+    family: "square",
+    chapter: "Four-fold ascent",
+    narrative: "Quarter-turn color orbits establish the p4 branch.",
+  },
+  {
+    symbol: "p4m",
+    family: "square",
+    chapter: "Four-fold ascent",
+    narrative: "The path arrives at p4mm with four-fold mirrors fully restored.",
+  },
+  {
+    symbol: "p4g",
+    family: "square",
+    chapter: "Alternate descent",
+    narrative: "The return follows the alternate p4gm branch while the square lattice remains.",
+  },
+  {
+    symbol: "p4",
+    family: "square",
+    chapter: "Alternate descent",
+    narrative: "Glide-reflection constraints fade, returning to four-fold rotation.",
+  },
+  {
+    symbol: "p2",
+    family: "square",
+    chapter: "Alternate descent",
+    narrative: "Only half-turn symmetry remains before complete color freedom.",
+  },
+  {
+    symbol: "p1",
+    family: "square",
+    chapter: "Alternate descent",
+    narrative: "The walk closes at p1, ready for another route through the hierarchy.",
+  },
+];
 
 const HUE_ORIGINS: Record<LatticeType, number> = {
   generic: 302,

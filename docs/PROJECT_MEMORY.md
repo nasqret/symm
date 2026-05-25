@@ -55,6 +55,12 @@ This file records reusable decisions and discoveries for future Unit Cell Design
   within-family stage to one vertex/edge mesh. Reserve geometry deformation for an explicit
   `p1` transition between lattice families, where contracted and expanded edges make the
   changing cell visible.
+- For hierarchy-driven teaching tours, render standard crystallographic labels in the graph
+  (`p4mm`, `p6mm`, `p4gm`) even if internal identifiers stay short, and make an authored path
+  explicit in the UI rather than implying that an automatic carousel enumerates every relation.
+- Any manual group selection must cancel queued fades, lattice bridges and ascents before it
+  changes the current group; otherwise an earlier autoplay path can overwrite an intentional
+  mathematical state.
 
 ## Validation Debt
 

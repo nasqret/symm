@@ -276,6 +276,39 @@
 - At `390 x 844`, the browser reported 17 rendered graph nodes with no horizontal overflow;
   browser page-error checks reported no application errors.
 
+## 2026-05-25: Supplied Hierarchy Reconstruction And Featured Walk
+
+- Reimplemented the exploration map from the supplied ignored reference
+  `sources/hierarchy.png`, using its open-line hierarchy and standard labels such as `p1g1`,
+  `c2mm`, `p4gm`, `p4mm` and `p6mm` rather than the earlier compact short-symbol cloud.
+- Replaced generic family cycling with one authored teaching walk:
+  `p6mm -> p6 -> p3 -> p1`, an explicit hexagonal-to-square `p1` homotopy,
+  `p2 -> p4 -> p4mm`, then the alternate square descent
+  `p4gm -> p4 -> p2 -> p1`.
+- Added a quiet reference-style graph treatment: fine unweighted hierarchy connectors, a
+  highlighted current-group box, a restrained highlighted walk and a compact step track.
+- Fixed manual interruption of autoplay: selecting a group or restarting the walk now cancels
+  pending color fades, lattice homotopies and queued ascents before taking control.
+
+### Validation Evidence
+
+- `npm run typecheck`: passed.
+- `npm run build`: passed.
+- Desktop rendered comparison against `sources/hierarchy.png`: all 17 standard-label node boxes
+  appeared in the hierarchy, with `p1` at the apex and `p4mm` / `p6mm` at the bottom; the
+  current group was marked by one colored box.
+- Featured-walk checks: restarting reported `p6mm` at step `1/12`; timed playback reached the
+  alternate `p4gm` step with detected symmetry `p4gm`; manual arrival at `p4mm` and descent to
+  `p4gm` both reported matching detected symmetry on the fixed square lattice.
+- Homotopy check: selecting square `p4mm` from controlled hexagonal `p1` mounted two
+  `demo-layer--homotopy` layers with complementary edge-scale values and reported the
+  `HEXAGONAL TO SQUARE / P1 BRIDGE` caption.
+- Interruption regression: pausing and manually selecting `p1` after autoplay retained
+  `HEXAGONAL LATTICE / FIXED LATTICE` with detected symmetry `p1`; no queued transition
+  overwrote it.
+- At `390 x 844`, all 17 standard-label nodes rendered with no horizontal overflow; browser
+  page-error checks reported no application errors.
+
 ## Journal Protocol
 
 For each working cycle append:

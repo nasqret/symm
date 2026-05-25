@@ -113,3 +113,13 @@ Run this checklist on every implementation cycle.
 - [x] Clarified in the UI and documentation that finite-index translation copies are suppressed.
 - [x] Ran `npm run build` and rendered browser checks across hexagonal, square, rectangular and
   generic states, including a `390 x 844` no-overflow check, without page errors.
+
+## Cycle Record: 2026-05-25 Supplied Hierarchy And Featured Walk
+
+- [x] Reconstructed the supplied `sources/hierarchy.png` hierarchy using standard group labels.
+- [x] Authored the `p6mm -> p1 -> p4mm -> p4gm -> p1` teaching walk with the `p1`
+  lattice-family homotopy.
+- [x] Added a live colored group box and restrained highlighted route within the full graph.
+- [x] Cancelled queued animation phases when manual graph exploration or walk restart takes over.
+- [x] Ran `npm run typecheck`, `npm run build`, desktop hierarchy/motion checks and a mobile
+  17-node no-overflow check without browser page errors.
