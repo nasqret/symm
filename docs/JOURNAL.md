@@ -859,6 +859,26 @@
 - Interactive mobile screenshot verification remains pending because the Browser plugin's
   required execution interface was not exposed after the prescribed discovery sequence.
 
+## 2026-05-26: Enlarged Mobile Color Roller
+
+- Enlarged the press-and-hold tile color roller from a compact `52px` track to a `58px`
+  capsule, with wider color slots and larger selectable swatches for touch visibility.
+- Moved the opened roller slightly farther above or below its tile anchor so the larger menu
+  remains visible around the pressing finger.
+- Kept hold timing, movement cancellation, pinch handoff and selected-color application logic
+  unchanged.
+
+### Validation Evidence
+
+- `git diff --check`: passed.
+- `npm run typecheck`: passed.
+- `npm run build`: passed; Vite production assets generated successfully.
+- Source check passed: `COLOR_ROLL_HOLD_MS`, `COLOR_ROLL_CANCEL_DISTANCE` and
+  `COLOR_ROLL_STEP_PX` are unchanged; only track/slot/swatch dimensions and displayed anchor
+  offset were increased.
+- Interactive long-press screenshot verification remains pending because the Browser plugin's
+  required execution interface was not exposed after the prescribed discovery sequence.
+
 ## Journal Protocol
 
 For each working cycle append:

@@ -80,7 +80,10 @@ function clampZoom(value: number): number {
 const COLOR_ROLL_HOLD_MS = 380;
 const COLOR_ROLL_CANCEL_DISTANCE = 12;
 const COLOR_ROLL_STEP_PX = 28;
-const COLOR_ROLL_SLOT_WIDTH = 30;
+const COLOR_ROLL_SLOT_WIDTH = 34;
+const COLOR_ROLL_TRACK_PADDING = 24;
+const COLOR_ROLL_TRACK_HEIGHT = 58;
+const COLOR_ROLL_ANCHOR_OFFSET = 64;
 
 interface UnitCellCanvasProps {
   document: CellDocument;
@@ -299,7 +302,7 @@ export function UnitCellCanvas({
       const selectedIndex = selectedColor ? colorRollColors.indexOf(selectedColor) : -1;
       const initialIndex = faceIndex >= 0 ? faceIndex : Math.max(selectedIndex, 0);
       const inverseScale = 1 / activeViewport.scale;
-      const rollerWidth = colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + 20;
+      const rollerWidth = colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + COLOR_ROLL_TRACK_PADDING;
       const halfWidth = (rollerWidth / 2) * inverseScale;
       const above = candidate.y - positioned.rect.top > 72;
       const next: ColorRollState = {
@@ -310,7 +313,9 @@ export function UnitCellCanvas({
             activeViewport.x + activeViewport.width - halfWidth,
             Math.max(activeViewport.x + halfWidth, positioned.point.x),
           ),
-          y: positioned.point.y + (above ? -58 : 58) * inverseScale,
+          y:
+            positioned.point.y +
+            (above ? -COLOR_ROLL_ANCHOR_OFFSET : COLOR_ROLL_ANCHOR_OFFSET) * inverseScale,
         },
         index: initialIndex,
         initialIndex,
@@ -796,20 +801,20 @@ export function UnitCellCanvas({
         >
           <rect
             className="color-roller-track"
-            x={-(colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + 20) / 2}
-            y={-26}
-            width={colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + 20}
-            height={52}
-            rx={26}
+            x={-(colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + COLOR_ROLL_TRACK_PADDING) / 2}
+            y={-COLOR_ROLL_TRACK_HEIGHT / 2}
+            width={colorRollColors.length * COLOR_ROLL_SLOT_WIDTH + COLOR_ROLL_TRACK_PADDING}
+            height={COLOR_ROLL_TRACK_HEIGHT}
+            rx={COLOR_ROLL_TRACK_HEIGHT / 2}
           />
           {colorRollColors.map((color, index) => {
             const x = (index - (colorRollColors.length - 1) / 2) * COLOR_ROLL_SLOT_WIDTH;
             return (
               <g key={`color-roll-${color}`} transform={`translate(${x} 0)`}>
                 {index === colorRoll.index ? (
-                  <circle className="color-roller-selection" r={15} />
+                  <circle className="color-roller-selection" r={17} />
                 ) : null}
-                <circle className="color-roller-swatch" r={10.5} fill={color} />
+                <circle className="color-roller-swatch" r={12} fill={color} />
               </g>
             );
           })}

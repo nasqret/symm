@@ -424,3 +424,15 @@ Run this checklist on every implementation cycle.
   overlay wiring.
 - [ ] Complete interactive mobile selection/tap screenshot verification when the Browser
   interface is exposed in the session.
+
+## Cycle Record: 2026-05-26 Enlarged Mobile Color Roller
+
+- [x] Increased the press-and-hold color roller capsule, swatch size and swatch spacing for
+  easier touch recognition.
+- [x] Increased the displayed roller offset from the touched tile so the larger control is not
+  obscured by the user's finger.
+- [x] Ran `git diff --check`, `npm run typecheck` and `npm run build`.
+- [x] Verified that hold timing, cancellation distance and drag selection threshold remain
+  unchanged while visual dimensions and placement are enlarged.
+- [ ] Complete interactive press-and-hold screenshot verification when the Browser interface
+  is exposed in the session.
